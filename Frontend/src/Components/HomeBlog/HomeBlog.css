@@ -1,0 +1,567 @@
+
+/* =====================================================
+   HOME BLOG SECTION
+===================================================== */
+
+.HomeBlog {
+  width: 100%;
+  padding: 70px 0 65px;
+  overflow: hidden;
+  background: #ffffff;
+  color: #171717;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.HomeBlog *,
+.HomeBlog *::before,
+.HomeBlog *::after {
+  box-sizing: border-box;
+}
+
+.HomeBlog-container {
+  width: 100%;
+  max-width: 1650px;
+  margin: 0 auto;
+  padding: 0 6.65%;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.HomeBlog-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+.HomeBlog-heading {
+  padding-top: 31px;
+}
+
+.HomeBlog-title {
+  margin: 0;
+  color: #171717;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(32px, 2.25vw, 40px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.HomeBlog-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.HomeBlog-subtitle {
+  max-width: 600px;
+  margin: 0 0 22px;
+  color: #666666;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: 0.2px;
+}
+
+.HomeBlog-view-all {
+  color: #171717;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.3s ease;
+}
+
+.HomeBlog-view-all:hover {
+  color: #987044;
+}
+
+/* =====================================================
+   CAROUSEL
+===================================================== */
+
+.HomeBlog-carousel {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.HomeBlog-viewport {
+  width: 100%;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.HomeBlog-track {
+  display: flex;
+  align-items: stretch;
+  gap: 28px;
+  width: 100%;
+
+  /* Smooth movement controlled by React */
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+/* =====================================================
+   ARTICLE CARD
+===================================================== */
+
+.HomeBlog-card {
+  display: flex;
+  flex: 0 0 calc((100% - 84px) / 4);
+  flex-direction: column;
+
+  min-width: 0;
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+
+  transition: box-shadow 0.35s ease;
+}
+
+.HomeBlog-card:hover {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+}
+
+/* =====================================================
+   ARTICLE IMAGE
+===================================================== */
+
+.HomeBlog-image-link {
+  display: block;
+  width: 100%;
+  height: 320px;
+  overflow: hidden;
+  background: #f2f0ed;
+}
+
+.HomeBlog-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.7s ease;
+}
+
+.HomeBlog-card:hover .HomeBlog-image {
+  transform: scale(1.045);
+}
+
+/* =====================================================
+   CARD CONTENT
+===================================================== */
+
+.HomeBlog-card-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+
+  min-height: 200px;
+  padding: 25px 17px 30px;
+  text-align: center;
+}
+
+/* =====================================================
+   DATE AND COMMENTS
+===================================================== */
+
+.HomeBlog-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  width: 100%;
+  margin-bottom: 16px;
+
+  color: #696969;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.HomeBlog-meta-divider {
+  flex: 0 0 1px;
+  width: 1px;
+  height: 17px;
+  background: #dedede;
+}
+
+/* =====================================================
+   ARTICLE TITLE
+===================================================== */
+
+.HomeBlog-card-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  min-height: 54px;
+  overflow: hidden;
+  margin: 0 0 21px;
+  padding: 0;
+
+  color: #111111;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.HomeBlog-card-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.HomeBlog-card-title a:hover {
+  color: #987044;
+}
+
+/* =====================================================
+   READ ARTICLE
+===================================================== */
+
+.HomeBlog-read-more {
+  display: inline-block;
+  margin-top: auto;
+  color: #111111;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+  text-decoration: none;
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.HomeBlog-read-more:hover {
+  color: #987044;
+  transform: translateY(-2px);
+}
+
+/* =====================================================
+   CAROUSEL ARROWS
+===================================================== */
+
+.HomeBlog-arrow {
+  position: absolute;
+  top: 42%;
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 43px;
+  height: 43px;
+  padding: 0;
+
+  color: #555555;
+  background: #ffffff;
+  border: 1px solid #ededed;
+  border-radius: 50%;
+
+  font-size: 13px;
+  cursor: pointer;
+
+  transform: translateY(-50%);
+
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.HomeBlog-arrow:hover {
+  color: #ffffff;
+  background: #171717;
+  border-color: #171717;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.HomeBlog-arrow:active {
+  transform: translateY(-50%) scale(0.94);
+}
+
+.HomeBlog-arrow--left {
+  left: -53px;
+}
+
+.HomeBlog-arrow--right {
+  right: -53px;
+}
+
+.HomeBlog-arrow:focus-visible,
+.HomeBlog-view-all:focus-visible,
+.HomeBlog-read-more:focus-visible,
+.HomeBlog-card-title a:focus-visible {
+  outline: 2px solid #987044;
+  outline-offset: 4px;
+}
+
+/* =====================================================
+   LAPTOP
+===================================================== */
+
+@media (max-width: 1300px) {
+  .HomeBlog-container {
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  .HomeBlog-header {
+    gap: 28px;
+    margin-bottom: 45px;
+  }
+
+  .HomeBlog-heading {
+    padding-top: 20px;
+  }
+
+  .HomeBlog-subtitle {
+    font-size: 16px;
+  }
+
+  .HomeBlog-track {
+    gap: 20px;
+  }
+
+  .HomeBlog-card {
+    flex-basis: calc((100% - 60px) / 4);
+  }
+
+  .HomeBlog-image-link {
+    height: 270px;
+  }
+
+  .HomeBlog-card-content {
+    padding: 22px 12px 25px;
+  }
+
+  .HomeBlog-meta {
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .HomeBlog-card-title {
+    font-size: 16px;
+  }
+
+  .HomeBlog-arrow--left {
+    left: -20px;
+  }
+
+  .HomeBlog-arrow--right {
+    right: -20px;
+  }
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+  .HomeBlog {
+    padding: 50px 0;
+  }
+
+  .HomeBlog-header {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+    margin-bottom: 35px;
+  }
+
+  .HomeBlog-heading {
+    padding-top: 12px;
+  }
+
+  .HomeBlog-title {
+    font-size: 30px;
+  }
+
+  .HomeBlog-subtitle {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .HomeBlog-track {
+    gap: 18px;
+  }
+
+  .HomeBlog-card {
+    flex-basis: calc((100% - 18px) / 2);
+  }
+
+  .HomeBlog-image-link {
+    height: 270px;
+  }
+
+  .HomeBlog-card-content {
+    min-height: 185px;
+    padding: 20px 14px 25px;
+  }
+
+  .HomeBlog-meta {
+    font-size: 13px;
+  }
+
+  .HomeBlog-card-title {
+    font-size: 18px;
+  }
+
+  .HomeBlog-arrow {
+    width: 38px;
+    height: 38px;
+  }
+
+  .HomeBlog-arrow--left {
+    left: -16px;
+  }
+
+  .HomeBlog-arrow--right {
+    right: -16px;
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 560px) {
+  .HomeBlog {
+    padding: 38px 0 45px;
+  }
+
+  .HomeBlog-container {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .HomeBlog-header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .HomeBlog-heading {
+    padding-top: 0;
+  }
+
+  .HomeBlog-title {
+    font-size: 30px;
+  }
+
+  .HomeBlog-subtitle {
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+
+  .HomeBlog-track {
+    gap: 15px;
+  }
+
+  .HomeBlog-card {
+    flex-basis: 100%;
+  }
+
+  .HomeBlog-image-link {
+    height: 290px;
+  }
+
+  .HomeBlog-card-content {
+    min-height: 190px;
+    padding: 20px 16px 24px;
+  }
+
+  .HomeBlog-meta {
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .HomeBlog-card-title {
+    max-width: 360px;
+    font-size: 18px;
+  }
+
+  .HomeBlog-arrow {
+    top: 145px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .HomeBlog-arrow--left {
+    left: -13px;
+  }
+
+  .HomeBlog-arrow--right {
+    right: -13px;
+  }
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 380px) {
+  .HomeBlog-container {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .HomeBlog-title {
+    font-size: 27px;
+  }
+
+  .HomeBlog-image-link {
+    height: 245px;
+  }
+
+  .HomeBlog-card-content {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .HomeBlog-meta {
+    gap: 7px;
+    font-size: 11px;
+  }
+
+  .HomeBlog-card-title {
+    font-size: 16px;
+  }
+
+  .HomeBlog-arrow--left {
+    left: -8px;
+  }
+
+  .HomeBlog-arrow--right {
+    right: -8px;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION ACCESSIBILITY
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .HomeBlog *,
+  .HomeBlog *::before,
+  .HomeBlog *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

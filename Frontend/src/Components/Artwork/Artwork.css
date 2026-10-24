@@ -1,0 +1,844 @@
+
+/* =====================================================
+   ARTWORK SECTION
+===================================================== */
+
+.Artwork {
+  --Artwork-text: #242424;
+  --Artwork-muted: #777777;
+  --Artwork-border: #eeeeee;
+  --Artwork-accent: #8b5e3c;
+  --Artwork-accent-dark: #6f452a;
+
+  width: 100%;
+  padding: 48px 0 45px;
+  overflow: hidden;
+
+  color: var(--Artwork-text);
+  background: #ffffff;
+
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.Artwork *,
+.Artwork *::before,
+.Artwork *::after {
+  box-sizing: border-box;
+}
+
+.Artwork-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 6.85%;
+}
+
+/* =====================================================
+   HEADING
+===================================================== */
+
+.Artwork-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 25px;
+
+  width: 100%;
+  margin-bottom: 74px;
+}
+
+.Artwork-heading-content {
+  min-width: 0;
+}
+
+.Artwork-title {
+  margin: 0 0 23px;
+  padding: 0;
+
+  color: #171717;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 2.3vw, 38px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
+}
+
+.Artwork-subtitle {
+  max-width: 1000px;
+  margin: 0;
+  padding: 0;
+
+  color: #696969;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: 0.25px;
+}
+
+.Artwork-view-all {
+  flex: 0 0 auto;
+  margin-top: 8px;
+  padding: 4px 0;
+
+  color: #171717;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+
+  transition: color 0.25s ease;
+}
+
+.Artwork-view-all:hover {
+  color: var(--Artwork-accent);
+}
+
+/* =====================================================
+   CAROUSEL
+===================================================== */
+
+.Artwork-carousel {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.Artwork-track {
+  display: flex;
+  align-items: stretch;
+  gap: 30px;
+
+  width: 100%;
+  padding: 0 0 2px;
+  margin: 0;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.Artwork-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* =====================================================
+   ARTWORK CARD
+===================================================== */
+
+.Artwork-card {
+  display: flex;
+  flex: 0 0 calc((100% - 90px) / 4);
+  flex-direction: column;
+
+  min-width: 0;
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+
+  scroll-snap-align: start;
+
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.Artwork-card:hover {
+  border-color: #e3ddd6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.045);
+}
+
+/* =====================================================
+   IMAGE
+===================================================== */
+
+.Artwork-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: clamp(280px, 20.5vw, 365px);
+  flex: 0 0 auto;
+
+  overflow: hidden;
+  background: #f2eee8;
+}
+
+.Artwork-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform 0.65s ease;
+}
+
+.Artwork-card:hover .Artwork-image {
+  transform: scale(1.035);
+}
+
+/* =====================================================
+   CATEGORY BADGE
+===================================================== */
+
+.Artwork-category-badge {
+  position: absolute;
+  bottom: 13px;
+  left: 13px;
+  z-index: 2;
+
+  max-width: calc(100% - 75px);
+  padding: 7px 11px;
+
+  overflow: hidden;
+
+  color: #292929;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 3px;
+
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   WISHLIST BUTTON
+===================================================== */
+
+.Artwork-wishlist {
+  position: absolute;
+  top: 17px;
+  right: 17px;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 37px;
+  height: 37px;
+  padding: 0;
+
+  color: #292929;
+  background: #ffffff;
+  border: none;
+  border-radius: 50%;
+
+  font-size: 17px;
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.Artwork-wishlist:hover {
+  color: #e52b45;
+  transform: scale(1.09);
+}
+
+.Artwork-wishlist-active {
+  color: #e52b45;
+}
+
+.Artwork-wishlist:focus-visible {
+  outline: 2px solid var(--Artwork-accent);
+  outline-offset: 3px;
+}
+
+/* =====================================================
+   CARD DETAILS
+===================================================== */
+
+.Artwork-details {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+
+  min-width: 0;
+  padding: 25px 18px 27px;
+
+  background: #ffffff;
+}
+
+.Artwork-card-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  width: 100%;
+  min-height: 54px;
+  overflow: hidden;
+
+  padding: 0;
+  margin: 0 0 15px;
+
+  color: #252525;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.05px;
+  overflow-wrap: anywhere;
+}
+
+.Artwork-artist,
+.Artwork-price {
+  width: 100%;
+  margin: 0 0 13px;
+  padding: 0;
+
+  color: #292929;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.Artwork-artist span,
+.Artwork-price span {
+  color: #777777;
+  margin-right: 3px;
+}
+
+/* =====================================================
+   BUY NOW / ADD TO CART
+===================================================== */
+
+.Artwork-buy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-width: 118px;
+  min-height: 43px;
+  padding: 10px 17px;
+  margin-top: auto;
+
+  color: #252525;
+  background: #ffffff;
+  border: 1px solid #292929;
+  border-radius: 6px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.Artwork-buy-button svg {
+  flex: 0 0 auto;
+  font-size: 13px;
+}
+
+.Artwork-buy-button:hover:not(:disabled) {
+  color: #ffffff;
+  background: var(--Artwork-accent);
+  border-color: var(--Artwork-accent);
+  transform: translateY(-1px);
+}
+
+.Artwork-buy-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.Artwork-buy-button:focus-visible {
+  outline: 2px solid var(--Artwork-accent);
+  outline-offset: 3px;
+}
+
+.Artwork-buy-button-added,
+.Artwork-buy-button:disabled {
+  color: #ffffff;
+  background: #555555;
+  border-color: #555555;
+  cursor: default;
+}
+
+/* =====================================================
+   LEFT AND RIGHT ARROWS
+===================================================== */
+
+.Artwork-arrow {
+  position: absolute;
+  top: 43%;
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  color: #555555;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 50%;
+
+  font-size: 14px;
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.025);
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.Artwork-arrow:hover {
+  color: #ffffff;
+  background: var(--Artwork-accent);
+  border-color: var(--Artwork-accent);
+  transform: scale(1.07);
+}
+
+.Artwork-arrow:active {
+  transform: scale(0.96);
+}
+
+.Artwork-arrow:focus-visible {
+  outline: 2px solid var(--Artwork-accent);
+  outline-offset: 3px;
+}
+
+.Artwork-arrow-prev {
+  left: -22px;
+}
+
+.Artwork-arrow-next {
+  right: -22px;
+}
+
+/* =====================================================
+   CART NOTIFICATION
+===================================================== */
+
+.Artwork-notice {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  max-width: min(400px, calc(100vw - 32px));
+  padding: 14px 18px;
+
+  color: #ffffff;
+  background: #252525;
+  border-radius: 6px;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease,
+    transform 0.25s ease;
+
+  pointer-events: none;
+}
+
+.Artwork-notice-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.Artwork-notice svg {
+  flex: 0 0 auto;
+  color: #5ce0a0;
+}
+
+/* =====================================================
+   LAPTOPS
+===================================================== */
+
+@media (max-width: 1200px) {
+  .Artwork-container {
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  .Artwork-heading {
+    margin-bottom: 55px;
+  }
+
+  .Artwork-title {
+    font-size: 33px;
+  }
+
+  .Artwork-subtitle {
+    font-size: 16px;
+  }
+
+  .Artwork-track {
+    gap: 22px;
+  }
+
+  .Artwork-card {
+    flex-basis: calc((100% - 66px) / 4);
+  }
+
+  .Artwork-image-wrapper {
+    height: clamp(240px, 25vw, 320px);
+  }
+
+  .Artwork-details {
+    padding: 20px 14px 22px;
+  }
+
+  .Artwork-card-title {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  .Artwork-artist,
+  .Artwork-price {
+    font-size: 13px;
+  }
+
+  .Artwork-arrow-prev {
+    left: -18px;
+  }
+
+  .Artwork-arrow-next {
+    right: -18px;
+  }
+}
+
+/* =====================================================
+   TABLETS
+===================================================== */
+
+@media (max-width: 900px) {
+  .Artwork {
+    padding-top: 38px;
+  }
+
+  .Artwork-container {
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+
+  .Artwork-heading {
+    margin-bottom: 38px;
+  }
+
+  .Artwork-title {
+    font-size: 30px;
+    margin-bottom: 15px;
+  }
+
+  .Artwork-subtitle {
+    font-size: 15px;
+  }
+
+  .Artwork-view-all {
+    font-size: 14px;
+  }
+
+  .Artwork-track {
+    gap: 20px;
+  }
+
+  .Artwork-card {
+    flex-basis: calc((100% - 40px) / 3);
+  }
+
+  .Artwork-image-wrapper {
+    height: 270px;
+  }
+
+  .Artwork-wishlist {
+    top: 12px;
+    right: 12px;
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .Artwork-details {
+    padding: 17px 12px 19px;
+  }
+
+  .Artwork-card-title {
+    font-size: 15px;
+    min-height: 45px;
+    margin-bottom: 11px;
+  }
+
+  .Artwork-artist,
+  .Artwork-price {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .Artwork-buy-button {
+    min-width: 105px;
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .Artwork-arrow {
+    width: 37px;
+    height: 37px;
+  }
+
+  .Artwork-arrow-prev {
+    left: -18px;
+  }
+
+  .Artwork-arrow-next {
+    right: -18px;
+  }
+}
+
+/* =====================================================
+   SMALL TABLETS
+===================================================== */
+
+@media (max-width: 700px) {
+  .Artwork {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .Artwork-container {
+    padding-right: 25px;
+    padding-left: 25px;
+  }
+
+  .Artwork-heading {
+    margin-bottom: 30px;
+  }
+
+  .Artwork-track {
+    gap: 18px;
+  }
+
+  .Artwork-card {
+    flex-basis: calc((100% - 18px) / 2);
+  }
+
+  .Artwork-image-wrapper {
+    height: clamp(240px, 48vw, 330px);
+  }
+
+  .Artwork-details {
+    padding: 18px 14px 20px;
+  }
+
+  .Artwork-card-title {
+    font-size: 16px;
+  }
+
+  .Artwork-artist,
+  .Artwork-price {
+    font-size: 13px;
+  }
+
+  .Artwork-arrow-prev {
+    left: -17px;
+  }
+
+  .Artwork-arrow-next {
+    right: -17px;
+  }
+}
+
+/* =====================================================
+   MOBILE PHONES
+===================================================== */
+
+@media (max-width: 480px) {
+  .Artwork {
+    padding-top: 26px;
+    padding-bottom: 25px;
+  }
+
+  .Artwork-container {
+    padding-right: 19px;
+    padding-left: 19px;
+  }
+
+  .Artwork-heading {
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+
+  .Artwork-title {
+    font-size: clamp(25px, 6.5vw, 30px);
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+
+  .Artwork-subtitle {
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .Artwork-view-all {
+    margin-top: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .Artwork-track {
+    gap: 15px;
+  }
+
+  .Artwork-card {
+    flex-basis: 84%;
+  }
+
+  .Artwork-image-wrapper {
+    height: clamp(260px, 82vw, 360px);
+  }
+
+  .Artwork-wishlist {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .Artwork-category-badge {
+    bottom: 12px;
+    left: 12px;
+    font-size: 10px;
+  }
+
+  .Artwork-details {
+    padding: 18px 15px 20px;
+  }
+
+  .Artwork-card-title {
+    min-height: 48px;
+    margin-bottom: 12px;
+    font-size: 17px;
+  }
+
+  .Artwork-artist,
+  .Artwork-price {
+    font-size: 13px;
+    margin-bottom: 11px;
+  }
+
+  .Artwork-buy-button {
+    min-height: 42px;
+    min-width: 115px;
+    font-size: 13px;
+  }
+
+  .Artwork-arrow {
+    top: 38%;
+    width: 33px;
+    height: 33px;
+    font-size: 11px;
+  }
+
+  .Artwork-arrow-prev {
+    left: -15px;
+  }
+
+  .Artwork-arrow-next {
+    right: -15px;
+  }
+
+  .Artwork-notice {
+    right: 12px;
+    bottom: 12px;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+}
+
+/* =====================================================
+   EXTRA-SMALL PHONES
+===================================================== */
+
+@media (max-width: 360px) {
+  .Artwork-container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .Artwork-title {
+    font-size: 24px;
+  }
+
+  .Artwork-subtitle {
+    font-size: 11px;
+  }
+
+  .Artwork-view-all {
+    font-size: 11px;
+  }
+
+  .Artwork-card {
+    flex-basis: 90%;
+  }
+
+  .Artwork-image-wrapper {
+    height: 260px;
+  }
+
+  .Artwork-arrow-prev {
+    left: -12px;
+  }
+
+  .Artwork-arrow-next {
+    right: -12px;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .Artwork *,
+  .Artwork *::before,
+  .Artwork *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}

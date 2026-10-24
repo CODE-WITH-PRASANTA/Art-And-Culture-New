@@ -1,14 +1,24 @@
-/* =========================================
-   HERO SECTION
-========================================= */
+
+/* =========================================================
+   HERO SECTION - GLOBAL STYLES
+========================================================= */
 
 .HeroSection {
+  --hero-primary: #8b5e3c;
+  --hero-primary-dark: #6f452a;
+  --hero-text: #29251f;
+  --hero-muted: #716b63;
+  --hero-border: #e9e2da;
+  --hero-background: #ffffff;
+  --hero-soft-background: #faf7f3;
+
+  position: relative;
   width: 100%;
-  background: #fff;
-  color: #191919;
-  overflow: clip;
+  overflow: hidden;
+  background: var(--hero-background);
+  color: var(--hero-text);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
- 
+  box-sizing: border-box;
 }
 
 .HeroSection *,
@@ -17,227 +27,672 @@
   box-sizing: border-box;
 }
 
-.HeroSection-container {
-  width: 100%;
-  max-width: 1770px;
-  margin: 0 auto;
-  
+.HeroSection a {
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================================
-   TOP BAR
-========================================= */
+.HeroSection-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-right: 48px;
+  padding-left: 48px;
+}
 
-.HeroSection-topbar .HeroSection-container {
-  min-height: 100px;
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.HeroSection-topbar {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid var(--hero-border);
+}
+
+.HeroSection-topbar > .HeroSection-container {
+  min-height: 76px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 30px;
+  gap: 24px;
 }
 
+/* =========================================================
+   SEARCH FORM
+========================================================= */
+
 .HeroSection-search {
-  width: min(600px, 60%);
-  height: 52px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #898989;
+  width: 100%;
+  max-width: 490px;
+  min-width: 0;
+  height: 46px;
+
+  padding: 0 6px 0 17px;
+  background: #ffffff;
+  border: 1px solid #e5ded5;
+  border-radius: 4px;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.HeroSection-search:focus-within {
+  border-color: var(--hero-primary);
+  box-shadow: 0 0 0 3px rgba(139, 94, 60, 0.09);
 }
 
 .HeroSection-search input {
   flex: 1;
+  width: 100%;
   min-width: 0;
   height: 100%;
-  padding: 0 12px 0 8px;
+
+  padding: 0 12px 0 0;
+  margin: 0;
+
+  color: var(--hero-text);
+  background: transparent;
   border: none;
   outline: none;
-  background: transparent;
-  color: #222;
-  font-size: 16px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .HeroSection-search input::placeholder {
-  color: #858585;
+  color: #918a82;
+  opacity: 1;
+}
+
+.HeroSection-search input::-webkit-search-cancel-button {
+  cursor: pointer;
 }
 
 .HeroSection-search button {
-  width: 42px;
-  height: 100%;
-  display: flex;
+  flex: 0 0 auto;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+
+  width: 35px;
+  height: 34px;
+  padding: 0;
+
+  color: #ffffff;
+  background: var(--hero-primary);
   border: none;
-  background: transparent;
-  color: #626262;
-  font-size: 18px;
+  border-radius: 3px;
+
+  font-size: 14px;
   cursor: pointer;
-  transition: color 0.25s ease;
+
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .HeroSection-search button:hover {
-  color: #000;
+  background: var(--hero-primary-dark);
 }
+
+.HeroSection-search button:active {
+  transform: scale(0.96);
+}
+
+.HeroSection-search button:focus-visible {
+  outline: 2px solid var(--hero-primary);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   NEED HELP LINK
+========================================================= */
 
 .HeroSection-help {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  font-size: 17px;
-  font-weight: 500;
+  justify-content: center;
+  flex: 0 0 auto;
+  gap: 10px;
+
+  padding: 10px 0;
+
+  color: var(--hero-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
   white-space: nowrap;
-  transition: opacity 0.25s ease;
+
+  transition: color 0.25s ease;
 }
 
 .HeroSection-help svg {
-  font-size: 14px;
+  flex: 0 0 auto;
+  font-size: 11px;
+
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
 }
 
 .HeroSection-help:hover {
-  opacity: 0.6;
+  color: var(--hero-primary);
 }
 
-/* =========================================
-   BANNER
-========================================= */
+.HeroSection-help:hover svg {
+  color: var(--hero-primary);
+  transform: translate(2px, -2px);
+}
+
+.HeroSection-help:focus-visible {
+  outline: 2px solid var(--hero-primary);
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   MAIN HERO BANNER
+========================================================= */
 
 .HeroSection-banner {
-  width: 100%;                 /* no calc, no extra padding system */
-  min-height: 640px;
-  padding: 60px 56px;
+  position: relative;
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.06fr);
   align-items: center;
   gap: 40px;
-  background: #fbf8f8;
-  border-radius: 12px;
+
+  width: 100%;
+  min-height: 590px;
+  padding-top: 56px;
+  padding-bottom: 56px;
 }
 
+/* =========================================================
+   LEFT CONTENT
+========================================================= */
+
 .HeroSection-content {
-  min-width: 0;
+  position: relative;
+  z-index: 1;
+
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+  padding: 18px 0;
 }
+
+/* Eyebrow text */
 
 .HeroSection-eyebrow {
   display: inline-flex;
   align-items: center;
-  padding: 6px 18px;
-  margin-bottom: 22px;
-  border: 1px solid #777;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
+  gap: 10px;
+
+  margin-bottom: 24px;
+
+  color: var(--hero-primary);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
+
+.HeroSection-eyebrow::before {
+  content: "";
+  display: inline-block;
+  flex: 0 0 auto;
+
+  width: 30px;
+  height: 1px;
+
+  background: var(--hero-primary);
+}
+
+/* Main heading */
 
 .HeroSection-title {
-  max-width: 760px;
-  margin-bottom: 24px;
+  width: 100%;
+  max-width: 650px;
+  padding: 0;
+  margin: 0 0 23px;
+
+  color: var(--hero-text);
+
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(36px, 3.4vw, 58px);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -1.2px;
+  font-size: clamp(38px, 4.1vw, 61px);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -1.8px;
+
+  overflow-wrap: break-word;
 }
+
+.HeroSection-desktop-break {
+  display: block;
+}
+
+/* Description */
 
 .HeroSection-description {
-  max-width: 600px;
-  margin-bottom: 40px;
-  color: #656565;
-  font-size: 19px;
-  line-height: 1.7;
+  width: 100%;
+  max-width: 430px;
+  padding: 0;
+  margin: 0 0 32px;
+
+  color: var(--hero-muted);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: 0.1px;
 }
 
+/* =========================================================
+   EXPLORE AUCTIONS BUTTON
+========================================================= */
+
 .HeroSection-button {
-  min-width: 190px;
-  min-height: 60px;
-  padding: 14px 24px;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #171717;
-  border: 1px solid #171717;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  gap: 13px;
+
+  min-height: 52px;
+  padding: 0 28px;
+
+  color: #ffffff;
+  background: var(--hero-primary);
+  border: 1px solid var(--hero-primary);
+  border-radius: 3px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.8px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  overflow: hidden;
+
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.HeroSection-button::after {
+  content: "\2192";
+  display: inline-block;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1;
+
+  transition: transform 0.3s ease;
 }
 
 .HeroSection-button:hover {
-  background: #fff;
-  color: #171717;
+  color: #ffffff;
+  background: var(--hero-primary-dark);
+  border-color: var(--hero-primary-dark);
+  box-shadow: 0 8px 20px rgba(111, 69, 42, 0.18);
   transform: translateY(-2px);
 }
 
-.HeroSection-gallery {
-  min-width: 0;
-  display: flex;
-  justify-content: center;
+.HeroSection-button:hover::after {
+  transform: translateX(4px);
 }
+
+.HeroSection-button:active {
+  transform: translateY(0);
+}
+
+.HeroSection-button:focus-visible {
+  outline: 2px solid var(--hero-primary);
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   RIGHT-SIDE ARTWORK GALLERY
+========================================================= */
+
+.HeroSection-gallery {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 420px;
+
+  overflow: hidden;
+  background: var(--hero-soft-background);
+  border: 1px solid #f0e9e0;
+  border-radius: 3px;
+}
+
+/* Decorative background detail */
+
+.HeroSection-gallery::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+
+  border: 1px solid rgba(139, 94, 60, 0.14);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Artwork image */
 
 .HeroSection-gallery-image {
+  display: block;
+
   width: 100%;
-  max-width: 600px;
-  height: auto;
+  height: 100%;
+  min-height: 420px;
+  max-height: 540px;
+
   object-fit: contain;
+  object-position: center;
+
+  transition: transform 0.6s ease;
 }
 
-/* =========================================
-   TABLET
-========================================= */
-
-@media (max-width: 1024px) {
-  .HeroSection-banner {
-    min-height: auto;
-    padding: 48px 32px;
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-
-  .HeroSection-description {
-    margin-bottom: 30px;
-  }
-
-  .HeroSection-gallery-image {
-    margin: 0 auto;
-  }
+.HeroSection-gallery:hover .HeroSection-gallery-image {
+  transform: scale(1.025);
 }
 
-/* =========================================
-   MOBILE
-========================================= */
+/* =========================================================
+   LARGE DESKTOPS
+========================================================= */
 
-@media (max-width: 600px) {
-  .HeroSection-topbar .HeroSection-container {
-    min-height: 76px;
-    gap: 14px;
-  }
-
-  .HeroSection-search {
-    width: 100%;
-    height: 44px;
-  }
-
-  .HeroSection-search input,
-  .HeroSection-help {
-    font-size: 13px;
-  }
-
+@media (min-width: 1441px) {
   .HeroSection-banner {
-    padding: 32px 20px;
-    gap: 30px;
-  }
-
-  .HeroSection-eyebrow {
-    padding: 5px 12px;
-    font-size: 12px;
+    min-height: 660px;
+    gap: 64px;
   }
 
   .HeroSection-title {
-    font-size: clamp(30px, 8vw, 42px);
-    letter-spacing: -0.6px;
+    font-size: 64px;
+  }
+
+  .HeroSection-gallery {
+    min-height: 480px;
+  }
+
+  .HeroSection-gallery-image {
+    min-height: 480px;
+    max-height: 590px;
+  }
+}
+
+/* =========================================================
+   LAPTOPS
+========================================================= */
+
+@media (max-width: 1200px) {
+  .HeroSection-container {
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+
+  .HeroSection-banner {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 30px;
+    min-height: 540px;
+    padding-top: 44px;
+    padding-bottom: 44px;
+  }
+
+  .HeroSection-title {
+    font-size: clamp(38px, 4.5vw, 53px);
+    letter-spacing: -1.4px;
+  }
+
+  .HeroSection-gallery,
+  .HeroSection-gallery-image {
+    min-height: 380px;
+  }
+
+  .HeroSection-gallery-image {
+    max-height: 490px;
+  }
+}
+
+/* =========================================================
+   SMALL LAPTOPS AND TABLETS
+========================================================= */
+
+@media (max-width: 992px) {
+  .HeroSection-container {
+    padding-right: 26px;
+    padding-left: 26px;
+  }
+
+  .HeroSection-topbar > .HeroSection-container {
+    min-height: 70px;
+  }
+
+  .HeroSection-search {
+    max-width: 420px;
+  }
+
+  .HeroSection-banner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+    min-height: 480px;
+    padding-top: 38px;
+    padding-bottom: 38px;
+  }
+
+  .HeroSection-content {
+    padding: 10px 0;
+  }
+
+  .HeroSection-eyebrow {
+    margin-bottom: 18px;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+  }
+
+  .HeroSection-eyebrow::before {
+    width: 23px;
+  }
+
+  .HeroSection-title {
+    font-size: clamp(33px, 4.5vw, 44px);
+    line-height: 1.16;
+    letter-spacing: -1px;
+    margin-bottom: 18px;
+  }
+
+  .HeroSection-description {
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 25px;
+  }
+
+  .HeroSection-button {
+    min-height: 48px;
+    padding: 0 22px;
+    font-size: 11px;
+  }
+
+  .HeroSection-gallery,
+  .HeroSection-gallery-image {
+    min-height: 330px;
+  }
+
+  .HeroSection-gallery-image {
+    max-height: 430px;
+  }
+
+  .HeroSection-gallery::before {
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+  }
+}
+
+/* =========================================================
+   TABLETS - PORTRAIT
+========================================================= */
+
+@media (max-width: 768px) {
+  .HeroSection-container {
+    padding-right: 22px;
+    padding-left: 22px;
+  }
+
+  .HeroSection-topbar > .HeroSection-container {
+    min-height: 68px;
+    gap: 18px;
+  }
+
+  .HeroSection-search {
+    max-width: none;
+    height: 43px;
+  }
+
+  .HeroSection-help {
+    gap: 7px;
+    font-size: 12px;
+  }
+
+  .HeroSection-banner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+    min-height: auto;
+    padding-top: 48px;
+    padding-bottom: 44px;
+  }
+
+  .HeroSection-content {
+    align-items: center;
+    text-align: center;
+    padding: 0;
+  }
+
+  .HeroSection-eyebrow {
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .HeroSection-title {
+    max-width: 620px;
+    margin-bottom: 18px;
+    font-size: clamp(38px, 6vw, 52px);
+    line-height: 1.14;
+    letter-spacing: -1.3px;
+  }
+
+  .HeroSection-description {
+    max-width: 500px;
+    margin-bottom: 25px;
+    font-size: 14px;
+  }
+
+  .HeroSection-gallery {
+    width: 100%;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .HeroSection-gallery-image {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: 500px;
+    aspect-ratio: 5 / 3;
+    object-fit: contain;
+  }
+}
+
+/* =========================================================
+   MOBILE PHONES
+========================================================= */
+
+@media (max-width: 576px) {
+  .HeroSection-container {
+    padding-right: 17px;
+    padding-left: 17px;
+  }
+
+  .HeroSection-topbar > .HeroSection-container {
+    min-height: 64px;
+    gap: 12px;
+  }
+
+  .HeroSection-search {
+    height: 41px;
+    padding-left: 11px;
+    padding-right: 4px;
+  }
+
+  .HeroSection-search input {
+    padding-right: 5px;
+    font-size: 12px;
+  }
+
+  .HeroSection-search button {
+    width: 31px;
+    height: 31px;
+    font-size: 12px;
+  }
+
+  .HeroSection-help {
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  .HeroSection-help svg {
+    font-size: 9px;
+  }
+
+  .HeroSection-banner {
+    gap: 26px;
+    padding-top: 38px;
+    padding-bottom: 30px;
+  }
+
+  .HeroSection-eyebrow {
+    gap: 7px;
+    margin-bottom: 16px;
+    font-size: 9px;
+    letter-spacing: 1.1px;
+  }
+
+  .HeroSection-eyebrow::before {
+    width: 19px;
+  }
+
+  .HeroSection-title {
+    max-width: 100%;
+    margin-bottom: 15px;
+    font-size: clamp(30px, 7.4vw, 40px);
+    line-height: 1.17;
+    letter-spacing: -0.8px;
   }
 
   .HeroSection-desktop-break {
@@ -245,19 +700,111 @@
   }
 
   .HeroSection-description {
-    margin-bottom: 24px;
-    font-size: 15px;
+    max-width: 400px;
+    margin-bottom: 22px;
+    font-size: 13px;
+    line-height: 1.8;
   }
 
   .HeroSection-button {
-    min-width: 160px;
-    min-height: 50px;
-    font-size: 14px;
+    min-height: 46px;
+    gap: 10px;
+    padding: 0 20px;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+  }
+
+  .HeroSection-button::after {
+    font-size: 17px;
+  }
+
+  .HeroSection-gallery-image {
+    aspect-ratio: 4 / 3;
+  }
+
+  .HeroSection-gallery::before {
+    top: 9px;
+    right: 9px;
+    bottom: 9px;
+    left: 9px;
   }
 }
 
+/* =========================================================
+   EXTRA-SMALL MOBILE PHONES
+========================================================= */
+
+@media (max-width: 380px) {
+  .HeroSection-container {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .HeroSection-topbar > .HeroSection-container {
+    gap: 8px;
+    min-height: 60px;
+  }
+
+  .HeroSection-search {
+    height: 39px;
+    padding-left: 9px;
+  }
+
+  .HeroSection-search input {
+    font-size: 11px;
+  }
+
+  .HeroSection-search button {
+    width: 29px;
+    height: 29px;
+  }
+
+  .HeroSection-help {
+    gap: 4px;
+    font-size: 10px;
+  }
+
+  .HeroSection-banner {
+    gap: 22px;
+    padding-top: 30px;
+    padding-bottom: 25px;
+  }
+
+  .HeroSection-eyebrow {
+    font-size: 8px;
+    letter-spacing: 0.8px;
+  }
+
+  .HeroSection-eyebrow::before {
+    width: 14px;
+  }
+
+  .HeroSection-title {
+    font-size: 29px;
+    letter-spacing: -0.7px;
+  }
+
+  .HeroSection-description {
+    font-size: 12px;
+  }
+
+  .HeroSection-button {
+    min-height: 43px;
+    padding: 0 16px;
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY - REDUCED MOTION
+========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
-  .HeroSection * {
+  .HeroSection *,
+  .HeroSection *::before,
+  .HeroSection *::after {
+    animation: none !important;
     transition: none !important;
+    scroll-behavior: auto !important;
   }
 }

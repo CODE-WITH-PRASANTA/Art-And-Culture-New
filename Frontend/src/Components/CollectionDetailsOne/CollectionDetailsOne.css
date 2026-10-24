@@ -1,0 +1,829 @@
+
+/* =====================================================
+   COLLECTION DETAILS ONE
+===================================================== */
+
+.CollectionDetailsOne {
+  width: 100%;
+  padding: 45px 24px 70px;
+  background: #ffffff;
+  color: #171717;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.CollectionDetailsOne *,
+.CollectionDetailsOne *::before,
+.CollectionDetailsOne *::after {
+  box-sizing: border-box;
+}
+
+.CollectionDetailsOne-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: start;
+  gap: 52px;
+  width: 100%;
+  max-width: 1450px;
+  margin: 0 auto;
+}
+
+/* =====================================================
+   IMAGE GALLERY
+===================================================== */
+
+.CollectionDetailsOne-gallery {
+  width: 100%;
+  min-width: 0;
+}
+
+.CollectionDetailsOne-main-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 675px;
+  overflow: hidden;
+  background: #f4f1ed;
+}
+
+.CollectionDetailsOne-main-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: CollectionDetailsOne-image-enter 0.35s ease;
+}
+
+@keyframes CollectionDetailsOne-image-enter {
+  from {
+    opacity: 0.65;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Zoom button */
+
+.CollectionDetailsOne-zoom-button {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #171717;
+  font-size: 17px;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.CollectionDetailsOne-zoom-button:hover {
+  background: #ededed;
+  transform: scale(1.06);
+}
+
+/* Gallery arrows */
+
+.CollectionDetailsOne-gallery-arrow {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 94%);
+  color: #171717;
+  font-size: 15px;
+  opacity: 0;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    opacity 0.25s ease,
+    background 0.25s ease;
+}
+
+.CollectionDetailsOne-main-image-wrapper:hover
+.CollectionDetailsOne-gallery-arrow,
+.CollectionDetailsOne-gallery-arrow:focus-visible {
+  opacity: 1;
+}
+
+.CollectionDetailsOne-gallery-arrow:hover {
+  background: #ffffff;
+}
+
+.CollectionDetailsOne-gallery-arrow--left {
+  left: 15px;
+}
+
+.CollectionDetailsOne-gallery-arrow--right {
+  right: 15px;
+}
+
+/* Thumbnail gallery */
+
+.CollectionDetailsOne-thumbnails {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.CollectionDetailsOne-thumbnail {
+  display: block;
+  width: 100%;
+  height: 150px;
+  padding: 6px;
+  overflow: hidden;
+  border: 1px solid #e6e6e6;
+  background: #eeeeee;
+  cursor: pointer;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease;
+}
+
+.CollectionDetailsOne-thumbnail img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.CollectionDetailsOne-thumbnail:hover img {
+  transform: scale(1.04);
+}
+
+.CollectionDetailsOne-thumbnail--active {
+  border: 2px solid #171717;
+  background: #ffffff;
+}
+
+/* =====================================================
+   PRODUCT INFORMATION
+===================================================== */
+
+.CollectionDetailsOne-information {
+  width: 100%;
+  min-width: 0;
+}
+
+.CollectionDetailsOne-heading-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 19px;
+}
+
+.CollectionDetailsOne-eyebrow {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #777777;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.CollectionDetailsOne-title {
+  margin: 0;
+  color: #111111;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(27px, 2.1vw, 36px);
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+/* Wishlist icon */
+
+.CollectionDetailsOne-wishlist-icon {
+  display: flex;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-top: 8px;
+  border: 1px solid #e7e7e7;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #222222;
+  font-size: 17px;
+  cursor: pointer;
+  transition:
+    color 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease;
+}
+
+.CollectionDetailsOne-wishlist-icon:hover,
+.CollectionDetailsOne-wishlist-icon--active {
+  border-color: #d9d9d9;
+  background: #f8f8f8;
+  color: #d72e46;
+}
+
+/* Product metadata */
+
+.CollectionDetailsOne-meta {
+  margin: 0 0 15px;
+  color: #666666;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.CollectionDetailsOne-meta strong {
+  color: #171717;
+  font-weight: 500;
+}
+
+/* =====================================================
+   PRICE AND DISCOUNT
+===================================================== */
+
+.CollectionDetailsOne-price-section {
+  margin: 25px 0 28px;
+  padding: 21px 0;
+  border-top: 1px solid #eeeeee;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.CollectionDetailsOne-price-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.CollectionDetailsOne-current-price {
+  color: #171717;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.CollectionDetailsOne-original-price {
+  color: #888888;
+  font-size: 17px;
+  text-decoration: line-through;
+}
+
+.CollectionDetailsOne-discount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 29px;
+  padding: 5px 9px;
+  background: #edf7ed;
+  color: #247a37;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.CollectionDetailsOne-tax-note {
+  margin: 8px 0 0;
+  color: #858585;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
+
+.CollectionDetailsOne-description-section {
+  margin-bottom: 25px;
+}
+
+.CollectionDetailsOne-section-title {
+  margin: 0 0 12px;
+  color: #171717;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.CollectionDetailsOne-description {
+  margin: 0;
+  color: #686868;
+  font-size: 16px;
+  line-height: 1.85;
+  letter-spacing: 0.1px;
+}
+
+/* =====================================================
+   PRODUCT SPECIFICATIONS
+===================================================== */
+
+.CollectionDetailsOne-specifications {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 25px;
+  border-top: 1px solid #eeeeee;
+}
+
+.CollectionDetailsOne-specification {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 13px 0;
+  border-bottom: 1px solid #eeeeee;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.CollectionDetailsOne-specification > span {
+  color: #777777;
+}
+
+.CollectionDetailsOne-specification strong {
+  color: #222222;
+  font-weight: 500;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.CollectionDetailsOne-specification .CollectionDetailsOne-stock {
+  color: #25863d;
+}
+
+/* =====================================================
+   QUANTITY AND ADD TO CART
+===================================================== */
+
+.CollectionDetailsOne-purchase {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 15px;
+  width: 100%;
+  margin-bottom: 19px;
+}
+
+.CollectionDetailsOne-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 125px;
+  height: 54px;
+  border: 1px solid #e5e5e5;
+  background: #ffffff;
+}
+
+.CollectionDetailsOne-quantity button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: 37px;
+  border: none;
+  background: #f5f5f5;
+  color: #171717;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.CollectionDetailsOne-quantity button:hover:not(:disabled) {
+  background: #e8e8e8;
+}
+
+.CollectionDetailsOne-quantity button:disabled {
+  color: #bdbdbd;
+  cursor: not-allowed;
+}
+
+.CollectionDetailsOne-quantity > span {
+  min-width: 28px;
+  color: #171717;
+  font-size: 16px;
+  text-align: center;
+}
+
+.CollectionDetailsOne-add-to-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  min-width: 0;
+  min-height: 54px;
+  padding: 12px 18px;
+  border: 1px solid #171717;
+  background: #171717;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+.CollectionDetailsOne-add-to-cart:hover {
+  background: #ffffff;
+  color: #171717;
+}
+
+/* Cart status */
+
+.CollectionDetailsOne-cart-message {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 17px;
+  color: #267a3c;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Wishlist link */
+
+.CollectionDetailsOne-wishlist-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 23px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #333333;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.CollectionDetailsOne-wishlist-link:hover {
+  color: #d72e46;
+}
+
+/* =====================================================
+   BENEFITS
+===================================================== */
+
+.CollectionDetailsOne-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  width: 100%;
+  padding: 23px 24px;
+  background: #f8f8f8;
+}
+
+.CollectionDetailsOne-benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #515151;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.CollectionDetailsOne-benefit svg {
+  flex-shrink: 0;
+  margin-top: 4px;
+  color: #269b45;
+  font-size: 14px;
+}
+
+/* Contact */
+
+.CollectionDetailsOne-help {
+  margin: 17px 0 0;
+  color: #555555;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.CollectionDetailsOne-help a {
+  color: #171717;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.CollectionDetailsOne-help a:hover {
+  color: #777777;
+}
+
+/* =====================================================
+   LIGHTBOX
+===================================================== */
+
+.CollectionDetailsOne-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 55px 25px;
+  background: rgb(0 0 0 / 88%);
+  cursor: zoom-out;
+}
+
+.CollectionDetailsOne-lightbox-image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  cursor: default;
+}
+
+.CollectionDetailsOne-lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 50%;
+  background: #ffffff;
+  color: #171717;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* =====================================================
+   LAPTOP
+===================================================== */
+
+@media (max-width: 1200px) {
+  .CollectionDetailsOne {
+    padding: 35px 22px 55px;
+  }
+
+  .CollectionDetailsOne-container {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 35px;
+  }
+
+  .CollectionDetailsOne-main-image-wrapper {
+    height: 570px;
+  }
+
+  .CollectionDetailsOne-thumbnail {
+    height: 115px;
+  }
+
+  .CollectionDetailsOne-thumbnails {
+    gap: 12px;
+  }
+
+  .CollectionDetailsOne-current-price {
+    font-size: 27px;
+  }
+
+  .CollectionDetailsOne-benefits {
+    padding: 20px;
+  }
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+  .CollectionDetailsOne-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    max-width: 700px;
+  }
+
+  .CollectionDetailsOne-main-image-wrapper {
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .CollectionDetailsOne-thumbnail {
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .CollectionDetailsOne-title {
+    font-size: 34px;
+  }
+
+  .CollectionDetailsOne-information {
+    max-width: 100%;
+  }
+
+  .CollectionDetailsOne-gallery-arrow {
+    opacity: 1;
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 540px) {
+  .CollectionDetailsOne {
+    padding: 22px 15px 40px;
+  }
+
+  .CollectionDetailsOne-container {
+    gap: 28px;
+  }
+
+  .CollectionDetailsOne-thumbnails {
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .CollectionDetailsOne-thumbnail {
+    padding: 4px;
+  }
+
+  .CollectionDetailsOne-zoom-button {
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
+
+  .CollectionDetailsOne-gallery-arrow {
+    width: 35px;
+    height: 35px;
+    font-size: 12px;
+  }
+
+  .CollectionDetailsOne-gallery-arrow--left {
+    left: 9px;
+  }
+
+  .CollectionDetailsOne-gallery-arrow--right {
+    right: 9px;
+  }
+
+  .CollectionDetailsOne-heading-row {
+    gap: 10px;
+    margin-bottom: 17px;
+  }
+
+  .CollectionDetailsOne-title {
+    font-size: 29px;
+    line-height: 1.35;
+  }
+
+  .CollectionDetailsOne-eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+  }
+
+  .CollectionDetailsOne-wishlist-icon {
+    flex-basis: 37px;
+    width: 37px;
+    height: 37px;
+    font-size: 15px;
+  }
+
+  .CollectionDetailsOne-meta {
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+
+  .CollectionDetailsOne-price-section {
+    margin: 21px 0;
+    padding: 18px 0;
+  }
+
+  .CollectionDetailsOne-price-row {
+    gap: 9px;
+  }
+
+  .CollectionDetailsOne-current-price {
+    font-size: 26px;
+  }
+
+  .CollectionDetailsOne-original-price {
+    font-size: 15px;
+  }
+
+  .CollectionDetailsOne-discount {
+    min-height: 25px;
+    padding: 4px 7px;
+    font-size: 10px;
+  }
+
+  .CollectionDetailsOne-section-title {
+    font-size: 21px;
+  }
+
+  .CollectionDetailsOne-description {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .CollectionDetailsOne-specification {
+    gap: 12px;
+    font-size: 14px;
+  }
+
+  .CollectionDetailsOne-purchase {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .CollectionDetailsOne-quantity {
+    min-width: 0;
+    height: 50px;
+  }
+
+  .CollectionDetailsOne-quantity button {
+    width: 31px;
+  }
+
+  .CollectionDetailsOne-add-to-cart {
+    min-height: 50px;
+    gap: 8px;
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .CollectionDetailsOne-benefits {
+    gap: 14px;
+    padding: 19px 16px;
+  }
+
+  .CollectionDetailsOne-benefit {
+    font-size: 13px;
+  }
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 360px) {
+  .CollectionDetailsOne {
+    padding-right: 11px;
+    padding-left: 11px;
+  }
+
+  .CollectionDetailsOne-title {
+    font-size: 25px;
+  }
+
+  .CollectionDetailsOne-purchase {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .CollectionDetailsOne-quantity button {
+    width: 27px;
+  }
+
+  .CollectionDetailsOne-add-to-cart {
+    font-size: 12px;
+  }
+
+  .CollectionDetailsOne-current-price {
+    font-size: 23px;
+  }
+}
+
+/* =====================================================
+   ACCESSIBILITY
+===================================================== */
+
+.CollectionDetailsOne button:focus-visible,
+.CollectionDetailsOne a:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .CollectionDetailsOne *,
+  .CollectionDetailsOne *::before,
+  .CollectionDetailsOne *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

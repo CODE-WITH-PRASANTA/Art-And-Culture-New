@@ -1,0 +1,594 @@
+
+/* =====================================================
+   ENDEAVOR SECTION
+===================================================== */
+
+.Endeavor {
+  --Endeavor-background: #faf7f7;
+  --Endeavor-text: #171717;
+  --Endeavor-muted: #5f5b5a;
+  --Endeavor-green: #00c982;
+
+  width: 100%;
+  padding: 4px 0 0;
+  overflow: hidden;
+
+  color: var(--Endeavor-text);
+  background: #ffffff;
+
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.Endeavor *,
+.Endeavor *::before,
+.Endeavor *::after {
+  box-sizing: border-box;
+}
+
+.Endeavor-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 6.85%;
+}
+
+/* =====================================================
+   TOP BANNER
+===================================================== */
+
+.Endeavor-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: clamp(300px, 23.2vw, 415px);
+
+  overflow: hidden;
+  background: #383c2b;
+}
+
+/* Three-panel artwork banner */
+
+.Endeavor-banner-image {
+  position: absolute;
+  inset: 0;
+
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  z-index: 0;
+}
+
+/* Dark overlay over the artwork */
+
+.Endeavor-banner-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  background: rgba(0, 0, 0, 0.39);
+  pointer-events: none;
+}
+
+/* Centered banner title */
+
+.Endeavor-banner-title {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  padding: 0 20px;
+  margin: 0;
+
+  color: #ffffff;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 2.35vw, 41px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+}
+
+/* =====================================================
+   CONTENT AREA
+===================================================== */
+
+.Endeavor-content {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  align-items: start;
+  gap: 40px;
+
+  width: 100%;
+  min-height: 450px;
+  padding: 49px 42px 45px;
+
+  background: var(--Endeavor-background);
+}
+
+/* =====================================================
+   LEFT PORTRAIT
+===================================================== */
+
+.Endeavor-visual {
+  position: relative;
+  z-index: 3;
+
+  width: 100%;
+  min-width: 0;
+  margin-top: -147px;
+  padding: 0 0 0 17px;
+}
+
+.Endeavor-image-wrapper {
+  position: relative;
+
+  width: 100%;
+  max-width: 398px;
+  height: 490px;
+
+  overflow: hidden;
+  background: #e6e0d7;
+
+  box-shadow: 0 13px 28px rgba(0, 0, 0, 0.12);
+}
+
+.Endeavor-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center top;
+
+  transition: transform 0.6s ease;
+}
+
+.Endeavor-image-wrapper:hover .Endeavor-image {
+  transform: scale(1.025);
+}
+
+/* =====================================================
+   RIGHT CONTENT
+===================================================== */
+
+.Endeavor-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+}
+
+/* Introductory mission statement */
+
+.Endeavor-intro {
+  width: 100%;
+  margin: 0 0 28px;
+  padding: 0;
+
+  color: var(--Endeavor-muted);
+
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: 0.35px;
+}
+
+/* =====================================================
+   MISSION LIST
+===================================================== */
+
+.Endeavor-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 19px;
+
+  width: 100%;
+  padding: 0;
+  margin: 0 0 31px;
+
+  list-style: none;
+}
+
+.Endeavor-list-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+
+  color: #161616;
+
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Green arrow icon */
+
+.Endeavor-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  flex: 0 0 22px;
+  width: 22px;
+
+  color: var(--Endeavor-green);
+  font-size: 19px;
+
+  transition: transform 0.25s ease;
+}
+
+.Endeavor-list-item:hover .Endeavor-arrow {
+  transform: translateX(5px);
+}
+
+.Endeavor-list-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* =====================================================
+   CLOSING DESCRIPTION
+===================================================== */
+
+.Endeavor-description {
+  width: 100%;
+  margin: 0 0 25px;
+  padding: 0;
+
+  color: var(--Endeavor-muted);
+
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: 0.25px;
+}
+
+/* =====================================================
+   OPTIONAL STORY BUTTON
+===================================================== */
+
+.Endeavor-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  min-height: 46px;
+  padding: 0 20px;
+
+  color: #ffffff;
+  background: #171717;
+  border: 1px solid #171717;
+  border-radius: 3px;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.Endeavor-button svg {
+  font-size: 12px;
+  transition: transform 0.25s ease;
+}
+
+.Endeavor-button:hover {
+  color: #ffffff;
+  background: #333333;
+  border-color: #333333;
+  transform: translateY(-2px);
+}
+
+.Endeavor-button:hover svg {
+  transform: translateX(4px);
+}
+
+.Endeavor-button:focus-visible {
+  outline: 2px solid var(--Endeavor-green);
+  outline-offset: 4px;
+}
+
+/* =====================================================
+   LARGE DESKTOPS
+===================================================== */
+
+@media (min-width: 1600px) {
+  .Endeavor-content {
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    gap: 48px;
+    padding-right: 48px;
+    padding-left: 48px;
+  }
+
+  .Endeavor-visual {
+    padding-left: 17px;
+  }
+
+  .Endeavor-image-wrapper {
+    height: 510px;
+  }
+
+  .Endeavor-intro,
+  .Endeavor-description {
+    font-size: 19px;
+  }
+}
+
+/* =====================================================
+   LAPTOPS
+===================================================== */
+
+@media (max-width: 1200px) {
+  .Endeavor-container {
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  .Endeavor-banner {
+    height: clamp(290px, 29vw, 370px);
+  }
+
+  .Endeavor-content {
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    gap: 28px;
+    padding: 42px 30px 38px;
+  }
+
+  .Endeavor-visual {
+    margin-top: -110px;
+    padding-left: 8px;
+  }
+
+  .Endeavor-image-wrapper {
+    height: 410px;
+  }
+
+  .Endeavor-intro {
+    margin-bottom: 22px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .Endeavor-list {
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .Endeavor-list-item {
+    gap: 13px;
+    font-size: 15px;
+  }
+
+  .Endeavor-description {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+}
+
+/* =====================================================
+   TABLETS
+===================================================== */
+
+@media (max-width: 900px) {
+  .Endeavor-container {
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+
+  .Endeavor-banner {
+    height: clamp(260px, 38vw, 340px);
+  }
+
+  .Endeavor-banner-title {
+    font-size: 32px;
+  }
+
+  .Endeavor-content {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 24px;
+    padding: 38px 24px 35px;
+  }
+
+  .Endeavor-visual {
+    margin-top: -78px;
+    padding-left: 0;
+  }
+
+  .Endeavor-image-wrapper {
+    height: 350px;
+  }
+
+  .Endeavor-intro {
+    font-size: 14px;
+    margin-bottom: 19px;
+  }
+
+  .Endeavor-list {
+    gap: 14px;
+    margin-bottom: 21px;
+  }
+
+  .Endeavor-list-item {
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  .Endeavor-arrow {
+    flex-basis: 18px;
+    font-size: 16px;
+  }
+
+  .Endeavor-description {
+    font-size: 13px;
+  }
+
+  .Endeavor-button {
+    min-height: 42px;
+    padding: 0 15px;
+    font-size: 11px;
+  }
+}
+
+/* =====================================================
+   SMALL TABLETS AND MOBILE
+===================================================== */
+
+@media (max-width: 650px) {
+  .Endeavor {
+    padding-top: 10px;
+  }
+
+  .Endeavor-container {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .Endeavor-banner {
+    height: clamp(230px, 57vw, 330px);
+  }
+
+  .Endeavor-banner-image {
+    object-position: center;
+  }
+
+  .Endeavor-banner-title {
+    padding: 0 15px;
+    font-size: clamp(25px, 5.5vw, 32px);
+  }
+
+  .Endeavor-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+    padding: 0 20px 35px;
+  }
+
+  /* Keep the image overlapping the bottom of the banner. */
+
+  .Endeavor-visual {
+    width: 100%;
+    margin-top: -45px;
+    padding: 0;
+  }
+
+  .Endeavor-image-wrapper {
+    width: min(100%, 360px);
+    height: auto;
+    aspect-ratio: 648 / 799;
+    margin: 0 auto;
+  }
+
+  .Endeavor-details {
+    padding-top: 0;
+  }
+
+  .Endeavor-intro {
+    margin-bottom: 22px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .Endeavor-list {
+    gap: 15px;
+    margin-bottom: 24px;
+  }
+
+  .Endeavor-list-item {
+    gap: 13px;
+    font-size: 15px;
+  }
+
+  .Endeavor-arrow {
+    flex-basis: 20px;
+    font-size: 17px;
+  }
+
+  .Endeavor-description {
+    margin-bottom: 22px;
+    font-size: 14px;
+    line-height: 1.85;
+  }
+}
+
+/* =====================================================
+   EXTRA-SMALL PHONES
+===================================================== */
+
+@media (max-width: 380px) {
+  .Endeavor-container {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .Endeavor-banner {
+    height: 220px;
+  }
+
+  .Endeavor-banner-title {
+    font-size: 24px;
+  }
+
+  .Endeavor-content {
+    gap: 25px;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .Endeavor-visual {
+    margin-top: -30px;
+  }
+
+  .Endeavor-intro {
+    font-size: 13px;
+  }
+
+  .Endeavor-list-item {
+    font-size: 13px;
+  }
+
+  .Endeavor-description {
+    font-size: 13px;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .Endeavor *,
+  .Endeavor *::before,
+  .Endeavor *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

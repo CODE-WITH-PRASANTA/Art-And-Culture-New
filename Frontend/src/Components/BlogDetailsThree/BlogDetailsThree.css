@@ -1,0 +1,487 @@
+
+/* =========================================
+   BLOG DETAILS THREE
+========================================= */
+
+.BlogDetailsThree {
+  width: 100%;
+  padding: 35px 24px 8px;
+  background: #ffffff;
+  color: #171717;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.BlogDetailsThree *,
+.BlogDetailsThree *::before,
+.BlogDetailsThree *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+.BlogDetailsThree-container {
+  width: 100%;
+  max-width: 1345px;
+  margin: 0 auto;
+  padding: 72px 110px 95px;
+  background: #f8f8f8;
+  border-radius: 13px;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.BlogDetailsThree-form {
+  width: 100%;
+  margin: 0;
+}
+
+/* =========================================
+   HEADING
+========================================= */
+
+.BlogDetailsThree-title {
+  margin: 0 0 32px;
+  color: #111111;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+/* =========================================
+   DESCRIPTION
+========================================= */
+
+.BlogDetailsThree-description {
+  margin: 0 0 20px;
+  color: #171717;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0.2px;
+}
+
+.BlogDetailsThree-description span,
+.BlogDetailsThree-label span {
+  color: #171717;
+}
+
+/* =========================================
+   INPUT GRID
+========================================= */
+
+.BlogDetailsThree-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 30px;
+  width: 100%;
+  margin-bottom: 27px;
+}
+
+.BlogDetailsThree-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.BlogDetailsThree-label {
+  display: block;
+  margin: 0 0 9px;
+  color: #171717;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.BlogDetailsThree-field > .BlogDetailsThree-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.BlogDetailsThree-input {
+  display: block;
+  width: 100%;
+  height: 63px;
+  padding: 0 26px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  outline: none;
+  background: #ffffff;
+  color: #222222;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: normal;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.BlogDetailsThree-input::placeholder {
+  color: #858585;
+  opacity: 1;
+}
+
+.BlogDetailsThree-input:focus {
+  border-color: #333333;
+  box-shadow: 0 0 0 2px rgb(0 0 0 / 5%);
+}
+
+/* =========================================
+   SAVE DETAILS
+========================================= */
+
+.BlogDetailsThree-save-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 28px;
+  cursor: pointer;
+}
+
+.BlogDetailsThree-checkbox {
+  flex: 0 0 15px;
+  width: 15px;
+  height: 15px;
+  margin: 6px 0 0;
+  accent-color: #171717;
+  cursor: pointer;
+}
+
+.BlogDetailsThree-save-text {
+  color: #656565;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0.15px;
+}
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+.BlogDetailsThree-message-field {
+  width: 100%;
+  margin-bottom: 42px;
+}
+
+.BlogDetailsThree-message-field > .BlogDetailsThree-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.BlogDetailsThree-textarea {
+  display: block;
+  width: 100%;
+  min-height: 250px;
+  padding: 23px 25px;
+  border: 1px solid #222222;
+  border-radius: 6px;
+  outline: none;
+  resize: vertical;
+  background: #ffffff;
+  color: #222222;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.BlogDetailsThree-textarea::placeholder {
+  color: #858585;
+  opacity: 1;
+}
+
+.BlogDetailsThree-textarea:focus {
+  border-color: #111111;
+  box-shadow: 0 0 0 2px rgb(0 0 0 / 5%);
+}
+
+/* =========================================
+   SUBMIT BUTTON
+========================================= */
+
+.BlogDetailsThree-submit-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.BlogDetailsThree-submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 198px;
+  min-height: 76px;
+  padding: 20px 27px;
+  border: 1px solid #171717;
+  border-radius: 8px;
+  background: #171717;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.BlogDetailsThree-submit-button:hover {
+  background: #ffffff;
+  color: #171717;
+}
+
+.BlogDetailsThree-submit-button:active {
+  transform: scale(0.98);
+}
+
+.BlogDetailsThree-submit-button:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 4px;
+}
+
+/* =========================================
+   SUCCESS MESSAGE
+========================================= */
+
+.BlogDetailsThree-success-message {
+  margin: 20px 0 0;
+  color: #376b45;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   LAPTOP
+========================================= */
+
+@media (max-width: 1100px) {
+  .BlogDetailsThree-container {
+    padding: 60px 65px 75px;
+  }
+
+  .BlogDetailsThree-title {
+    font-size: 26px;
+  }
+
+  .BlogDetailsThree-description {
+    font-size: 19px;
+  }
+
+  .BlogDetailsThree-fields {
+    gap: 22px;
+  }
+
+  .BlogDetailsThree-input {
+    height: 60px;
+    padding: 0 20px;
+    font-size: 16px;
+  }
+
+  .BlogDetailsThree-save-text {
+    font-size: 16px;
+  }
+
+  .BlogDetailsThree-textarea {
+    min-height: 230px;
+  }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 768px) {
+  .BlogDetailsThree {
+    padding: 25px 20px;
+  }
+
+  .BlogDetailsThree-container {
+    padding: 45px 35px 50px;
+    border-radius: 11px;
+  }
+
+  .BlogDetailsThree-title {
+    margin-bottom: 24px;
+    font-size: 25px;
+  }
+
+  .BlogDetailsThree-description {
+    margin-bottom: 18px;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .BlogDetailsThree-fields {
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .BlogDetailsThree-input {
+    height: 56px;
+    padding: 0 16px;
+    font-size: 15px;
+  }
+
+  .BlogDetailsThree-save-label {
+    gap: 11px;
+    margin-bottom: 23px;
+  }
+
+  .BlogDetailsThree-save-text {
+    font-size: 15px;
+  }
+
+  .BlogDetailsThree-textarea {
+    min-height: 220px;
+    padding: 19px;
+    font-size: 16px;
+  }
+
+  .BlogDetailsThree-message-field {
+    margin-bottom: 30px;
+  }
+
+  .BlogDetailsThree-submit-button {
+    min-width: 175px;
+    min-height: 62px;
+    padding: 16px 22px;
+    font-size: 16px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 540px) {
+  .BlogDetailsThree {
+    padding: 18px 14px;
+  }
+
+  .BlogDetailsThree-container {
+    padding: 30px 20px 35px;
+    border-radius: 9px;
+  }
+
+  .BlogDetailsThree-title {
+    margin-bottom: 20px;
+    font-size: 23px;
+    line-height: 1.4;
+  }
+
+  .BlogDetailsThree-description {
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .BlogDetailsThree-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 21px;
+  }
+
+  .BlogDetailsThree-input {
+    height: 54px;
+    padding: 0 16px;
+    font-size: 15px;
+  }
+
+  .BlogDetailsThree-save-label {
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .BlogDetailsThree-checkbox {
+    flex-basis: 14px;
+    width: 14px;
+    height: 14px;
+    margin-top: 5px;
+  }
+
+  .BlogDetailsThree-save-text {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .BlogDetailsThree-textarea {
+    min-height: 190px;
+    padding: 16px;
+    font-size: 15px;
+  }
+
+  .BlogDetailsThree-message-field {
+    margin-bottom: 25px;
+  }
+
+  .BlogDetailsThree-submit-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 57px;
+    padding: 15px 20px;
+    font-size: 15px;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 350px) {
+  .BlogDetailsThree {
+    padding: 14px 10px;
+  }
+
+  .BlogDetailsThree-container {
+    padding: 24px 15px 28px;
+  }
+
+  .BlogDetailsThree-title {
+    font-size: 21px;
+  }
+
+  .BlogDetailsThree-description,
+  .BlogDetailsThree-save-text {
+    font-size: 13px;
+  }
+
+  .BlogDetailsThree-input {
+    font-size: 14px;
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .BlogDetailsThree *,
+  .BlogDetailsThree *::before,
+  .BlogDetailsThree *::after {
+    transition: none !important;
+  }
+}

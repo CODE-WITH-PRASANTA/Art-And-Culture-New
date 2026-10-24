@@ -1,0 +1,528 @@
+
+/* =====================================================
+   SPECIAL US SECTION
+===================================================== */
+
+.SpecialUs {
+  width: 100%;
+  padding: 65px 0 55px;
+  overflow: hidden;
+
+  background: #faf7f7;
+  color: #111111;
+
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.SpecialUs *,
+.SpecialUs *::before,
+.SpecialUs *::after {
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.SpecialUs-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 55px;
+
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 6.85%;
+}
+
+/* =====================================================
+   LEFT ARTWORK
+===================================================== */
+
+.SpecialUs-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 570px;
+}
+
+.SpecialUs-image {
+  display: block;
+
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+
+  object-fit: contain;
+  object-position: center;
+
+  background: transparent;
+
+  transition: transform 0.5s ease;
+}
+
+/* Subtle artwork hover effect */
+
+.SpecialUs-visual:hover .SpecialUs-image {
+  transform: translateY(-3px);
+}
+
+/* =====================================================
+   RIGHT CONTENT
+===================================================== */
+
+.SpecialUs-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+}
+
+/* =====================================================
+   SECTION HEADING
+===================================================== */
+
+.SpecialUs-heading {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.SpecialUs-title {
+  margin: 0 0 24px;
+  padding: 0;
+
+  color: #111111;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 2.2vw, 39px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.4px;
+}
+
+.SpecialUs-subtitle {
+  max-width: 680px;
+  margin: 0;
+  padding: 0;
+
+  color: #5d5d5d;
+
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.85;
+  letter-spacing: 0.25px;
+}
+
+/* =====================================================
+   DIVIDER
+===================================================== */
+
+.SpecialUs-divider {
+  width: 100%;
+  height: 1px;
+  margin: 0 0 35px;
+
+  background: #eae6e6;
+  border: 0;
+}
+
+/* =====================================================
+   FEATURES GRID
+===================================================== */
+
+.SpecialUs-features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 35px;
+  row-gap: 43px;
+
+  width: 100%;
+}
+
+/* =====================================================
+   FEATURE ITEM
+===================================================== */
+
+.SpecialUs-feature {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Icon and title row */
+
+.SpecialUs-feature-heading {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 18px;
+}
+
+/* Circular icon border */
+
+.SpecialUs-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+
+  color: #333333;
+  background: transparent;
+  border: 1px solid #444444;
+  border-radius: 50%;
+
+  font-size: 16px;
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.SpecialUs-feature:hover .SpecialUs-icon {
+  color: #ffffff;
+  background: #171717;
+  border-color: #171717;
+}
+
+/* Feature title */
+
+.SpecialUs-feature-title {
+  margin: 0;
+  padding: 0;
+
+  color: #111111;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(17px, 1.4vw, 23px);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Feature description */
+
+.SpecialUs-feature-description {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+
+  color: #5d5d5d;
+
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: 0.15px;
+}
+
+/* =====================================================
+   LARGE DESKTOPS
+===================================================== */
+
+@media (min-width: 1600px) {
+  .SpecialUs-container {
+    gap: 65px;
+  }
+
+  .SpecialUs-visual {
+    min-height: 600px;
+  }
+
+  .SpecialUs-image {
+    max-width: 700px;
+  }
+
+  .SpecialUs-features {
+    column-gap: 40px;
+    row-gap: 46px;
+  }
+
+  .SpecialUs-feature-description {
+    font-size: 17px;
+  }
+}
+
+/* =====================================================
+   LAPTOPS
+===================================================== */
+
+@media (max-width: 1200px) {
+  .SpecialUs {
+    padding: 50px 0;
+  }
+
+  .SpecialUs-container {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 35px;
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  .SpecialUs-visual {
+    min-height: 450px;
+  }
+
+  .SpecialUs-title {
+    margin-bottom: 18px;
+    font-size: 31px;
+  }
+
+  .SpecialUs-subtitle {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .SpecialUs-heading {
+    margin-bottom: 23px;
+  }
+
+  .SpecialUs-divider {
+    margin-bottom: 27px;
+  }
+
+  .SpecialUs-features {
+    column-gap: 22px;
+    row-gap: 32px;
+  }
+
+  .SpecialUs-feature-heading {
+    gap: 11px;
+    margin-bottom: 13px;
+  }
+
+  .SpecialUs-icon {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  .SpecialUs-feature-title {
+    font-size: 17px;
+  }
+
+  .SpecialUs-feature-description {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+}
+
+/* =====================================================
+   TABLETS
+===================================================== */
+
+@media (max-width: 850px) {
+  .SpecialUs {
+    padding: 40px 0;
+  }
+
+  .SpecialUs-container {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 24px;
+    padding-right: 28px;
+    padding-left: 28px;
+  }
+
+  .SpecialUs-visual {
+    min-height: 350px;
+  }
+
+  .SpecialUs-title {
+    font-size: 27px;
+  }
+
+  .SpecialUs-subtitle {
+    font-size: 14px;
+  }
+
+  .SpecialUs-divider {
+    margin-bottom: 23px;
+  }
+
+  .SpecialUs-features {
+    column-gap: 17px;
+    row-gap: 27px;
+  }
+
+  .SpecialUs-feature-heading {
+    align-items: flex-start;
+    gap: 9px;
+  }
+
+  .SpecialUs-icon {
+    flex-basis: 30px;
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .SpecialUs-feature-title {
+    font-size: 15px;
+  }
+
+  .SpecialUs-feature-description {
+    font-size: 13px;
+    line-height: 1.75;
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+  .SpecialUs {
+    padding: 35px 0;
+  }
+
+  .SpecialUs-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 25px;
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .SpecialUs-visual {
+    min-height: 0;
+    width: 100%;
+  }
+
+  .SpecialUs-image {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .SpecialUs-content {
+    padding: 0;
+  }
+
+  .SpecialUs-heading {
+    margin-bottom: 23px;
+  }
+
+  .SpecialUs-title {
+    margin-bottom: 16px;
+    font-size: clamp(27px, 6vw, 34px);
+  }
+
+  .SpecialUs-subtitle {
+    max-width: 100%;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .SpecialUs-divider {
+    margin-bottom: 27px;
+  }
+
+  .SpecialUs-features {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+    row-gap: 30px;
+  }
+
+  .SpecialUs-feature-heading {
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .SpecialUs-icon {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .SpecialUs-feature-title {
+    font-size: 16px;
+  }
+
+  .SpecialUs-feature-description {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 400px) {
+  .SpecialUs {
+    padding: 28px 0;
+  }
+
+  .SpecialUs-container {
+    padding-right: 15px;
+    padding-left: 15px;
+    gap: 22px;
+  }
+
+  .SpecialUs-title {
+    font-size: 26px;
+  }
+
+  .SpecialUs-subtitle {
+    font-size: 14px;
+  }
+
+  .SpecialUs-features {
+    column-gap: 14px;
+    row-gap: 25px;
+  }
+
+  .SpecialUs-feature-heading {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .SpecialUs-icon {
+    flex-basis: 28px;
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .SpecialUs-feature-title {
+    font-size: 14px;
+  }
+
+  .SpecialUs-feature-description {
+    font-size: 12px;
+    line-height: 1.75;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .SpecialUs *,
+  .SpecialUs *::before,
+  .SpecialUs *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
