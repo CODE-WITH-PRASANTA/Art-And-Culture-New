@@ -1,0 +1,428 @@
+
+/* ========================================
+   NAVBAR
+======================================== */
+
+.Navbar {
+  width: 100%;
+  height: 88px;
+  background: #ffffff;
+  position: relative;
+  z-index: 1000;
+  border-bottom: 1px solid #eeeeee;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.Navbar *,
+.Navbar *::before,
+.Navbar *::after {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   NAVBAR CONTAINER
+======================================== */
+
+.Navbar-container {
+  width: 100%;
+  max-width: 1770px;
+  height: 100%;
+  margin: 0 auto;
+
+  padding-left: var(--site-side-space, 150px);
+  padding-right: var(--site-side-space, 150px);
+
+  display: grid;
+  grid-template-columns: 165px minmax(0, 1fr) 150px;
+  align-items: center;
+  column-gap: 30px;
+}
+
+/* ========================================
+   LOGO
+======================================== */
+
+.Navbar-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: fit-content;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.Navbar-logo img {
+  display: block;
+  width: 165px;
+  height: 56px;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+/* ========================================
+   NAVIGATION
+======================================== */
+
+.Navbar-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.Navbar-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 2.4vw, 40px);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.Navbar-item {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.Navbar-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 0;
+
+  color: #292929;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.05px;
+  line-height: 1.5;
+
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition: color 0.25s ease;
+}
+
+/* Underline animation */
+
+.Navbar-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  width: 100%;
+  height: 1px;
+  background: #222222;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.25s ease;
+}
+
+.Navbar-link:hover {
+  color: #000000;
+}
+
+.Navbar-link:hover::after,
+.Navbar-link--active::after {
+  transform: scaleX(1);
+}
+
+.Navbar-link--active {
+  color: #111111;
+}
+
+/* ========================================
+   DROPDOWN ARROWS
+======================================== */
+
+.Navbar-dropdown-icon {
+  font-size: 10px;
+  color: #555555;
+  flex-shrink: 0;
+
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
+}
+
+.Navbar-link:hover .Navbar-dropdown-icon {
+  color: #111111;
+  transform: translateY(2px);
+}
+
+/* ========================================
+   RIGHT-SIDE ICONS
+======================================== */
+
+.Navbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.Navbar-action {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #222222;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+
+  font-size: 19px;
+  text-decoration: none;
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.Navbar-action:hover {
+  color: #000000;
+  background: #f8f8f8;
+  border-color: #eeeeee;
+}
+
+/* ========================================
+   MOBILE MENU BUTTON
+======================================== */
+
+.Navbar-menu-toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+
+  color: #222222;
+  font-size: 19px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.Navbar-menu-toggle:hover {
+  background: #f7f7f7;
+  border-color: #d5d5d5;
+}
+
+/* ========================================
+   LARGE LAPTOP
+======================================== */
+
+@media (max-width: 1500px) {
+  .Navbar-container {
+    grid-template-columns: 150px minmax(0, 1fr) 135px;
+    column-gap: 22px;
+  }
+
+  .Navbar-logo img {
+    width: 150px;
+  }
+
+  .Navbar-links {
+    gap: clamp(15px, 1.7vw, 27px);
+  }
+
+  .Navbar-link {
+    font-size: 15px;
+  }
+
+  .Navbar-actions {
+    gap: 5px;
+  }
+
+  .Navbar-action {
+    width: 38px;
+    height: 40px;
+    font-size: 18px;
+  }
+}
+
+/* ========================================
+   LAPTOP / TABLET NAVIGATION
+======================================== */
+
+@media (max-width: 1050px) {
+  .Navbar {
+    height: 80px;
+  }
+
+  .Navbar-container {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    column-gap: 16px;
+  }
+
+  .Navbar-logo img {
+    width: 145px;
+    height: 52px;
+  }
+
+  .Navbar-menu-toggle {
+    display: inline-flex;
+  }
+
+  .Navbar-navigation {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+
+    display: none;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-direction: column;
+
+    padding: 15px var(--site-side-space, 24px) 25px;
+
+    background: #ffffff;
+    border-bottom: 1px solid #eaeaea;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.045);
+
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+
+  .Navbar-navigation--open {
+    display: flex;
+  }
+
+  .Navbar-links {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+  }
+
+  .Navbar-item {
+    width: 100%;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .Navbar-link {
+    display: flex;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 0;
+    justify-content: space-between;
+    font-size: 16px;
+  }
+
+  .Navbar-link::after {
+    display: none;
+  }
+
+  .Navbar-link--active {
+    font-weight: 600;
+  }
+
+  .Navbar-dropdown-icon {
+    font-size: 11px;
+  }
+
+  .Navbar-actions {
+    justify-content: flex-end;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+  .Navbar {
+    height: 72px;
+  }
+
+  .Navbar-container {
+    padding-left: var(--site-side-space, 16px);
+    padding-right: var(--site-side-space, 16px);
+    column-gap: 9px;
+  }
+
+  .Navbar-logo img {
+    width: 120px;
+    height: 46px;
+  }
+
+  .Navbar-actions {
+    gap: 1px;
+  }
+
+  .Navbar-action {
+    width: 34px;
+    height: 38px;
+    font-size: 17px;
+  }
+
+  .Navbar-menu-toggle {
+    width: 36px;
+    height: 38px;
+    font-size: 17px;
+  }
+
+  .Navbar-navigation {
+    max-height: calc(100dvh - 72px);
+    padding: 12px var(--site-side-space, 16px) 22px;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 370px) {
+  .Navbar-container {
+    column-gap: 5px;
+  }
+
+  .Navbar-logo img {
+    width: 100px;
+  }
+
+  .Navbar-action {
+    width: 29px;
+    font-size: 15px;
+  }
+
+  .Navbar-actions {
+    gap: 0;
+  }
+
+  .Navbar-menu-toggle {
+    width: 32px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .Navbar-link,
+  .Navbar-link::after,
+  .Navbar-dropdown-icon,
+  .Navbar-action,
+  .Navbar-menu-toggle {
+    transition: none !important;
+  }
+}
