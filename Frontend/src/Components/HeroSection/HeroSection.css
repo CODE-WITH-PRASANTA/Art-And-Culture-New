@@ -8,9 +8,7 @@
   color: #191919;
   overflow: clip;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  /* the ONLY place side space is applied */
-  padding-left: var(--site-side-space, 50px);
-  padding-right: var(--site-side-space, 50px);
+ 
 }
 
 .HeroSection *,
@@ -23,6 +21,7 @@
   width: 100%;
   max-width: 1770px;
   margin: 0 auto;
+  
 }
 
 /* =========================================
