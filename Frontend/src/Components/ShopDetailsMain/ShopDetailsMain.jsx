@@ -1,39 +1,58 @@
-
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-
-import shop1 from "../../assets/shop-details-1.webp";
-import shop2 from "../../assets/shop-details-2.webp";
-import shop3 from "../../assets/shop-details-3.webp";
-import shop4 from "../../assets/shop-details-4.webp";
-
+import shop1 from "../../assets/shop-1.webp";
+import shop2 from "../../assets/shop-2.webp";
+import shop3 from "../../assets/shop-3.webp";
+import shop4 from "../../assets/shop-4.webp";
 import "./ShopDetailsMain.css";
 
+/* =====================================================================
+   PRODUCT DATA  (edit freely, or connect to your API)
+===================================================================== */
 const product = {
   title: "Whispers of Colors in Silent Shadows",
   artist: "Henri Matisse",
-  currentBid: 34000,
-  step: 500,
+  price: 34000, // in rupees
   condition: "New",
-  endsAt: new Date("2027-03-30T00:00:00+05:30"),
-  reserveMet: true,
-  category: "Oil Painting",
-  size: "75 × 60 cm",
-  framing: "Unframed",
-  theme: "Nature & Animals",
-  signature: "Artist signed",
-  authenticity: "Certificate of authenticity included",
+  stock: 3, // max quantity a buyer can add
+  categories: ["Watercolor", "Street Art"],
   deliveryCharge: 1200,
-  categories: ["Nature", "Painting", "Sculpture", "Street Art"],
-  tags: ["Painting", "Poetry", "Sculpture"],
   images: [
-    { src: shop1, alt: "Watercolour historic street with carriage" },
-    { src: shop2, alt: "Coastal horseback artwork" },
-    { src: shop3, alt: "Floral doorway impressionist art" },
-    { src: shop4, alt: "Vintage town walkway with lantern" },
+    { src: shop1, alt: "Colourful watercolour street with a horse carriage" },
+    { src: shop2, alt: "Artwork detail, view 2" },
+    { src: shop3, alt: "Artwork detail, view 3" },
+    { src: shop4, alt: "Artwork detail, view 4" },
+  ],
+
+  /* ---- Details section ---- */
+  artistInfo: [
+    { label: "Date of Birth and Death", value: "Born on December 31, 1869, and passed away on November 3, 1954" },
+    { label: "Nationality", value: "French" },
+    { label: "Style", value: "Known for bold colour, fluid line and the Fauvist movement" },
+    {
+      label: "Notable Work",
+      value:
+        "“The Dance” (1910), “Woman with a Hat” (1905), and “The Snail” (1953)",
+    },
+  ],
+  artworkInfo: [
+    { label: "Category", value: "Watercolor Painting" },
+    { label: "Size", value: "29.7 x 28 inch (Height x Width)" },
+    { label: "Framing", value: "Not framed" },
+    { label: "Theme", value: "Street scenes and everyday life" },
+    { label: "Signature", value: "Signed by Artist" },
+    { label: "Authenticity", value: "Includes Certificate of Authenticity." },
+  ],
+  narrative:
+    "This artwork often delves into personal and emotional experiences, so these colours capture the depth and complexity of the themes the artist explores.",
+  guidelines: [
+    "Frame the artwork behind UV-protective glass",
+    "Keep the painting away from direct sunlight",
+    "Dust the surface gently with a soft dry brush or cloth",
   ],
 };
 
+/* ---------------- Helpers ---------------- */
 const formatINR = (value) =>
   Number(value).toLocaleString("en-IN", {
     style: "currency",
@@ -41,645 +60,776 @@ const formatINR = (value) =>
     maximumFractionDigits: 0,
   });
 
-const formatEnding = (date) =>
-  new Intl.DateTimeFormat("en-IN", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Asia/Kolkata",
-  }).format(date) + " IST";
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
-const pad = (value) => String(value).padStart(2, "0");
+/* ---------------- Icons ---------------- */
+const baseIcon = {
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  "aria-hidden": "true",
+};
 
-const Icon = ({ children, size = 20, className = "" }) => (
-  <svg
-    className={className}
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.7"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    {children}
+const ZoomIcon = ({ plus = false, size = 20 }) => (
+  <svg {...baseIcon} width={size} height={size}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-3.5-3.5" />
+    {plus && <path d="M11 8v6M8 11h6" />}
   </svg>
 );
 
-const CheckIcon = () => (
-  <Icon size={17} className="ShopDetailsMain-checkIcon">
-    <path d="m5 12 4 4L19 6" />
-  </Icon>
+const FullscreenIcon = () => (
+  <svg {...baseIcon} width="20" height="20">
+    <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+  </svg>
+);
+
+const CloseIcon = ({ size = 22 }) => (
+  <svg {...baseIcon} width={size} height={size}>
+    <path d="M6 6l12 12M18 6 6 18" />
+  </svg>
+);
+
+const NextIcon = () => (
+  <svg {...baseIcon} width="24" height="24">
+    <path d="M5 12h14M13 6l6 6-6 6" />
+  </svg>
+);
+
+const PrevIcon = () => (
+  <svg {...baseIcon} width="24" height="24">
+    <path d="M19 12H5M11 6l-6 6 6 6" />
+  </svg>
 );
 
 const HeartIcon = ({ filled }) => (
-  <Icon size={19} className="ShopDetailsMain-heartIcon">
-    <path
-      d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"
-      fill={filled ? "currentColor" : "none"}
-    />
-  </Icon>
+  <svg {...baseIcon} width="20" height="20" fill={filled ? "currentColor" : "none"}>
+    <path d="M12 20.5s-7.5-4.6-9.2-9.4C1.7 7.8 3.4 4.5 6.7 4.5c2 0 3.4 1.1 5.3 3.1 1.9-2 3.3-3.1 5.3-3.1 3.3 0 5 3.3 3.9 6.6-1.7 4.8-9.2 9.4-9.2 9.4z" />
+  </svg>
 );
 
-const Countdown = ({ endsAt, onEnd }) => {
-  const [now, setNow] = useState(Date.now());
+const CheckIcon = ({ size = 20 }) => (
+  <svg {...baseIcon} width={size} height={size} strokeWidth="2.4">
+    <path d="M5 12.5 10 17.5 19 7.5" />
+  </svg>
+);
 
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, []);
+const MinusIcon = () => (
+  <svg {...baseIcon} width="18" height="18" strokeWidth="2.4">
+    <path d="M5 12h14" />
+  </svg>
+);
 
-  const total = Math.max(
-    0,
-    Math.floor((endsAt.getTime() - now) / 1000)
-  );
+const PlusIcon = () => (
+  <svg {...baseIcon} width="18" height="18" strokeWidth="2.4">
+    <path d="M12 5v14M5 12h14" />
+  </svg>
+);
 
-  useEffect(() => {
-    if (total === 0) onEnd();
-  }, [total, onEnd]);
+const CartIcon = ({ size = 22 }) => (
+  <svg {...baseIcon} width={size} height={size}>
+    <circle cx="9" cy="20" r="1.4" />
+    <circle cx="18" cy="20" r="1.4" />
+    <path d="M2.5 3.5h2.6l2.2 11.2a1.6 1.6 0 0 0 1.6 1.3h8.1a1.6 1.6 0 0 0 1.6-1.2l1.5-6.6H6.1" />
+  </svg>
+);
 
-  const parts = [
-    { label: "Days", value: Math.floor(total / 86400) },
-    { label: "Hours", value: Math.floor((total % 86400) / 3600) },
-    { label: "Minutes", value: Math.floor((total % 3600) / 60) },
-    { label: "Seconds", value: total % 60 },
-  ];
+const BoltIcon = () => (
+  <svg {...baseIcon} width="19" height="19">
+    <path d="M13 2 4.5 13.5H12L11 22l8.5-11.5H12z" />
+  </svg>
+);
 
-  return (
-    <div className="ShopDetailsMain-countdown" role="timer">
-      {parts.map((part, index) => (
-        <div
-          key={part.label}
-          className="ShopDetailsMain-countdownUnit"
-        >
-          <strong className="ShopDetailsMain-countdownValue">
-            {index === 0 ? part.value : pad(part.value)}
-          </strong>
-          <span className="ShopDetailsMain-countdownLabel">
-            {part.label}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-};
+const UserIcon = () => (
+  <svg {...baseIcon} width="22" height="22">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7" />
+  </svg>
+);
 
-const ShopDetailsMainLightbox = ({
-  images,
-  index,
-  onChange,
-  onClose,
-}) => {
+const FrameIcon = () => (
+  <svg {...baseIcon} width="22" height="22">
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <rect x="7" y="7" width="10" height="10" rx="1" />
+  </svg>
+);
+
+const BookIcon = () => (
+  <svg {...baseIcon} width="22" height="22">
+    <path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z" />
+    <path d="M4 19V5M9 8h6" />
+  </svg>
+);
+
+/* ---------------- Full screen viewer (lightbox) ---------------- */
+const ShopDetailsMainLightbox = ({ images, index, onChange, onClose }) => {
+  const overlayRef = useRef(null);
+  const closeRef = useRef(null);
+  const touchStart = useRef(null);
   const [zoomed, setZoomed] = useState(false);
+  const [origin, setOrigin] = useState({ x: 50, y: 50 });
+  const [isFull, setIsFull] = useState(false);
   const [closing, setClosing] = useState(false);
-  const closeTimer = useRef(null);
+
+  const total = images.length;
+
+  const requestClose = useCallback(() => {
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    setClosing(true);
+    setTimeout(onClose, 320);
+  }, [onClose]);
+
+  const go = useCallback(
+    (step) => {
+      setZoomed(false);
+      onChange((index + step + total) % total);
+    },
+    [index, total, onChange]
+  );
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
 
-    const handleKey = (event) => {
+    const onKey = (event) => {
       if (event.key === "Escape") requestClose();
+      if (event.key === "ArrowRight") go(1);
+      if (event.key === "ArrowLeft") go(-1);
     };
-
-    window.addEventListener("keydown", handleKey);
+    window.addEventListener("keydown", onKey);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKey);
-      clearTimeout(closeTimer.current);
+      window.removeEventListener("keydown", onKey);
     };
+  }, [go, requestClose]);
+
+  useEffect(() => {
+    const onFull = () => setIsFull(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onFull);
+    return () => document.removeEventListener("fullscreenchange", onFull);
   }, []);
 
-  const requestClose = () => {
-    if (closing) return;
-    setClosing(true);
-    closeTimer.current = setTimeout(onClose, 220);
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    else overlayRef.current?.requestFullscreen?.();
   };
 
-  const toggleFullscreen = async () => {
-    try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
-      } else {
-        await document
-          .querySelector(".ShopDetailsMain-lightbox")
-          ?.requestFullscreen?.();
-      }
-    } catch {
-      // Fullscreen is optional; the lightbox remains usable.
-    }
+  const handleMove = (event) => {
+    if (!zoomed) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    setOrigin({
+      x: clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100),
+      y: clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100),
+    });
+  };
+
+  const onTouchStart = (event) => {
+    touchStart.current = event.touches[0].clientX;
+  };
+
+  const onTouchEnd = (event) => {
+    if (touchStart.current === null || zoomed) return;
+    const diff = event.changedTouches[0].clientX - touchStart.current;
+    if (Math.abs(diff) > 50) go(diff < 0 ? 1 : -1);
+    touchStart.current = null;
   };
 
   return createPortal(
     <div
-      className={`ShopDetailsMain-lightbox ${
-        closing ? "ShopDetailsMain-lightboxClosing" : ""
-      }`}
+      ref={overlayRef}
+      className={`ShopDetailsMain-lightbox ${closing ? "ShopDetailsMain-lightboxClosing" : ""}`}
       role="dialog"
       aria-modal="true"
-      aria-label="Artwork image gallery"
-      onClick={(event) => {
-        if (event.target === event.currentTarget) requestClose();
-      }}
+      aria-label="Artwork full view"
     >
       <div className="ShopDetailsMain-lightboxBar">
         <span className="ShopDetailsMain-lightboxCount">
-          {index + 1} / {images.length}
+          {index + 1} / {total}
         </span>
 
         <div className="ShopDetailsMain-lightboxTools">
           <button
             type="button"
-            className="ShopDetailsMain-lightboxBtn"
-            onClick={() => setZoomed((value) => !value)}
+            className="ShopDetailsMain-lightboxButton"
+            onClick={() => setZoomed((prev) => !prev)}
             aria-label={zoomed ? "Zoom out" : "Zoom in"}
           >
-            <Icon>
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-4-4M11 8v6M8 11h6" />
-            </Icon>
+            <ZoomIcon plus={!zoomed} />
           </button>
-
           <button
             type="button"
-            className="ShopDetailsMain-lightboxBtn"
+            className="ShopDetailsMain-lightboxButton"
             onClick={toggleFullscreen}
-            aria-label="Toggle fullscreen"
+            aria-label={isFull ? "Exit full screen" : "Full screen"}
           >
-            <Icon>
-              <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
-            </Icon>
+            <FullscreenIcon />
           </button>
-
           <button
+            ref={closeRef}
             type="button"
-            className="ShopDetailsMain-lightboxBtn"
+            className="ShopDetailsMain-lightboxButton"
             onClick={requestClose}
-            aria-label="Close image gallery"
+            aria-label="Close"
           >
-            <Icon>
-              <path d="m6 6 12 12M18 6 6 18" />
-            </Icon>
+            <CloseIcon />
           </button>
         </div>
       </div>
 
-      <div className="ShopDetailsMain-lightboxStage">
+      <div
+        className="ShopDetailsMain-lightboxStage"
+        onClick={(event) => {
+          if (event.target === event.currentTarget) requestClose();
+        }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <div
+          key={index}
           className={`ShopDetailsMain-lightboxFrame ${
             zoomed ? "ShopDetailsMain-lightboxFrameZoomed" : ""
           }`}
-          onClick={() => setZoomed((value) => !value)}
+          onMouseMove={handleMove}
+          onClick={() => setZoomed((prev) => !prev)}
         >
           <img
             className="ShopDetailsMain-lightboxImage"
             src={images[index].src}
             alt={images[index].alt}
-            style={{ transform: zoomed ? "scale(1.8)" : "scale(1)" }}
+            draggable="false"
+            style={{
+              transformOrigin: `${origin.x}% ${origin.y}%`,
+              transform: zoomed ? "scale(2.2)" : "scale(1)",
+            }}
           />
         </div>
       </div>
 
-      <div className="ShopDetailsMain-lightboxThumbs">
-        {images.map((image, imageIndex) => (
+      {total > 1 && (
+        <>
           <button
-            key={image.src}
             type="button"
-            className={`ShopDetailsMain-lightboxThumb ${
-              imageIndex === index
-                ? "ShopDetailsMain-lightboxThumbActive"
-                : ""
-            }`}
-            onClick={() => {
-              setZoomed(false);
-              onChange(imageIndex);
-            }}
-            aria-label={`View image ${imageIndex + 1}`}
-            aria-pressed={imageIndex === index}
+            className="ShopDetailsMain-lightboxNav ShopDetailsMain-lightboxPrev"
+            onClick={() => go(-1)}
+            aria-label="Previous image"
           >
-            <img src={image.src} alt="" />
+            <PrevIcon />
           </button>
-        ))}
-      </div>
+          <button
+            type="button"
+            className="ShopDetailsMain-lightboxNav ShopDetailsMain-lightboxNext"
+            onClick={() => go(1)}
+            aria-label="Next image"
+          >
+            <NextIcon />
+          </button>
+
+          <div className="ShopDetailsMain-lightboxThumbs">
+            {images.map((image, i) => (
+              <button
+                key={image.src}
+                type="button"
+                className={`ShopDetailsMain-lightboxThumb ${
+                  i === index ? "ShopDetailsMain-lightboxThumbActive" : ""
+                }`}
+                onClick={() => {
+                  setZoomed(false);
+                  onChange(i);
+                }}
+                aria-label={`Show image ${i + 1}`}
+              >
+                <img src={image.src} alt="" />
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>,
     document.body
   );
 };
 
-const ShopDetailsMain = ({ onBid }) => {
+/* =====================================================================
+   Main component
+   Optional props:
+     onAddToCart(product, quantity)  -> may return a Promise
+     onBuyNow(product, quantity)
+===================================================================== */
+const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
   const rootRef = useRef(null);
+  const detailsRef = useRef(null);
+  const stageRef = useRef(null);
+  const imgRef = useRef(null);
+  const glareRef = useRef(null);
+  const motion = useRef({ tx: 50, ty: 50, x: 50, y: 50, ts: 1, s: 1, raf: 0 });
+
   const [inView, setInView] = useState(false);
+  const [detailsInView, setDetailsInView] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [currentBid, setCurrentBid] = useState(product.currentBid);
-  const [amount, setAmount] = useState(
-    product.currentBid + product.step
-  );
+  const [explored, setExplored] = useState(false);
+
+  const [quantity, setQuantity] = useState(1);
+  const [cartState, setCartState] = useState("idle"); // idle | adding | added
+  const [message, setMessage] = useState("");
   const [liked, setLiked] = useState(false);
-  const [youLead, setYouLead] = useState(false);
-  const [placing, setPlacing] = useState(false);
-  const [ended, setEnded] = useState(
-    () => product.endsAt.getTime() <= Date.now()
-  );
-  const [status, setStatus] = useState({
-    type: "idle",
-    text: "",
-  });
 
-  const minBid = currentBid + product.step;
-  const activeImage = product.images[activeIndex];
-
+  /* ---------- enter animations ---------- */
   useEffect(() => {
-    const element = rootRef.current;
-    if (!element) return;
+    const observe = (node, setter, threshold) => {
+      if (!node) return undefined;
+      if (!("IntersectionObserver" in window)) {
+        setter(true);
+        return undefined;
+      }
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setter(true);
+            observer.disconnect();
+          }
+        },
+        { threshold }
+      );
+      observer.observe(node);
+      return () => observer.disconnect();
+    };
 
-    if (
-      !("IntersectionObserver" in window) ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setInView(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.08 }
-    );
-
-    observer.observe(element);
-    return () => observer.disconnect();
+    const stopA = observe(rootRef.current, setInView, 0.1);
+    const stopB = observe(detailsRef.current, setDetailsInView, 0.12);
+    return () => {
+      stopA && stopA();
+      stopB && stopB();
+    };
   }, []);
 
-  const changeAmount = (value) => {
-    setAmount(value);
-    setStatus({ type: "idle", text: "" });
-  };
-
-  const stepAmount = (direction) => {
-    changeAmount(Math.max(minBid, amount + direction * product.step));
-  };
-
-  const placeBid = async () => {
-    if (ended || placing) return;
-
-    if (!Number.isFinite(amount) || amount < minBid) {
-      setAmount(minBid);
-      setStatus({
-        type: "error",
-        text: `Your minimum bid must be ${formatINR(minBid)}.`,
-      });
-      return;
+  /* ---------- smooth cursor-follow image motion ---------- */
+  const applyMotion = useCallback(() => {
+    const m = motion.current;
+    if (imgRef.current) {
+      imgRef.current.style.transformOrigin = `${m.x}% ${m.y}%`;
+      imgRef.current.style.transform = `scale(${m.s})`;
     }
+    if (stageRef.current) {
+      const rotateX = ((50 - m.y) * 0.07).toFixed(3);
+      const rotateY = ((m.x - 50) * 0.07).toFixed(3);
+      stageRef.current.style.transform = `perspective(1400px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+    if (glareRef.current) {
+      glareRef.current.style.background = `radial-gradient(circle at ${m.x}% ${m.y}%, rgba(255,255,255,0.32), rgba(255,255,255,0) 46%)`;
+      glareRef.current.style.opacity = String(clamp((m.s - 1) / 0.35, 0, 1));
+    }
+  }, []);
 
-    setPlacing(true);
-    setStatus({ type: "idle", text: "" });
+  const tick = useCallback(() => {
+    const m = motion.current;
+    m.x += (m.tx - m.x) * 0.1;
+    m.y += (m.ty - m.y) * 0.1;
+    m.s += (m.ts - m.s) * 0.08;
+    applyMotion();
 
+    const settled =
+      Math.abs(m.tx - m.x) < 0.05 &&
+      Math.abs(m.ty - m.y) < 0.05 &&
+      Math.abs(m.ts - m.s) < 0.001;
+
+    if (settled) m.raf = 0;
+    else m.raf = requestAnimationFrame(tick);
+  }, [applyMotion]);
+
+  const kick = useCallback(() => {
+    const m = motion.current;
+    if (!m.raf) m.raf = requestAnimationFrame(tick);
+  }, [tick]);
+
+  useEffect(() => {
+    const m = motion.current;
+    return () => cancelAnimationFrame(m.raf);
+  }, []);
+
+  useEffect(() => {
+    applyMotion();
+  }, [activeIndex, applyMotion]);
+
+  const handlePointerMove = (event) => {
+    if (event.pointerType && event.pointerType !== "mouse") return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const m = motion.current;
+    m.tx = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
+    m.ty = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100);
+    m.ts = 1.45;
+    if (!explored) setExplored(true);
+    kick();
+  };
+
+  const handlePointerLeave = () => {
+    const m = motion.current;
+    m.tx = 50;
+    m.ty = 50;
+    m.ts = 1;
+    kick();
+  };
+
+  /* ---------- cart ---------- */
+  const total = product.price * quantity;
+
+  const changeQuantity = (next) => {
+    setQuantity(clamp(next, 1, product.stock));
+    if (cartState === "added") {
+      setCartState("idle");
+      setMessage("");
+    }
+  };
+
+  const addToCart = async () => {
+    if (cartState === "adding") return;
+    setCartState("adding");
+    setMessage("");
     try {
-      if (onBid) {
-        await onBid(amount);
-      } else {
-        // Demo only: connect onBid to your auction backend.
-        await new Promise((resolve) => setTimeout(resolve, 650));
-      }
-
-      setCurrentBid(amount);
-      setAmount(amount + product.step);
-      setYouLead(true);
-      setStatus({
-        type: "success",
-        text: `Demo bid of ${formatINR(amount)} submitted successfully.`,
-      });
-    } catch {
-      setStatus({
-        type: "error",
-        text: "Unable to submit your bid. Please try again.",
-      });
-    } finally {
-      setPlacing(false);
+      if (onAddToCart) await onAddToCart(product, quantity);
+      else await new Promise((resolve) => setTimeout(resolve, 800)); // demo only
+      setCartState("added");
+      setMessage(
+        `${quantity} × ${product.title} added to your cart.`
+      );
+    } catch (error) {
+      setCartState("idle");
+      setMessage("error");
     }
   };
+
+  const buyNow = () => {
+    if (onBuyNow) onBuyNow(product, quantity);
+  };
+
+  const activeImage = product.images[activeIndex];
 
   return (
     <section
       ref={rootRef}
-      className={`ShopDetailsMain ${
-        inView ? "ShopDetailsMain-visible" : ""
+      className={`ShopDetailsMain ${inView ? "ShopDetailsMain-visible" : ""} ${
+        detailsInView ? "ShopDetailsMain-detailsVisible" : ""
       }`}
+      aria-labelledby="ShopDetailsMain-title"
     >
       <div className="ShopDetailsMain-container">
-        {/* LEFT: FOUR-IMAGE GALLERY */}
+        {/* ================= Gallery ================= */}
         <div className="ShopDetailsMain-gallery">
-          <div className="ShopDetailsMain-frame">
-            <div className="ShopDetailsMain-imageBox">
-              <img
-                key={activeImage.src}
-                className="ShopDetailsMain-image"
-                src={activeImage.src}
-                alt={activeImage.alt}
-                draggable="false"
-              />
-            </div>
-
-            <span className="ShopDetailsMain-imageCounter">
-              {pad(activeIndex + 1)} / {pad(product.images.length)}
-            </span>
-
-            <button
-              type="button"
-              className="ShopDetailsMain-zoomBtn"
-              onClick={() => setLightboxOpen(true)}
-              aria-label="Enlarge artwork"
+          <div className="ShopDetailsMain-mainWrap">
+            <div
+              className="ShopDetailsMain-frame"
+              onPointerMove={handlePointerMove}
+              onPointerLeave={handlePointerLeave}
             >
-              <Icon size={19}>
-                <circle cx="11" cy="11" r="7" />
-                <path d="m20 20-4-4M11 8v6M8 11h6" />
-              </Icon>
-            </button>
-          </div>
+              <div ref={stageRef} className="ShopDetailsMain-stage">
+                <div className="ShopDetailsMain-imageBox">
+                  <div key={activeIndex} className="ShopDetailsMain-slide">
+                    <img
+                      ref={imgRef}
+                      className="ShopDetailsMain-image"
+                      src={activeImage.src}
+                      alt={activeImage.alt}
+                      draggable="false"
+                    />
+                  </div>
+                  <span ref={glareRef} className="ShopDetailsMain-glare" aria-hidden="true" />
+                </div>
+              </div>
 
-          <div
-            className="ShopDetailsMain-thumbStrip"
-            aria-label="Choose artwork image"
-          >
-            {product.images.map((image, index) => (
+              <span className="ShopDetailsMain-corner ShopDetailsMain-cornerTop" aria-hidden="true" />
+              <span className="ShopDetailsMain-corner ShopDetailsMain-cornerBottom" aria-hidden="true" />
+
+              <span className="ShopDetailsMain-badge">Original Artwork</span>
+
               <button
-                key={image.src}
                 type="button"
-                className={`ShopDetailsMain-thumb ${
-                  index === activeIndex
-                    ? "ShopDetailsMain-thumbActive"
-                    : ""
-                }`}
-                onClick={() => setActiveIndex(index)}
-                aria-label={`Select artwork image ${index + 1}`}
-                aria-pressed={index === activeIndex}
+                className="ShopDetailsMain-zoom"
+                onClick={() => setLightboxOpen(true)}
+                aria-label="View image full screen"
               >
-                <img
-                  className="ShopDetailsMain-thumbImg"
-                  src={image.src}
-                  alt={image.alt}
-                  loading="lazy"
-                  draggable="false"
-                />
+                <ZoomIcon />
               </button>
-            ))}
-          </div>
 
-          <div className="ShopDetailsMain-galleryNote">
-            <span className="ShopDetailsMain-galleryNoteIcon">✳</span>
-            <div>
-              <strong>Art worth looking closer at.</strong>
-              <p>Explore all four views of this artwork.</p>
+              <span
+                className={`ShopDetailsMain-hint ${explored ? "ShopDetailsMain-hintHidden" : ""}`}
+                aria-hidden="true"
+              >
+                Move your cursor to explore the details
+              </span>
             </div>
           </div>
+
+          <ul className="ShopDetailsMain-thumbs">
+            {product.images.map((image, index) => (
+              <li
+                key={image.src}
+                className="ShopDetailsMain-thumbItem"
+                style={{ "--delay": `${0.6 + index * 0.1}s` }}
+              >
+                <button
+                  type="button"
+                  className={`ShopDetailsMain-thumb ${
+                    index === activeIndex ? "ShopDetailsMain-thumbActive" : ""
+                  }`}
+                  onClick={() => setActiveIndex(index)}
+                  aria-label={`Show image ${index + 1} of ${product.images.length}`}
+                  aria-current={index === activeIndex}
+                >
+                  <img className="ShopDetailsMain-thumbImage" src={image.src} alt="" draggable="false" />
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* RIGHT: AUCTION DETAILS */}
+        {/* ================= Details ================= */}
         <div className="ShopDetailsMain-info">
-          <div className="ShopDetailsMain-eyebrow">
-            <span />
-            ART & CULTURE COLLECTION
-          </div>
+          <h1 id="ShopDetailsMain-title" className="ShopDetailsMain-title">
+            {product.title}
+          </h1>
+          <span className="ShopDetailsMain-titleLine" aria-hidden="true" />
 
-          <h1 className="ShopDetailsMain-title">{product.title}</h1>
-
-          <div className="ShopDetailsMain-field">
-            <span className="ShopDetailsMain-label">Artist</span>
-            <strong className="ShopDetailsMain-value">
-              {product.artist}
-            </strong>
-          </div>
-
-          <div className="ShopDetailsMain-field">
-            <span className="ShopDetailsMain-label">Current bid</span>
-            <strong className="ShopDetailsMain-price">
-              {formatINR(currentBid)}
-            </strong>
-            {youLead && (
-              <span className="ShopDetailsMain-leadBadge">
-                <CheckIcon /> You lead
-              </span>
-            )}
-          </div>
-
-          <div className="ShopDetailsMain-field">
-            <span className="ShopDetailsMain-label">Condition</span>
-            <strong className="ShopDetailsMain-value">
-              {product.condition}
-            </strong>
-          </div>
-
-          <div className="ShopDetailsMain-timerBox">
-            <span className="ShopDetailsMain-timerHeading">
-              Auction ends in
-            </span>
-
-            <Countdown
-              endsAt={product.endsAt}
-              onEnd={() => setEnded(true)}
-            />
-
-            <div className="ShopDetailsMain-timerFooter">
-              <span>Ending: {formatEnding(product.endsAt)}</span>
-              <span>Timezone: IST (UTC+5:30)</span>
-            </div>
-
-            {product.reserveMet && (
-              <p className="ShopDetailsMain-reserveMet">
-                <CheckIcon /> Reserve price has been met
-              </p>
-            )}
-
-            {ended && (
-              <p className="ShopDetailsMain-endedMessage">
-                This auction has ended.
-              </p>
-            )}
-          </div>
-
-          <div className="ShopDetailsMain-actionRow">
-            <div className="ShopDetailsMain-stepper">
-              <button
-                type="button"
-                className="ShopDetailsMain-stepBtn"
-                onClick={() => stepAmount(-1)}
-                disabled={ended || amount <= minBid}
-                aria-label="Decrease bid"
-              >
-                −
-              </button>
-
-              <output className="ShopDetailsMain-input">
-                {formatINR(amount)}
-              </output>
-
-              <button
-                type="button"
-                className="ShopDetailsMain-stepBtn"
-                onClick={() => stepAmount(1)}
-                disabled={ended}
-                aria-label="Increase bid"
-              >
-                +
-              </button>
-            </div>
-
-            <button
-              type="button"
-              className="ShopDetailsMain-bidBtn"
-              onClick={placeBid}
-              disabled={ended || placing}
-            >
-              {placing ? "Submitting..." : ended ? "Ended" : "Place Bid"}
-              {!placing && !ended && <span>↗</span>}
-            </button>
-          </div>
-
-          <p className="ShopDetailsMain-minimumBid">
-            Minimum next bid: {formatINR(minBid)}
+          <p className="ShopDetailsMain-row" style={{ "--delay": "0.3s" }}>
+            <span className="ShopDetailsMain-rowLabel">Artist :</span>
+            <strong className="ShopDetailsMain-rowValue">{product.artist}</strong>
           </p>
 
-          {status.text && (
-            <div
-              className={`ShopDetailsMain-alert ShopDetailsMain-alert-${status.type}`}
-              role="status"
-            >
-              {status.text}
+          <div className="ShopDetailsMain-row ShopDetailsMain-rowPrice" style={{ "--delay": "0.38s" }}>
+            <span className="ShopDetailsMain-rowLabel">Price:</span>
+            <strong className="ShopDetailsMain-price">{formatINR(product.price)}</strong>
+            <span className="ShopDetailsMain-tax">Inclusive of all taxes</span>
+          </div>
+
+          <div className="ShopDetailsMain-row" style={{ "--delay": "0.46s" }}>
+            <span className="ShopDetailsMain-rowLabel">Item condition:</span>
+            <strong className="ShopDetailsMain-rowValue">{product.condition}</strong>
+            <span className="ShopDetailsMain-stock">
+              <span className="ShopDetailsMain-stockDot" aria-hidden="true" />
+              In stock
+            </span>
+          </div>
+
+          {/* ---------- Purchase panel ---------- */}
+          <div className="ShopDetailsMain-buy" style={{ "--delay": "0.56s" }}>
+            <div className="ShopDetailsMain-buyTop">
+              <span className="ShopDetailsMain-buyLabel">Quantity</span>
+              <div className="ShopDetailsMain-qty" role="group" aria-label="Quantity">
+                <button
+                  type="button"
+                  className="ShopDetailsMain-qtyButton"
+                  onClick={() => changeQuantity(quantity - 1)}
+                  disabled={quantity <= 1}
+                  aria-label="Decrease quantity"
+                >
+                  <MinusIcon />
+                </button>
+                <span className="ShopDetailsMain-qtyValue" aria-live="polite">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  className="ShopDetailsMain-qtyButton"
+                  onClick={() => changeQuantity(quantity + 1)}
+                  disabled={quantity >= product.stock}
+                  aria-label="Increase quantity"
+                >
+                  <PlusIcon />
+                </button>
+              </div>
+
+              <div className="ShopDetailsMain-total">
+                <span>Total</span>
+                <strong key={total}>{formatINR(total)}</strong>
+              </div>
             </div>
-          )}
+
+            <div className="ShopDetailsMain-actions">
+              <button
+                type="button"
+                className={`ShopDetailsMain-cartButton ${
+                  cartState === "added" ? "ShopDetailsMain-cartButtonAdded" : ""
+                }`}
+                onClick={addToCart}
+                disabled={cartState === "adding"}
+              >
+                <span className="ShopDetailsMain-cartIcon">
+                  {cartState === "adding" && (
+                    <span className="ShopDetailsMain-spinner" aria-hidden="true" />
+                  )}
+                  {cartState === "added" && <CheckIcon size={22} />}
+                  {cartState === "idle" && <CartIcon />}
+                </span>
+                <span>
+                  {cartState === "adding"
+                    ? "Adding..."
+                    : cartState === "added"
+                    ? "Added to Cart"
+                    : "Add to Cart"}
+                </span>
+              </button>
+
+              <button type="button" className="ShopDetailsMain-buyButton" onClick={buyNow}>
+                <BoltIcon />
+                <span>Buy Now</span>
+              </button>
+            </div>
+
+            <p
+              className={`ShopDetailsMain-status ${
+                cartState === "added" ? "ShopDetailsMain-statusSuccess" : ""
+              } ${message === "error" ? "ShopDetailsMain-statusError" : ""}`}
+              role="status"
+              aria-live="polite"
+            >
+              {message === "error" ? (
+                "We could not add this to your cart. Please try again."
+              ) : cartState === "added" ? (
+                <>
+                  {message} <a href="/cart">View cart</a>
+                </>
+              ) : (
+                ""
+              )}
+            </p>
+          </div>
 
           <button
             type="button"
-            className={`ShopDetailsMain-wishlist ${
-              liked ? "ShopDetailsMain-wishlistActive" : ""
-            }`}
-            onClick={() => setLiked((value) => !value)}
+            className={`ShopDetailsMain-wish ${liked ? "ShopDetailsMain-wishActive" : ""}`}
+            onClick={() => setLiked((prev) => !prev)}
             aria-pressed={liked}
+            style={{ "--delay": "0.66s" }}
           >
             <HeartIcon filled={liked} />
-            {liked ? "Added to wishlist" : "Add to wishlist"}
+            <span>{liked ? "Added to wishlist" : "Add to wishlist"}</span>
           </button>
 
-          <div className="ShopDetailsMain-taxonomies">
-            <div className="ShopDetailsMain-taxoRow">
-              <strong>Categories:</strong>
-              <span>{product.categories.join(", ")}</span>
-            </div>
-            <div className="ShopDetailsMain-taxoRow">
-              <strong>Tags:</strong>
-              <span>{product.tags.join(", ")}</span>
-            </div>
+          <div className="ShopDetailsMain-meta" style={{ "--delay": "0.74s" }}>
+            <span className="ShopDetailsMain-metaLabel">Categories:</span>
+            <ul className="ShopDetailsMain-tags">
+              {product.categories.map((category) => (
+                <li key={category} className="ShopDetailsMain-tag">
+                  {category}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="ShopDetailsMain-perks">
-            <ul className="ShopDetailsMain-perkList">
-              <li><CheckIcon /> <span>Shipping in less than one week</span></li>
-              <li>
+          {/* ---------- Assurance ---------- */}
+          <div className="ShopDetailsMain-assure" style={{ "--delay": "0.82s" }}>
+            <ul className="ShopDetailsMain-assureList">
+              <li className="ShopDetailsMain-assureItem">
                 <CheckIcon />
-                <span>Delivery across India: {formatINR(product.deliveryCharge)}</span>
+                <span>Shipping : Less than one week</span>
               </li>
-              <li><CheckIcon /> <span>Returns within two weeks, subject to policy</span></li>
-              <li><CheckIcon /> <span>Authenticity certificate included</span></li>
-              <li><CheckIcon /> <span>Secure payment options at checkout</span></li>
+              <li className="ShopDetailsMain-assureItem">
+                <CheckIcon />
+                <span>Secure delivery : Across India + {formatINR(product.deliveryCharge)}</span>
+              </li>
+              <li className="ShopDetailsMain-assureItem">
+                <CheckIcon />
+                <span>Free returns within two weeks</span>
+              </li>
+              <li className="ShopDetailsMain-assureItem">
+                <CheckIcon />
+                <span>Authenticity certificate</span>
+              </li>
+              <li className="ShopDetailsMain-assureItem">
+                <CheckIcon />
+                <span>Secured payment gateways</span>
+              </li>
             </ul>
 
-            <div className="ShopDetailsMain-cardLogos">
-              <span>UPI</span>
-              <span>VISA</span>
-              <span>RuPay</span>
-              <span>Mastercard</span>
-            </div>
+            <ul className="ShopDetailsMain-pay" aria-label="Accepted payment methods">
+              <li className="ShopDetailsMain-payItem ShopDetailsMain-payUpi">UPI</li>
+              <li className="ShopDetailsMain-payItem ShopDetailsMain-payVisa">VISA</li>
+              <li className="ShopDetailsMain-payItem ShopDetailsMain-payMaster">
+                <span className="ShopDetailsMain-payCircle ShopDetailsMain-payRed" />
+                <span className="ShopDetailsMain-payCircle ShopDetailsMain-payOrange" />
+              </li>
+              <li className="ShopDetailsMain-payItem ShopDetailsMain-payRupay">RuPay</li>
+            </ul>
           </div>
 
-          <p className="ShopDetailsMain-contactNote">
-            Have a question? <a href="#contact">Ask Us</a>
+          <p className="ShopDetailsMain-ask" style={{ "--delay": "0.9s" }}>
+            Have any question? <a href="/contact">Ask Us</a>
           </p>
         </div>
       </div>
 
-      {/* BOTTOM: THREE INFORMATION CARDS */}
-      <div className="ShopDetailsMain-bottom">
-        <article className="ShopDetailsMain-detailCard ShopDetailsMain-artistCard">
-          <span className="ShopDetailsMain-detailEyebrow">THE CREATOR</span>
-          <h2>Artist Overview</h2>
-
-          <div className="ShopDetailsMain-detailItem">
-            <h3>Artist</h3>
-            <p>{product.artist}</p>
-          </div>
-
-          <div className="ShopDetailsMain-detailItem">
-            <h3>Artistic style</h3>
-            <p>Expressive colour, composition and visual storytelling.</p>
-          </div>
-
-          <div className="ShopDetailsMain-detailItem">
-            <h3>Collection</h3>
-            <p>Art & Culture curated artwork collection.</p>
-          </div>
-        </article>
-
-        <article className="ShopDetailsMain-detailCard ShopDetailsMain-artworkCard">
-          <span className="ShopDetailsMain-detailEyebrow">ARTWORK DETAILS</span>
-          <h2>Exploring the Artwork</h2>
-
-          <div className="ShopDetailsMain-detailItem">
-            <h3>Category</h3>
-            <p>{product.category}</p>
-          </div>
-
-          <div className="ShopDetailsMain-detailItem">
-            <h3>Size</h3>
-            <p>{product.size}</p>
-          </div>
-
-          <div className="ShopDetailsMain-detailItem">
-            <h3>Framing</h3>
-            <p>{product.framing}</p>
-          </div>
-
-          <div className="ShopDetailsMain-detailItem">
-            <h3>Theme</h3>
-            <p>{product.theme}</p>
-          </div>
-
-          <div className="ShopDetailsMain-detailItem">
-            <h3>Signature & authenticity</h3>
-            <p>{product.signature}. {product.authenticity}.</p>
-          </div>
-        </article>
-
-        <article className="ShopDetailsMain-detailCard ShopDetailsMain-careCard">
-          <span className="ShopDetailsMain-detailEyebrow">PRESERVE ITS BEAUTY</span>
-          <h2>Artwork Care & Guidelines</h2>
-
-          <p className="ShopDetailsMain-careIntro">
-            Keep your artwork beautiful with a little everyday care.
+      {/* ================= About the artwork ================= */}
+      <div className="ShopDetailsMain-details" ref={detailsRef}>
+        <div className="ShopDetailsMain-detailsHead">
+          <h2 className="ShopDetailsMain-detailsTitle">About this artwork</h2>
+          <p className="ShopDetailsMain-detailsText">
+            The artist, the piece and how to care for it, all in one place.
           </p>
+        </div>
 
-          <ul className="ShopDetailsMain-careList">
-            <li>Keep away from direct sunlight.</li>
-            <li>Avoid moisture and excessive humidity.</li>
-            <li>Dust gently with a soft, dry cloth.</li>
-            <li>Handle carefully when moving or framing.</li>
-          </ul>
+        <div className="ShopDetailsMain-detailsGrid">
+          <article className="ShopDetailsMain-card" style={{ "--delay": "0s" }}>
+            <header className="ShopDetailsMain-cardHead">
+              <span className="ShopDetailsMain-cardIcon">
+                <UserIcon />
+              </span>
+              <h3 className="ShopDetailsMain-cardTitle">Artist Overview</h3>
+            </header>
+            <dl className="ShopDetailsMain-list">
+              {product.artistInfo.map((entry) => (
+                <div key={entry.label} className="ShopDetailsMain-listItem">
+                  <dt>{entry.label}</dt>
+                  <dd>{entry.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </article>
 
-          <div className="ShopDetailsMain-careNote">
-            <CheckIcon />
-            <span>Carefully handle and store your artwork.</span>
-          </div>
-        </article>
+          <article className="ShopDetailsMain-card ShopDetailsMain-cardFeature" style={{ "--delay": "0.12s" }}>
+            <header className="ShopDetailsMain-cardHead">
+              <span className="ShopDetailsMain-cardIcon">
+                <FrameIcon />
+              </span>
+              <h3 className="ShopDetailsMain-cardTitle">Exploring the Artwork</h3>
+            </header>
+            <dl className="ShopDetailsMain-list ShopDetailsMain-listTwo">
+              {product.artworkInfo.map((entry) => (
+                <div key={entry.label} className="ShopDetailsMain-listItem">
+                  <dt>{entry.label}</dt>
+                  <dd>{entry.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </article>
+
+          <article className="ShopDetailsMain-card" style={{ "--delay": "0.24s" }}>
+            <header className="ShopDetailsMain-cardHead">
+              <span className="ShopDetailsMain-cardIcon">
+                <BookIcon />
+              </span>
+              <h3 className="ShopDetailsMain-cardTitle">Inner Narrative &amp; Guidelines</h3>
+            </header>
+
+            <h4 className="ShopDetailsMain-subTitle">Inner Narrative of This Artwork</h4>
+            <p className="ShopDetailsMain-narrative">{product.narrative}</p>
+
+            <div className="ShopDetailsMain-rule" aria-hidden="true" />
+
+            <h4 className="ShopDetailsMain-subTitle">Guidelines for the Artwork</h4>
+            <ul className="ShopDetailsMain-guides">
+              {product.guidelines.map((guide) => (
+                <li key={guide}>
+                  <CheckIcon size={16} />
+                  <span>{guide}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+        </div>
       </div>
 
       {lightboxOpen && (
