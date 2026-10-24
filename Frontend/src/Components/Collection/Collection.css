@@ -1,0 +1,935 @@
+
+/* =====================================================
+   STREAMING COLLECTION
+===================================================== */
+
+.Collection {
+  --Collection-accent: #8b5e3c;
+  --Collection-accent-dark: #6f452a;
+  --Collection-text: #242424;
+  --Collection-muted: #777777;
+  --Collection-border: #eeeeee;
+  --Collection-background: #ffffff;
+  --Collection-discount: #e52b2b;
+
+  width: 100%;
+  padding: 54px 0 42px;
+  overflow: hidden;
+
+  color: var(--Collection-text);
+  background: var(--Collection-background);
+
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.Collection *,
+.Collection *::before,
+.Collection *::after {
+  box-sizing: border-box;
+}
+
+.Collection-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 6.75%;
+}
+
+/* =====================================================
+   HEADING
+===================================================== */
+
+.Collection-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+
+  width: 100%;
+  margin-bottom: 60px;
+}
+
+.Collection-heading-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.Collection-title {
+  padding: 0;
+  margin: 0;
+
+  color: #171717;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 2.3vw, 38px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+}
+
+.Collection-subtitle {
+  padding: 0;
+  margin: 0;
+
+  color: #777777;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+}
+
+.Collection-view-all {
+  display: inline-block;
+  flex: 0 0 auto;
+
+  padding: 5px 0 3px;
+  margin-top: 44px;
+
+  color: #161616;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+
+  transition: color 0.25s ease;
+}
+
+.Collection-view-all:hover {
+  color: var(--Collection-accent);
+}
+
+/* =====================================================
+   CAROUSEL
+===================================================== */
+
+.Collection-carousel {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Horizontal scrolling track */
+
+.Collection-track {
+  display: flex;
+  align-items: stretch;
+  gap: 28px;
+
+  width: 100%;
+  padding: 0 0 8px;
+  margin: 0;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.Collection-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* =====================================================
+   COLLECTION CARD
+===================================================== */
+
+.Collection-card {
+  position: relative;
+
+  display: flex;
+  flex: 0 0 calc((100% - 84px) / 4);
+  flex-direction: column;
+
+  min-width: 0;
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+
+  scroll-snap-align: start;
+
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.Collection-card:hover {
+  border-color: #e4ded7;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.055);
+}
+
+/* =====================================================
+   IMAGE WRAPPER
+===================================================== */
+
+.Collection-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: clamp(280px, 25vw, 360px);
+  flex: 0 0 auto;
+
+  overflow: hidden;
+  background: #f4f0eb;
+}
+
+/* Artwork */
+
+.Collection-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform 0.65s ease;
+}
+
+.Collection-card:hover .Collection-image {
+  transform: scale(1.045);
+}
+
+/* =====================================================
+   DISCOUNT BADGE
+===================================================== */
+
+.Collection-discount {
+  position: absolute;
+  top: 17px;
+  left: 0;
+  z-index: 2;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 76px;
+  min-height: 32px;
+  padding: 6px 13px;
+
+  color: #ffffff;
+  background: var(--Collection-discount);
+
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.3px;
+}
+
+/* =====================================================
+   WISHLIST BUTTON
+===================================================== */
+
+.Collection-wishlist {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 39px;
+  height: 39px;
+  padding: 0;
+
+  color: #252525;
+  background: #ffffff;
+  border: none;
+  border-radius: 50%;
+
+  font-size: 19px;
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.Collection-wishlist:hover {
+  color: #e52b45;
+  transform: scale(1.08);
+}
+
+.Collection-wishlist-active {
+  color: #e52b45;
+}
+
+.Collection-wishlist:focus-visible {
+  outline: 2px solid var(--Collection-accent);
+  outline-offset: 3px;
+}
+
+/* =====================================================
+   CATEGORY PANEL
+   Positioned over the bottom of the image
+===================================================== */
+
+.Collection-category-panel {
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+  left: 12px;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 9px;
+
+  min-height: 58px;
+  padding: 12px 10px;
+
+  color: #292929;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 7px 7px 0 0;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.09);
+}
+
+.Collection-category-label {
+  color: #858585;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.Collection-category {
+  color: #292929;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* =====================================================
+   CARD DETAILS
+===================================================== */
+
+.Collection-details {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+
+  min-width: 0;
+  padding: 23px 18px 24px;
+  background: #ffffff;
+}
+
+/* Artwork title */
+
+.Collection-card-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  min-height: 54px;
+  width: 100%;
+  overflow: hidden;
+
+  padding: 0;
+  margin: 0 0 14px;
+
+  color: #262626;
+  font-family: inherit;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0.05px;
+}
+
+/* Artist */
+
+.Collection-artist {
+  width: 100%;
+  padding: 0;
+  margin: 0 0 14px;
+
+  color: #333333;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+.Collection-artist span {
+  color: #888888;
+  margin-right: 3px;
+}
+
+/* =====================================================
+   PRICING
+===================================================== */
+
+.Collection-pricing {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 9px;
+
+  width: 100%;
+  margin-bottom: 23px;
+}
+
+.Collection-original-price {
+  color: #888888;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.Collection-discount-price {
+  color: #292929;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* =====================================================
+   ADD TO CART BUTTON
+===================================================== */
+
+.Collection-cart-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 14px;
+  margin-top: auto;
+
+  color: #262626;
+  background: #ffffff;
+  border: 1px solid #333333;
+  border-radius: 5px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.Collection-cart-button svg {
+  flex: 0 0 auto;
+  font-size: 14px;
+}
+
+.Collection-cart-button:hover:not(:disabled) {
+  color: #ffffff;
+  background: var(--Collection-accent);
+  border-color: var(--Collection-accent);
+  transform: translateY(-1px);
+}
+
+.Collection-cart-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.Collection-cart-button:focus-visible {
+  outline: 2px solid var(--Collection-accent);
+  outline-offset: 3px;
+}
+
+.Collection-cart-button-added,
+.Collection-cart-button:disabled {
+  color: #ffffff;
+  background: #525252;
+  border-color: #525252;
+  cursor: default;
+  opacity: 1;
+}
+
+/* =====================================================
+   CAROUSEL ARROWS
+===================================================== */
+
+.Collection-arrow {
+  position: absolute;
+  top: 42%;
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 43px;
+  height: 43px;
+  padding: 0;
+
+  color: #4b4b4b;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 50%;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  box-shadow: 0 2px 9px rgba(0, 0, 0, 0.045);
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.Collection-arrow:hover {
+  color: #ffffff;
+  background: var(--Collection-accent);
+  border-color: var(--Collection-accent);
+  transform: scale(1.07);
+}
+
+.Collection-arrow:active {
+  transform: scale(0.96);
+}
+
+.Collection-arrow:focus-visible {
+  outline: 2px solid var(--Collection-accent);
+  outline-offset: 3px;
+}
+
+.Collection-arrow-prev {
+  left: -22px;
+}
+
+.Collection-arrow-next {
+  right: -22px;
+}
+
+/* =====================================================
+   LARGE LAPTOPS
+===================================================== */
+
+@media (max-width: 1200px) {
+  .Collection {
+    padding-top: 46px;
+  }
+
+  .Collection-container {
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  .Collection-heading {
+    margin-bottom: 45px;
+  }
+
+  .Collection-track {
+    gap: 22px;
+  }
+
+  .Collection-card {
+    flex-basis: calc((100% - 66px) / 4);
+  }
+
+  .Collection-image-wrapper {
+    height: clamp(250px, 27vw, 330px);
+  }
+
+  .Collection-details {
+    padding: 20px 15px 21px;
+  }
+
+  .Collection-card-title {
+    font-size: 17px;
+  }
+
+  .Collection-artist {
+    font-size: 14px;
+  }
+
+  .Collection-discount-price {
+    font-size: 16px;
+  }
+
+  .Collection-arrow-prev {
+    left: -19px;
+  }
+
+  .Collection-arrow-next {
+    right: -19px;
+  }
+}
+
+/* =====================================================
+   TABLETS
+===================================================== */
+
+@media (max-width: 900px) {
+  .Collection-container {
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+
+  .Collection-heading {
+    margin-bottom: 35px;
+  }
+
+  .Collection-title {
+    font-size: 31px;
+  }
+
+  .Collection-subtitle {
+    font-size: 16px;
+  }
+
+  .Collection-view-all {
+    margin-top: 35px;
+    font-size: 14px;
+  }
+
+  .Collection-track {
+    gap: 20px;
+  }
+
+  .Collection-card {
+    flex-basis: calc((100% - 40px) / 3);
+  }
+
+  .Collection-image-wrapper {
+    height: 290px;
+  }
+
+  .Collection-category-panel {
+    right: 8px;
+    left: 8px;
+    min-height: 52px;
+    padding: 9px 6px;
+    gap: 5px;
+  }
+
+  .Collection-category-label {
+    font-size: 10px;
+  }
+
+  .Collection-category {
+    font-size: 12px;
+  }
+
+  .Collection-wishlist {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+  }
+
+  .Collection-discount {
+    top: 13px;
+    min-width: 65px;
+    min-height: 29px;
+    font-size: 12px;
+  }
+
+  .Collection-details {
+    padding: 17px 13px 19px;
+  }
+
+  .Collection-card-title {
+    min-height: 48px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .Collection-artist {
+    font-size: 13px;
+  }
+
+  .Collection-pricing {
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .Collection-original-price {
+    font-size: 12px;
+  }
+
+  .Collection-discount-price {
+    font-size: 15px;
+  }
+
+  .Collection-cart-button {
+    min-height: 41px;
+    padding: 9px 8px;
+    font-size: 12px;
+  }
+
+  .Collection-arrow {
+    top: 39%;
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .Collection-arrow-prev {
+    left: -18px;
+  }
+
+  .Collection-arrow-next {
+    right: -18px;
+  }
+}
+
+/* =====================================================
+   SMALL TABLETS
+===================================================== */
+
+@media (max-width: 700px) {
+  .Collection {
+    padding-top: 38px;
+    padding-bottom: 30px;
+  }
+
+  .Collection-container {
+    padding-right: 25px;
+    padding-left: 25px;
+  }
+
+  .Collection-track {
+    gap: 18px;
+  }
+
+  .Collection-card {
+    flex-basis: calc((100% - 18px) / 2);
+  }
+
+  .Collection-image-wrapper {
+    height: clamp(250px, 48vw, 340px);
+  }
+
+  .Collection-arrow-prev {
+    left: -18px;
+  }
+
+  .Collection-arrow-next {
+    right: -18px;
+  }
+}
+
+/* =====================================================
+   MOBILE PHONES
+===================================================== */
+
+@media (max-width: 480px) {
+  .Collection {
+    padding-top: 30px;
+    padding-bottom: 25px;
+  }
+
+  .Collection-container {
+    padding-right: 19px;
+    padding-left: 19px;
+  }
+
+  .Collection-heading {
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 27px;
+  }
+
+  .Collection-heading-main {
+    gap: 5px;
+  }
+
+  .Collection-title {
+    font-size: clamp(23px, 6vw, 29px);
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+  }
+
+  .Collection-subtitle {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .Collection-view-all {
+    margin-top: 32px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .Collection-track {
+    gap: 15px;
+    scroll-padding-left: 0;
+  }
+
+  .Collection-card {
+    flex-basis: 84%;
+  }
+
+  .Collection-image-wrapper {
+    height: clamp(270px, 82vw, 360px);
+  }
+
+  .Collection-discount {
+    top: 12px;
+    min-width: 67px;
+    min-height: 29px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .Collection-wishlist {
+    top: 11px;
+    right: 11px;
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+  }
+
+  .Collection-category-panel {
+    right: 10px;
+    left: 10px;
+    min-height: 49px;
+    padding: 9px;
+  }
+
+  .Collection-category-label {
+    font-size: 10px;
+  }
+
+  .Collection-category {
+    font-size: 12px;
+  }
+
+  .Collection-details {
+    padding: 18px 15px 19px;
+  }
+
+  .Collection-card-title {
+    min-height: 48px;
+    margin-bottom: 10px;
+    font-size: 17px;
+  }
+
+  .Collection-artist {
+    margin-bottom: 11px;
+    font-size: 13px;
+  }
+
+  .Collection-pricing {
+    gap: 9px;
+    margin-bottom: 18px;
+  }
+
+  .Collection-original-price {
+    font-size: 13px;
+  }
+
+  .Collection-discount-price {
+    font-size: 17px;
+  }
+
+  .Collection-cart-button {
+    min-height: 43px;
+    font-size: 13px;
+  }
+
+  .Collection-arrow {
+    top: 35%;
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .Collection-arrow-prev {
+    left: -15px;
+  }
+
+  .Collection-arrow-next {
+    right: -15px;
+  }
+}
+
+/* =====================================================
+   EXTRA-SMALL PHONES
+===================================================== */
+
+@media (max-width: 360px) {
+  .Collection-container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .Collection-title {
+    font-size: 22px;
+  }
+
+  .Collection-subtitle {
+    font-size: 11px;
+  }
+
+  .Collection-view-all {
+    font-size: 11px;
+  }
+
+  .Collection-card {
+    flex-basis: 90%;
+  }
+
+  .Collection-image-wrapper {
+    height: 270px;
+  }
+
+  .Collection-details {
+    padding: 15px 12px 17px;
+  }
+
+  .Collection-arrow {
+    width: 31px;
+    height: 31px;
+  }
+
+  .Collection-arrow-prev {
+    left: -12px;
+  }
+
+  .Collection-arrow-next {
+    right: -12px;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION ACCESSIBILITY
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .Collection *,
+  .Collection *::before,
+  .Collection *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
