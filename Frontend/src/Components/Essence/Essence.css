@@ -1,0 +1,691 @@
+
+/* =====================================================
+   ESSENCE SECTION
+===================================================== */
+
+.Essence {
+  --Essence-background: #faf7f7;
+  --Essence-text: #171717;
+  --Essence-description: #5d5b5a;
+  --Essence-green: #00c982;
+  --Essence-border: #e9e6e6;
+
+  width: 100%;
+  padding: 24px 0 75px;
+  background: #ffffff;
+  color: var(--Essence-text);
+
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.Essence *,
+.Essence *::before,
+.Essence *::after {
+  box-sizing: border-box;
+}
+
+.Essence-container {
+  width: 100%;
+  max-width: 1600px;
+  min-height: 730px;
+  margin: 0 auto;
+  padding: 100px 58px;
+
+  background: var(--Essence-background);
+
+  display: flex;
+  align-items: center;
+}
+
+/* =====================================================
+   MAIN TWO-COLUMN LAYOUT
+===================================================== */
+
+.Essence-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 30px;
+
+  width: 100%;
+  max-width: 1390px;
+  margin: 0 auto;
+}
+
+/* =====================================================
+   LEFT VISUAL
+===================================================== */
+
+.Essence-visual {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  padding-bottom: 37px;
+}
+
+.Essence-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 485px;
+  overflow: hidden;
+  background: #eee9e2;
+}
+
+.Essence-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform 0.7s ease;
+}
+
+.Essence-image-wrapper:hover .Essence-image {
+  transform: scale(1.035);
+}
+
+/* =====================================================
+   STATISTICS PANEL
+===================================================== */
+
+.Essence-stats {
+  position: absolute;
+  right: -1px;
+  bottom: 0;
+  left: 70px;
+  z-index: 2;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+
+  min-height: 106px;
+  padding: 14px 10px;
+
+  background: #ffffff;
+  border: 1px solid var(--Essence-border);
+  border-radius: 7px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.015);
+}
+
+.Essence-stat {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-width: 0;
+  min-height: 55px;
+  padding: 0 5px;
+  text-align: center;
+}
+
+.Essence-stat:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 0;
+
+  width: 1px;
+  height: 52px;
+
+  background: #d9d6d6;
+}
+
+.Essence-stat-number {
+  color: #171717;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(25px, 2.2vw, 37px);
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.Essence-stat-label {
+  color: #66615f;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   RIGHT CONTENT
+===================================================== */
+
+.Essence-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+  padding: 0 0 5px;
+}
+
+/* Heading */
+
+.Essence-title {
+  margin: 0 0 26px;
+  padding: 0;
+
+  color: #171717;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(32px, 2.45vw, 40px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.65px;
+}
+
+/* Description */
+
+.Essence-description {
+  max-width: 790px;
+  margin: 0 0 38px;
+  padding: 0;
+
+  color: var(--Essence-description);
+
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.85;
+  letter-spacing: 0.35px;
+}
+
+/* =====================================================
+   FEATURES AND LEARN MORE
+===================================================== */
+
+.Essence-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  align-items: center;
+  gap: 28px;
+
+  width: 100%;
+}
+
+/* Features list */
+
+.Essence-features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 18px 24px;
+
+  padding: 0;
+  margin: 0;
+
+  list-style: none;
+}
+
+.Essence-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 0;
+
+  color: #151515;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.Essence-check {
+  flex: 0 0 auto;
+
+  color: var(--Essence-green);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* =====================================================
+   STARBURST LEARN MORE BUTTON
+===================================================== */
+
+.Essence-learn-more {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+  width: 116px;
+  height: 120px;
+
+  color: #ffffff;
+  background: #171717;
+
+  clip-path: polygon(
+    50% 0%,
+    59% 11%,
+    72% 4%,
+    76% 19%,
+    91% 16%,
+    89% 31%,
+    100% 40%,
+    91% 50%,
+    100% 61%,
+    87% 69%,
+    91% 84%,
+    76% 82%,
+    70% 97%,
+    59% 89%,
+    50% 100%,
+    41% 89%,
+    29% 97%,
+    24% 82%,
+    9% 84%,
+    12% 69%,
+    0% 61%,
+    9% 50%,
+    0% 40%,
+    11% 31%,
+    9% 16%,
+    24% 19%,
+    29% 4%,
+    41% 11%
+  );
+
+  text-decoration: none;
+  text-align: center;
+
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.Essence-learn-more span {
+  display: block;
+
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.Essence-learn-more:hover {
+  color: #ffffff;
+  background: #333333;
+  transform: rotate(5deg) scale(1.04);
+}
+
+.Essence-learn-more:focus-visible {
+  outline: 2px solid var(--Essence-green);
+  outline-offset: 5px;
+}
+
+/* =====================================================
+   LARGE SCREENS
+===================================================== */
+
+@media (min-width: 1600px) {
+  .Essence-container {
+    padding-right: 58px;
+    padding-left: 58px;
+  }
+
+  .Essence-layout {
+    gap: 38px;
+  }
+
+  .Essence-image-wrapper {
+    height: 510px;
+  }
+
+  .Essence-description {
+    font-size: 19px;
+  }
+}
+
+/* =====================================================
+   LAPTOPS
+===================================================== */
+
+@media (max-width: 1200px) {
+  .Essence-container {
+    min-height: 650px;
+    padding: 75px 38px;
+  }
+
+  .Essence-layout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+    gap: 26px;
+  }
+
+  .Essence-image-wrapper {
+    height: 410px;
+  }
+
+  .Essence-stats {
+    left: 35px;
+    min-height: 90px;
+  }
+
+  .Essence-stat-number {
+    font-size: 29px;
+  }
+
+  .Essence-stat-label {
+    font-size: 13px;
+  }
+
+  .Essence-title {
+    margin-bottom: 20px;
+    font-size: 33px;
+  }
+
+  .Essence-description {
+    margin-bottom: 28px;
+    font-size: 15px;
+    line-height: 1.85;
+  }
+
+  .Essence-bottom {
+    grid-template-columns: minmax(0, 1fr) 95px;
+    gap: 16px;
+  }
+
+  .Essence-features {
+    gap: 15px 12px;
+  }
+
+  .Essence-feature {
+    gap: 7px;
+    font-size: 14px;
+  }
+
+  .Essence-check {
+    font-size: 18px;
+  }
+
+  .Essence-learn-more {
+    width: 95px;
+    height: 100px;
+  }
+
+  .Essence-learn-more span {
+    font-size: 13px;
+  }
+}
+
+/* =====================================================
+   TABLETS
+===================================================== */
+
+@media (max-width: 900px) {
+  .Essence {
+    padding: 20px 0 45px;
+  }
+
+  .Essence-container {
+    min-height: auto;
+    padding: 55px 35px 75px;
+  }
+
+  .Essence-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 65px;
+    max-width: 700px;
+  }
+
+  .Essence-visual {
+    padding-bottom: 35px;
+  }
+
+  .Essence-image-wrapper {
+    height: clamp(350px, 60vw, 480px);
+  }
+
+  .Essence-stats {
+    right: 25px;
+    left: 25px;
+    min-height: 100px;
+  }
+
+  .Essence-stat-number {
+    font-size: 34px;
+  }
+
+  .Essence-stat-label {
+    font-size: 15px;
+  }
+
+  .Essence-content {
+    padding: 0;
+  }
+
+  .Essence-title {
+    margin-bottom: 20px;
+    font-size: 37px;
+  }
+
+  .Essence-description {
+    max-width: 100%;
+    margin-bottom: 30px;
+    font-size: 16px;
+  }
+
+  .Essence-bottom {
+    grid-template-columns: minmax(0, 1fr) 110px;
+    gap: 25px;
+  }
+
+  .Essence-feature {
+    font-size: 16px;
+  }
+
+  .Essence-learn-more {
+    width: 105px;
+    height: 110px;
+  }
+}
+
+/* =====================================================
+   MOBILE PHONES
+===================================================== */
+
+@media (max-width: 600px) {
+  .Essence {
+    padding: 15px 0 30px;
+  }
+
+  .Essence-container {
+    padding: 38px 20px 60px;
+  }
+
+  .Essence-layout {
+    gap: 48px;
+  }
+
+  .Essence-visual {
+    padding-bottom: 60px;
+  }
+
+  .Essence-image-wrapper {
+    height: clamp(260px, 75vw, 390px);
+  }
+
+  .Essence-image {
+    object-position: center;
+  }
+
+  /* Statistics panel */
+
+  .Essence-stats {
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+
+    min-height: 120px;
+    padding: 12px 6px;
+  }
+
+  .Essence-stat {
+    min-height: 44px;
+    padding: 7px 4px;
+  }
+
+  .Essence-stat:nth-child(odd)::after {
+    display: block;
+    top: 5px;
+    height: calc(100% - 10px);
+  }
+
+  .Essence-stat:nth-child(even)::after {
+    display: none;
+  }
+
+  .Essence-stat:nth-child(-n + 2) {
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .Essence-stat-number {
+    font-size: 27px;
+  }
+
+  .Essence-stat-label {
+    font-size: 12px;
+  }
+
+  /* Content */
+
+  .Essence-title {
+    margin-bottom: 17px;
+    font-size: clamp(28px, 7vw, 35px);
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+  }
+
+  .Essence-description {
+    margin-bottom: 25px;
+    font-size: 14px;
+    line-height: 1.85;
+    letter-spacing: 0.1px;
+  }
+
+  /* Features and button */
+
+  .Essence-bottom {
+    grid-template-columns: minmax(0, 1fr) 78px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .Essence-features {
+    gap: 16px 10px;
+  }
+
+  .Essence-feature {
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .Essence-check {
+    font-size: 17px;
+  }
+
+  .Essence-learn-more {
+    width: 78px;
+    height: 82px;
+  }
+
+  .Essence-learn-more span {
+    font-size: 11px;
+  }
+}
+
+/* =====================================================
+   EXTRA-SMALL PHONES
+===================================================== */
+
+@media (max-width: 380px) {
+  .Essence-container {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .Essence-layout {
+    gap: 42px;
+  }
+
+  .Essence-visual {
+    padding-bottom: 66px;
+  }
+
+  .Essence-image-wrapper {
+    height: 250px;
+  }
+
+  .Essence-stats {
+    min-height: 132px;
+    padding: 8px 3px;
+  }
+
+  .Essence-stat-number {
+    font-size: 24px;
+  }
+
+  .Essence-stat-label {
+    font-size: 11px;
+  }
+
+  .Essence-title {
+    font-size: 27px;
+  }
+
+  .Essence-description {
+    font-size: 13px;
+  }
+
+  .Essence-bottom {
+    grid-template-columns: minmax(0, 1fr) 68px;
+    gap: 8px;
+  }
+
+  .Essence-features {
+    gap: 14px 6px;
+  }
+
+  .Essence-feature {
+    font-size: 12px;
+  }
+
+  .Essence-learn-more {
+    width: 68px;
+    height: 72px;
+  }
+
+  .Essence-learn-more span {
+    font-size: 10px;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .Essence *,
+  .Essence *::before,
+  .Essence *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

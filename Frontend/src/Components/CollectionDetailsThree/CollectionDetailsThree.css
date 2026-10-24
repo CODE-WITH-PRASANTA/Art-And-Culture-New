@@ -1,0 +1,935 @@
+
+/* =====================================================
+   STREAMING COLLECTION
+===================================================== */
+
+.CollectionDetailsThree {
+  --CollectionDetailsThree-accent: #8b5e3c;
+  --CollectionDetailsThree-accent-dark: #6f452a;
+  --CollectionDetailsThree-text: #242424;
+  --CollectionDetailsThree-muted: #777777;
+  --CollectionDetailsThree-border: #eeeeee;
+  --CollectionDetailsThree-background: #ffffff;
+  --CollectionDetailsThree-discount: #e52b2b;
+
+  width: 100%;
+  padding: 54px 0 42px;
+  overflow: hidden;
+
+  color: var(--CollectionDetailsThree-text);
+  background: var(--CollectionDetailsThree-background);
+
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.CollectionDetailsThree *,
+.CollectionDetailsThree *::before,
+.CollectionDetailsThree *::after {
+  box-sizing: border-box;
+}
+
+.CollectionDetailsThree-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 6.75%;
+}
+
+/* =====================================================
+   HEADING
+===================================================== */
+
+.CollectionDetailsThree-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+
+  width: 100%;
+  margin-bottom: 60px;
+}
+
+.CollectionDetailsThree-heading-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.CollectionDetailsThree-title {
+  padding: 0;
+  margin: 0;
+
+  color: #171717;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 2.3vw, 38px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+}
+
+.CollectionDetailsThree-subtitle {
+  padding: 0;
+  margin: 0;
+
+  color: #777777;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+}
+
+.CollectionDetailsThree-view-all {
+  display: inline-block;
+  flex: 0 0 auto;
+
+  padding: 5px 0 3px;
+  margin-top: 44px;
+
+  color: #161616;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+
+  transition: color 0.25s ease;
+}
+
+.CollectionDetailsThree-view-all:hover {
+  color: var(--CollectionDetailsThree-accent);
+}
+
+/* =====================================================
+   CAROUSEL
+===================================================== */
+
+.CollectionDetailsThree-carousel {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Horizontal scrolling track */
+
+.CollectionDetailsThree-track {
+  display: flex;
+  align-items: stretch;
+  gap: 28px;
+
+  width: 100%;
+  padding: 0 0 8px;
+  margin: 0;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.CollectionDetailsThree-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* =====================================================
+   COLLECTION CARD
+===================================================== */
+
+.CollectionDetailsThree-card {
+  position: relative;
+
+  display: flex;
+  flex: 0 0 calc((100% - 84px) / 4);
+  flex-direction: column;
+
+  min-width: 0;
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+
+  scroll-snap-align: start;
+
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.CollectionDetailsThree-card:hover {
+  border-color: #e4ded7;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.055);
+}
+
+/* =====================================================
+   IMAGE WRAPPER
+===================================================== */
+
+.CollectionDetailsThree-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: clamp(280px, 25vw, 360px);
+  flex: 0 0 auto;
+
+  overflow: hidden;
+  background: #f4f0eb;
+}
+
+/* Artwork */
+
+.CollectionDetailsThree-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform 0.65s ease;
+}
+
+.CollectionDetailsThree-card:hover .CollectionDetailsThree-image {
+  transform: scale(1.045);
+}
+
+/* =====================================================
+   DISCOUNT BADGE
+===================================================== */
+
+.CollectionDetailsThree-discount {
+  position: absolute;
+  top: 17px;
+  left: 0;
+  z-index: 2;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 76px;
+  min-height: 32px;
+  padding: 6px 13px;
+
+  color: #ffffff;
+  background: var(--CollectionDetailsThree-discount);
+
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.3px;
+}
+
+/* =====================================================
+   WISHLIST BUTTON
+===================================================== */
+
+.CollectionDetailsThree-wishlist {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 39px;
+  height: 39px;
+  padding: 0;
+
+  color: #252525;
+  background: #ffffff;
+  border: none;
+  border-radius: 50%;
+
+  font-size: 19px;
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.CollectionDetailsThree-wishlist:hover {
+  color: #e52b45;
+  transform: scale(1.08);
+}
+
+.CollectionDetailsThree-wishlist-active {
+  color: #e52b45;
+}
+
+.CollectionDetailsThree-wishlist:focus-visible {
+  outline: 2px solid var(--CollectionDetailsThree-accent);
+  outline-offset: 3px;
+}
+
+/* =====================================================
+   CATEGORY PANEL
+   Positioned over the bottom of the image
+===================================================== */
+
+.CollectionDetailsThree-category-panel {
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+  left: 12px;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 9px;
+
+  min-height: 58px;
+  padding: 12px 10px;
+
+  color: #292929;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 7px 7px 0 0;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.09);
+}
+
+.CollectionDetailsThree-category-label {
+  color: #858585;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.CollectionDetailsThree-category {
+  color: #292929;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* =====================================================
+   CARD DETAILS
+===================================================== */
+
+.CollectionDetailsThree-details {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+
+  min-width: 0;
+  padding: 23px 18px 24px;
+  background: #ffffff;
+}
+
+/* Artwork title */
+
+.CollectionDetailsThree-card-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  min-height: 54px;
+  width: 100%;
+  overflow: hidden;
+
+  padding: 0;
+  margin: 0 0 14px;
+
+  color: #262626;
+  font-family: inherit;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0.05px;
+}
+
+/* Artist */
+
+.CollectionDetailsThree-artist {
+  width: 100%;
+  padding: 0;
+  margin: 0 0 14px;
+
+  color: #333333;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+.CollectionDetailsThree-artist span {
+  color: #888888;
+  margin-right: 3px;
+}
+
+/* =====================================================
+   PRICING
+===================================================== */
+
+.CollectionDetailsThree-pricing {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 9px;
+
+  width: 100%;
+  margin-bottom: 23px;
+}
+
+.CollectionDetailsThree-original-price {
+  color: #888888;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.CollectionDetailsThree-discount-price {
+  color: #292929;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* =====================================================
+   ADD TO CART BUTTON
+===================================================== */
+
+.CollectionDetailsThree-cart-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 14px;
+  margin-top: auto;
+
+  color: #262626;
+  background: #ffffff;
+  border: 1px solid #333333;
+  border-radius: 5px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.CollectionDetailsThree-cart-button svg {
+  flex: 0 0 auto;
+  font-size: 14px;
+}
+
+.CollectionDetailsThree-cart-button:hover:not(:disabled) {
+  color: #ffffff;
+  background: var(--CollectionDetailsThree-accent);
+  border-color: var(--CollectionDetailsThree-accent);
+  transform: translateY(-1px);
+}
+
+.CollectionDetailsThree-cart-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.CollectionDetailsThree-cart-button:focus-visible {
+  outline: 2px solid var(--CollectionDetailsThree-accent);
+  outline-offset: 3px;
+}
+
+.CollectionDetailsThree-cart-button-added,
+.CollectionDetailsThree-cart-button:disabled {
+  color: #ffffff;
+  background: #525252;
+  border-color: #525252;
+  cursor: default;
+  opacity: 1;
+}
+
+/* =====================================================
+   CAROUSEL ARROWS
+===================================================== */
+
+.CollectionDetailsThree-arrow {
+  position: absolute;
+  top: 42%;
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 43px;
+  height: 43px;
+  padding: 0;
+
+  color: #4b4b4b;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 50%;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  box-shadow: 0 2px 9px rgba(0, 0, 0, 0.045);
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.CollectionDetailsThree-arrow:hover {
+  color: #ffffff;
+  background: var(--CollectionDetailsThree-accent);
+  border-color: var(--CollectionDetailsThree-accent);
+  transform: scale(1.07);
+}
+
+.CollectionDetailsThree-arrow:active {
+  transform: scale(0.96);
+}
+
+.CollectionDetailsThree-arrow:focus-visible {
+  outline: 2px solid var(--CollectionDetailsThree-accent);
+  outline-offset: 3px;
+}
+
+.CollectionDetailsThree-arrow-prev {
+  left: -22px;
+}
+
+.CollectionDetailsThree-arrow-next {
+  right: -22px;
+}
+
+/* =====================================================
+   LARGE LAPTOPS
+===================================================== */
+
+@media (max-width: 1200px) {
+  .CollectionDetailsThree {
+    padding-top: 46px;
+  }
+
+  .CollectionDetailsThree-container {
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  .CollectionDetailsThree-heading {
+    margin-bottom: 45px;
+  }
+
+  .CollectionDetailsThree-track {
+    gap: 22px;
+  }
+
+  .CollectionDetailsThree-card {
+    flex-basis: calc((100% - 66px) / 4);
+  }
+
+  .CollectionDetailsThree-image-wrapper {
+    height: clamp(250px, 27vw, 330px);
+  }
+
+  .CollectionDetailsThree-details {
+    padding: 20px 15px 21px;
+  }
+
+  .CollectionDetailsThree-card-title {
+    font-size: 17px;
+  }
+
+  .CollectionDetailsThree-artist {
+    font-size: 14px;
+  }
+
+  .CollectionDetailsThree-discount-price {
+    font-size: 16px;
+  }
+
+  .CollectionDetailsThree-arrow-prev {
+    left: -19px;
+  }
+
+  .CollectionDetailsThree-arrow-next {
+    right: -19px;
+  }
+}
+
+/* =====================================================
+   TABLETS
+===================================================== */
+
+@media (max-width: 900px) {
+  .CollectionDetailsThree-container {
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+
+  .CollectionDetailsThree-heading {
+    margin-bottom: 35px;
+  }
+
+  .CollectionDetailsThree-title {
+    font-size: 31px;
+  }
+
+  .CollectionDetailsThree-subtitle {
+    font-size: 16px;
+  }
+
+  .CollectionDetailsThree-view-all {
+    margin-top: 35px;
+    font-size: 14px;
+  }
+
+  .CollectionDetailsThree-track {
+    gap: 20px;
+  }
+
+  .CollectionDetailsThree-card {
+    flex-basis: calc((100% - 40px) / 3);
+  }
+
+  .CollectionDetailsThree-image-wrapper {
+    height: 290px;
+  }
+
+  .CollectionDetailsThree-category-panel {
+    right: 8px;
+    left: 8px;
+    min-height: 52px;
+    padding: 9px 6px;
+    gap: 5px;
+  }
+
+  .CollectionDetailsThree-category-label {
+    font-size: 10px;
+  }
+
+  .CollectionDetailsThree-category {
+    font-size: 12px;
+  }
+
+  .CollectionDetailsThree-wishlist {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+  }
+
+  .CollectionDetailsThree-discount {
+    top: 13px;
+    min-width: 65px;
+    min-height: 29px;
+    font-size: 12px;
+  }
+
+  .CollectionDetailsThree-details {
+    padding: 17px 13px 19px;
+  }
+
+  .CollectionDetailsThree-card-title {
+    min-height: 48px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .CollectionDetailsThree-artist {
+    font-size: 13px;
+  }
+
+  .CollectionDetailsThree-pricing {
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .CollectionDetailsThree-original-price {
+    font-size: 12px;
+  }
+
+  .CollectionDetailsThree-discount-price {
+    font-size: 15px;
+  }
+
+  .CollectionDetailsThree-cart-button {
+    min-height: 41px;
+    padding: 9px 8px;
+    font-size: 12px;
+  }
+
+  .CollectionDetailsThree-arrow {
+    top: 39%;
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .CollectionDetailsThree-arrow-prev {
+    left: -18px;
+  }
+
+  .CollectionDetailsThree-arrow-next {
+    right: -18px;
+  }
+}
+
+/* =====================================================
+   SMALL TABLETS
+===================================================== */
+
+@media (max-width: 700px) {
+  .CollectionDetailsThree {
+    padding-top: 38px;
+    padding-bottom: 30px;
+  }
+
+  .CollectionDetailsThree-container {
+    padding-right: 25px;
+    padding-left: 25px;
+  }
+
+  .CollectionDetailsThree-track {
+    gap: 18px;
+  }
+
+  .CollectionDetailsThree-card {
+    flex-basis: calc((100% - 18px) / 2);
+  }
+
+  .CollectionDetailsThree-image-wrapper {
+    height: clamp(250px, 48vw, 340px);
+  }
+
+  .CollectionDetailsThree-arrow-prev {
+    left: -18px;
+  }
+
+  .CollectionDetailsThree-arrow-next {
+    right: -18px;
+  }
+}
+
+/* =====================================================
+   MOBILE PHONES
+===================================================== */
+
+@media (max-width: 480px) {
+  .CollectionDetailsThree {
+    padding-top: 30px;
+    padding-bottom: 25px;
+  }
+
+  .CollectionDetailsThree-container {
+    padding-right: 19px;
+    padding-left: 19px;
+  }
+
+  .CollectionDetailsThree-heading {
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 27px;
+  }
+
+  .CollectionDetailsThree-heading-main {
+    gap: 5px;
+  }
+
+  .CollectionDetailsThree-title {
+    font-size: clamp(23px, 6vw, 29px);
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+  }
+
+  .CollectionDetailsThree-subtitle {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .CollectionDetailsThree-view-all {
+    margin-top: 32px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .CollectionDetailsThree-track {
+    gap: 15px;
+    scroll-padding-left: 0;
+  }
+
+  .CollectionDetailsThree-card {
+    flex-basis: 84%;
+  }
+
+  .CollectionDetailsThree-image-wrapper {
+    height: clamp(270px, 82vw, 360px);
+  }
+
+  .CollectionDetailsThree-discount {
+    top: 12px;
+    min-width: 67px;
+    min-height: 29px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .CollectionDetailsThree-wishlist {
+    top: 11px;
+    right: 11px;
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+  }
+
+  .CollectionDetailsThree-category-panel {
+    right: 10px;
+    left: 10px;
+    min-height: 49px;
+    padding: 9px;
+  }
+
+  .CollectionDetailsThree-category-label {
+    font-size: 10px;
+  }
+
+  .CollectionDetailsThree-category {
+    font-size: 12px;
+  }
+
+  .CollectionDetailsThree-details {
+    padding: 18px 15px 19px;
+  }
+
+  .CollectionDetailsThree-card-title {
+    min-height: 48px;
+    margin-bottom: 10px;
+    font-size: 17px;
+  }
+
+  .CollectionDetailsThree-artist {
+    margin-bottom: 11px;
+    font-size: 13px;
+  }
+
+  .CollectionDetailsThree-pricing {
+    gap: 9px;
+    margin-bottom: 18px;
+  }
+
+  .CollectionDetailsThree-original-price {
+    font-size: 13px;
+  }
+
+  .CollectionDetailsThree-discount-price {
+    font-size: 17px;
+  }
+
+  .CollectionDetailsThree-cart-button {
+    min-height: 43px;
+    font-size: 13px;
+  }
+
+  .CollectionDetailsThree-arrow {
+    top: 35%;
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .CollectionDetailsThree-arrow-prev {
+    left: -15px;
+  }
+
+  .CollectionDetailsThree-arrow-next {
+    right: -15px;
+  }
+}
+
+/* =====================================================
+   EXTRA-SMALL PHONES
+===================================================== */
+
+@media (max-width: 360px) {
+  .CollectionDetailsThree-container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .CollectionDetailsThree-title {
+    font-size: 22px;
+  }
+
+  .CollectionDetailsThree-subtitle {
+    font-size: 11px;
+  }
+
+  .CollectionDetailsThree-view-all {
+    font-size: 11px;
+  }
+
+  .CollectionDetailsThree-card {
+    flex-basis: 90%;
+  }
+
+  .CollectionDetailsThree-image-wrapper {
+    height: 270px;
+  }
+
+  .CollectionDetailsThree-details {
+    padding: 15px 12px 17px;
+  }
+
+  .CollectionDetailsThree-arrow {
+    width: 31px;
+    height: 31px;
+  }
+
+  .CollectionDetailsThree-arrow-prev {
+    left: -12px;
+  }
+
+  .CollectionDetailsThree-arrow-next {
+    right: -12px;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION ACCESSIBILITY
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .CollectionDetailsThree *,
+  .CollectionDetailsThree *::before,
+  .CollectionDetailsThree *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
