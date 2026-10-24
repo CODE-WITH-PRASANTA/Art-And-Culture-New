@@ -1,15 +1,15 @@
-
 /* =========================================
    HERO SECTION
 ========================================= */
 
 .HeroSection {
   width: 100%;
-  background: #ffffff;
+  background: #fff;
   color: #191919;
   overflow: clip;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-   padding-left: var(--site-side-space, 50px);
+  /* the ONLY place side space is applied */
+  padding-left: var(--site-side-space, 50px);
   padding-right: var(--site-side-space, 50px);
 }
 
@@ -19,28 +19,18 @@
   box-sizing: border-box;
 }
 
-/* =========================================
-   SHARED CONTAINER
-========================================= */
-
 .HeroSection-container {
   width: 100%;
   max-width: 1770px;
   margin: 0 auto;
- 
 }
 
 /* =========================================
-   TOP SEARCH BAR
+   TOP BAR
 ========================================= */
 
-.HeroSection-topbar {
-  width: 100%;
-  background: #ffffff;
-}
-
 .HeroSection-topbar .HeroSection-container {
-  min-height: 108px;
+  min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -48,7 +38,7 @@
 }
 
 .HeroSection-search {
-  width: min(625px, 60%);
+  width: min(600px, 60%);
   height: 52px;
   display: flex;
   align-items: center;
@@ -57,41 +47,36 @@
 
 .HeroSection-search input {
   flex: 1;
-  width: 100%;
   min-width: 0;
   height: 100%;
   padding: 0 12px 0 8px;
-  color: #222222;
-  background: transparent;
   border: none;
   outline: none;
-  font-family: inherit;
+  background: transparent;
+  color: #222;
   font-size: 16px;
-  letter-spacing: 0.3px;
 }
 
 .HeroSection-search input::placeholder {
   color: #858585;
-  opacity: 1;
 }
 
 .HeroSection-search button {
   width: 42px;
   height: 100%;
-  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   background: transparent;
   color: #626262;
-  font-size: 19px;
+  font-size: 18px;
   cursor: pointer;
   transition: color 0.25s ease;
 }
 
 .HeroSection-search button:hover {
-  color: #000000;
+  color: #000;
 }
 
 .HeroSection-help {
@@ -99,204 +84,105 @@
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-  color: #111111;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 500;
-  text-decoration: none;
   white-space: nowrap;
   transition: opacity 0.25s ease;
 }
 
 .HeroSection-help svg {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .HeroSection-help:hover {
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
 /* =========================================
-   MAIN HERO BANNER
+   BANNER
 ========================================= */
 
 .HeroSection-banner {
-  position: relative;
-  width: calc(100% - (2 * var(--site-side-space, 150px)));
-  max-width: 1770px;
-  min-height: 680px;
-  margin: 18px auto 0;
-  padding: 75px 56px 50px;
+  width: 100%;                 /* no calc, no extra padding system */
+  min-height: 640px;
+  padding: 60px 56px;
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  grid-template-columns: 1.1fr 1fr;
   align-items: center;
-  gap: 38px;
+  gap: 40px;
   background: #fbf8f8;
+  border-radius: 12px;
 }
 
-/* =========================================
-   LEFT CONTENT
-========================================= */
-
 .HeroSection-content {
-  position: relative;
-  z-index: 2;
   min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
 }
 
 .HeroSection-eyebrow {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-height: 37px;
-  padding: 5px 19px;
-  margin-bottom: 23px;
-  border: 1px solid #777777;
+  padding: 6px 18px;
+  margin-bottom: 22px;
+  border: 1px solid #777;
   border-radius: 8px;
-  color: #171717;
-  background: transparent;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: 0.1px;
-  text-align: center;
 }
-
-/* =========================================
-   HERO HEADING
-========================================= */
 
 .HeroSection-title {
   max-width: 760px;
-  margin: 0 0 25px;
-  color: #191919;
+  margin-bottom: 24px;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(42px, 3.2vw, 59px);
+  font-size: clamp(36px, 3.4vw, 58px);
   font-weight: 700;
-  line-height: 1.09;
-  letter-spacing: -1.5px;
+  line-height: 1.1;
+  letter-spacing: -1.2px;
 }
-
-/* =========================================
-   DESCRIPTION
-========================================= */
 
 .HeroSection-description {
-  max-width: 690px;
-  margin: 0 0 63px;
+  max-width: 600px;
+  margin-bottom: 40px;
   color: #656565;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 1.75;
-  letter-spacing: 0.2px;
+  font-size: 19px;
+  line-height: 1.7;
 }
 
-/* =========================================
-   AUCTION BUTTON
-========================================= */
-
 .HeroSection-button {
-  min-width: 197px;
-  min-height: 65px;
-  padding: 15px 23px;
+  min-width: 190px;
+  min-height: 60px;
+  padding: 14px 24px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: #171717;
   border: 1px solid #171717;
   border-radius: 8px;
-  color: #ffffff;
+  color: #fff;
   font-size: 16px;
   font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  text-decoration: none;
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    transform 0.25s ease;
-}
-
-.HeroSection-button span {
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 
 .HeroSection-button:hover {
-  background: #ffffff;
+  background: #fff;
   color: #171717;
   transform: translateY(-2px);
 }
 
-/* =========================================
-   ARTWORK IMAGE
-========================================= */
-
 .HeroSection-gallery {
-  width: 100%;
   min-width: 0;
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
 .HeroSection-gallery-image {
-  display: block;
   width: 100%;
-  max-width: 650px;
+  max-width: 600px;
   height: auto;
   object-fit: contain;
-  object-position: center;
-}
-
-/* =========================================
-   LARGE DESKTOP
-========================================= */
-
-@media (min-width: 1600px) {
-  .HeroSection-banner {
-    min-height: 680px;
-    padding-left: 56px;
-    padding-right: 56px;
-  }
-
-  .HeroSection-gallery-image {
-    max-width: 650px;
-  }
-}
-
-/* =========================================
-   LAPTOP
-========================================= */
-
-@media (max-width: 1400px) {
-  .HeroSection-topbar .HeroSection-container {
-    min-height: 95px;
-  }
-
-  .HeroSection-banner {
-    min-height: 600px;
-    padding: 55px 38px;
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-    gap: 28px;
-  }
-
-  .HeroSection-title {
-    font-size: clamp(39px, 3.8vw, 52px);
-    letter-spacing: -1.1px;
-  }
-
-  .HeroSection-description {
-    margin-bottom: 42px;
-    font-size: 18px;
-  }
-
-  .HeroSection-gallery-image {
-    max-width: 560px;
-  }
 }
 
 /* =========================================
@@ -304,43 +190,19 @@
 ========================================= */
 
 @media (max-width: 1024px) {
-  .HeroSection-topbar .HeroSection-container {
-    min-height: 85px;
-  }
-
-  .HeroSection-search {
-    width: min(500px, 70%);
-  }
-
   .HeroSection-banner {
-    width: calc(100% - (2 * var(--site-side-space, 24px)));
     min-height: auto;
-    padding: 55px 35px 45px;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 45px;
-  }
-
-  .HeroSection-content {
-    max-width: 760px;
-  }
-
-  .HeroSection-title {
-    max-width: 760px;
-    font-size: clamp(43px, 6vw, 62px);
+    padding: 48px 32px;
+    grid-template-columns: 1fr;
+    gap: 40px;
   }
 
   .HeroSection-description {
-    max-width: 620px;
     margin-bottom: 30px;
   }
 
-  .HeroSection-gallery {
-    max-width: 650px;
-    margin: 0 auto;
-  }
-
   .HeroSection-gallery-image {
-    max-width: 100%;
+    margin: 0 auto;
   }
 }
 
@@ -350,53 +212,33 @@
 
 @media (max-width: 600px) {
   .HeroSection-topbar .HeroSection-container {
-    min-height: 78px;
-    gap: 15px;
+    min-height: 76px;
+    gap: 14px;
   }
 
   .HeroSection-search {
     width: 100%;
-    height: 45px;
+    height: 44px;
   }
 
-  .HeroSection-search input {
-    font-size: 13px;
-    padding-left: 3px;
-  }
-
-  .HeroSection-search button {
-    width: 32px;
-    font-size: 16px;
-  }
-
+  .HeroSection-search input,
   .HeroSection-help {
-    gap: 4px;
     font-size: 13px;
-  }
-
-  .HeroSection-help svg {
-    font-size: 12px;
   }
 
   .HeroSection-banner {
-    width: calc(100% - (2 * var(--site-side-space, 16px)));
-    padding: 40px 22px 30px;
-    gap: 35px;
+    padding: 32px 20px;
+    gap: 30px;
   }
 
   .HeroSection-eyebrow {
-    min-height: 33px;
     padding: 5px 12px;
-    margin-bottom: 20px;
-    border-radius: 6px;
     font-size: 12px;
   }
 
   .HeroSection-title {
-    margin-bottom: 18px;
-    font-size: clamp(35px, 8vw, 46px);
-    line-height: 1.13;
-    letter-spacing: -0.8px;
+    font-size: clamp(30px, 8vw, 42px);
+    letter-spacing: -0.6px;
   }
 
   .HeroSection-desktop-break {
@@ -404,56 +246,19 @@
   }
 
   .HeroSection-description {
-    margin-bottom: 25px;
+    margin-bottom: 24px;
     font-size: 15px;
-    line-height: 1.75;
   }
 
   .HeroSection-button {
-    min-width: 165px;
-    min-height: 52px;
-    padding: 12px 18px;
-    border-radius: 6px;
+    min-width: 160px;
+    min-height: 50px;
     font-size: 14px;
   }
-
-  .HeroSection-gallery-image {
-    width: 100%;
-    height: auto;
-  }
 }
-
-/* =========================================
-   SMALL MOBILE
-========================================= */
-
-@media (max-width: 380px) {
-  .HeroSection-topbar .HeroSection-container {
-    gap: 8px;
-  }
-
-  .HeroSection-help {
-    font-size: 11px;
-  }
-
-  .HeroSection-banner {
-    padding: 32px 16px 25px;
-  }
-
-  .HeroSection-title {
-    font-size: 33px;
-  }
-}
-
-/* =========================================
-   ACCESSIBILITY
-========================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .HeroSection *,
-  .HeroSection *::before,
-  .HeroSection *::after {
+  .HeroSection * {
     transition: none !important;
-    animation: none !important;
   }
 }

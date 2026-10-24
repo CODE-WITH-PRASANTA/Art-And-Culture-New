@@ -1,9 +1,16 @@
-
-:root {
-  --site-side-space: 50px;
-  --site-max-width: 100%;
+#root {
+  width: 100%;
+  min-height: 100vh;
+  /* remove padding-left / padding-right from here */
 }
 
+/* Apply the side space to everything at the top level */
+#root > *,
+.Navbar,
+.Footer {
+  padding-left: var(--site-side-space);
+  padding-right: var(--site-side-space);
+}
 *,
 *::before,
 *::after {
@@ -30,9 +37,12 @@ body {
   background: #fff;
 }
 
+/* ONE place that controls left/right space for the whole site */
 #root {
   width: 100%;
   min-height: 100vh;
+  padding-left: var(--site-side-space);
+  padding-right: var(--site-side-space);
 }
 
 img,
@@ -57,34 +67,7 @@ select {
   font: inherit;
 }
 
-/* Global horizontal spacing */
-.container,
-.section-inner,
-.Navbar-container,
-.Footer-container,
-.HeroSection-container {
-  width: 100%;
-  max-width: var(--site-max-width);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--site-side-space);
-  padding-right: var(--site-side-space);
-  box-sizing: border-box;
-}
-
-/* Responsive side spacing */
-@media (max-width: 1440px) {
-  :root {
-    --site-side-space: 100px;
-  }
-}
-
-@media (max-width: 1200px) {
-  :root {
-    --site-side-space: 60px;
-  }
-}
-
+/* Optional: smaller on mobile only */
 @media (max-width: 768px) {
   :root {
     --site-side-space: 24px;
@@ -97,17 +80,6 @@ select {
   }
 }
 
-.section-padding {
-  padding-top: 80px;
-  padding-bottom: 80px;
-}
-
-.section-padding-sm {
-  padding-top: 45px;
-  padding-bottom: 45px;
-}
-
-.section-padding-lg {
-  padding-top: 110px;
-  padding-bottom: 110px;
-}
+.section-padding    { padding-top: 80px;  padding-bottom: 80px; }
+.section-padding-sm { padding-top: 45px;  padding-bottom: 45px; }
+.section-padding-lg { padding-top: 110px; padding-bottom: 110px; }
