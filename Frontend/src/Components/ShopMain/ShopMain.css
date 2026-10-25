@@ -1,0 +1,1260 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Nunito:wght@400;500;600;700&display=swap");
+
+/* ================= Tokens ================= */
+.ShopMain {
+  --ShopMain-bg: #ffffff;
+  --ShopMain-panel: #fcfaf6;
+  --ShopMain-card: #ffffff;
+  --ShopMain-ink: #1b1511;
+  --ShopMain-onInk: #ffffff;
+  --ShopMain-muted: #6a615a;
+  --ShopMain-border: #ece5d9;
+  --ShopMain-soft: #f3ede2;
+  --ShopMain-gold: #d98a1c;
+  --ShopMain-goldSoft: #fbe6ca;
+  --ShopMain-live: #d92d20;
+  --ShopMain-upcoming: #1f9d62;
+  --ShopMain-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  background: var(--ShopMain-bg);
+  color: var(--ShopMain-ink);
+  font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding: clamp(40px, 6vw, 80px) 0;
+}
+
+[data-theme="dark"] .ShopMain {
+  --ShopMain-bg: #14100d;
+  --ShopMain-panel: #1b1612;
+  --ShopMain-card: #1b1612;
+  --ShopMain-ink: #f4eee8;
+  --ShopMain-onInk: #14100d;
+  --ShopMain-muted: #b6aca3;
+  --ShopMain-border: #2e2620;
+  --ShopMain-soft: #261f19;
+  --ShopMain-goldSoft: #3a2a14;
+}
+
+.ShopMain *,
+.ShopMain *::before,
+.ShopMain *::after {
+  box-sizing: border-box;
+}
+
+.ShopMain button,
+.ShopMain input,
+.ShopMain select {
+  font-family: inherit;
+}
+
+.ShopMain-container {
+  width: min(1280px, 100% - 40px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: clamp(28px, 3.6vw, 52px);
+  align-items: start;
+}
+
+/* ================= Sidebar ================= */
+.ShopMain-sidebar {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 22px;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 18px;
+  background: var(--ShopMain-panel);
+  box-shadow: 0 30px 60px -44px rgba(70, 45, 10, 0.45);
+  scrollbar-width: thin;
+  scrollbar-color: var(--ShopMain-border) transparent;
+}
+
+.ShopMain-sidebarHead {
+  display: none;
+}
+
+.ShopMain-sidebarTitle {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.ShopMain-sidebarClose {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 50%;
+  background: var(--ShopMain-card);
+  color: var(--ShopMain-ink);
+  cursor: pointer;
+}
+
+/* ---------- Search ---------- */
+.ShopMain-search {
+  display: flex;
+  margin-bottom: 8px;
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.8s var(--ShopMain-ease) 0.1s,
+    transform 0.8s var(--ShopMain-ease) 0.1s;
+}
+
+.ShopMain-searchInput {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--ShopMain-border);
+  border-right: 0;
+  border-radius: 12px 0 0 12px;
+  background: var(--ShopMain-card);
+  color: var(--ShopMain-ink);
+  font-size: 0.96rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ShopMain-searchInput::placeholder {
+  color: #9a9087;
+}
+
+.ShopMain-searchInput:focus {
+  border-color: var(--ShopMain-gold);
+  box-shadow: 0 0 0 4px rgba(217, 138, 28, 0.15);
+}
+
+.ShopMain-searchButton {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 52px;
+  border: 0;
+  border-radius: 0 12px 12px 0;
+  background: var(--ShopMain-ink);
+  color: var(--ShopMain-onInk);
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.ShopMain-searchButton:hover {
+  background: var(--ShopMain-gold);
+  color: #ffffff;
+}
+
+/* ---------- Filter groups ---------- */
+.ShopMain-group {
+  border-bottom: 1px solid var(--ShopMain-border);
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.8s var(--ShopMain-ease) var(--delay, 0s),
+    transform 0.8s var(--ShopMain-ease) var(--delay, 0s);
+}
+
+.ShopMain-group:last-child {
+  border-bottom: 0;
+}
+
+.ShopMain-groupHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 20px 0 14px;
+  border: 0;
+  background: none;
+  color: var(--ShopMain-ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.ShopMain-groupTitle {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.32rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.ShopMain-groupChevron {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ShopMain-soft);
+  color: var(--ShopMain-muted);
+  transition: transform 0.45s var(--ShopMain-ease), background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.ShopMain-groupHead:hover .ShopMain-groupChevron {
+  background: var(--ShopMain-gold);
+  color: #ffffff;
+}
+
+.ShopMain-groupOpen .ShopMain-groupChevron {
+  transform: rotate(180deg);
+}
+
+.ShopMain-groupPanel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ShopMain-ease);
+}
+
+.ShopMain-groupOpen .ShopMain-groupPanel {
+  grid-template-rows: 1fr;
+}
+
+.ShopMain-groupInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ShopMain-options {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 16px;
+  display: grid;
+  gap: 2px;
+}
+
+.ShopMain-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px;
+  margin: 0 -8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.ShopMain-option:hover {
+  background: var(--ShopMain-soft);
+}
+
+.ShopMain-optionInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+
+.ShopMain-optionBox {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  border: 1.5px solid #b9ad9e;
+  border-radius: 6px;
+  background: var(--ShopMain-card);
+  color: #ffffff;
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+    transform 0.3s var(--ShopMain-ease);
+}
+
+.ShopMain-optionBox svg {
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.2s ease, transform 0.3s var(--ShopMain-ease);
+}
+
+.ShopMain-option:hover .ShopMain-optionBox {
+  border-color: var(--ShopMain-gold);
+}
+
+.ShopMain-optionInput:checked + .ShopMain-optionBox {
+  background: var(--ShopMain-gold);
+  border-color: var(--ShopMain-gold);
+  transform: scale(1.06);
+}
+
+.ShopMain-optionInput:checked + .ShopMain-optionBox svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ShopMain-optionInput:focus-visible + .ShopMain-optionBox {
+  box-shadow: 0 0 0 4px rgba(217, 138, 28, 0.3);
+}
+
+.ShopMain-optionLabel {
+  flex: 1;
+  min-width: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ShopMain-muted);
+  transition: color 0.25s ease;
+}
+
+.ShopMain-optionInput:checked ~ .ShopMain-optionLabel,
+.ShopMain-option:hover .ShopMain-optionLabel {
+  color: var(--ShopMain-ink);
+}
+
+.ShopMain-optionInput:checked ~ .ShopMain-optionLabel {
+  font-weight: 700;
+}
+
+.ShopMain-optionCount {
+  min-width: 26px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ShopMain-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--ShopMain-muted);
+}
+
+.ShopMain-more {
+  margin: -4px 0 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ShopMain-gold);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.ShopMain-sidebarFoot {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ShopMain-border);
+}
+
+.ShopMain-clear,
+.ShopMain-apply {
+  height: 48px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease, opacity 0.3s ease;
+}
+
+.ShopMain-clear {
+  border: 1.5px solid var(--ShopMain-border);
+  background: transparent;
+  color: var(--ShopMain-ink);
+}
+
+.ShopMain-clear:hover:not(:disabled) {
+  border-color: var(--ShopMain-ink);
+}
+
+.ShopMain-clear:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.ShopMain-apply {
+  display: none;
+  border: 0;
+  background: var(--ShopMain-ink);
+  color: var(--ShopMain-onInk);
+}
+
+.ShopMain-overlay {
+  display: none;
+}
+
+/* ================= Main / toolbar ================= */
+.ShopMain-main {
+  min-width: 0;
+  scroll-margin-top: 24px;
+}
+
+.ShopMain-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 22px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--ShopMain-border);
+  opacity: 0;
+  transform: translateY(-14px);
+  transition: opacity 0.8s var(--ShopMain-ease) 0.15s,
+    transform 0.8s var(--ShopMain-ease) 0.15s;
+}
+
+.ShopMain-results {
+  margin: 0;
+  font-size: 1.08rem;
+  color: var(--ShopMain-muted);
+}
+
+.ShopMain-results strong {
+  font-weight: 700;
+  color: var(--ShopMain-ink);
+}
+
+.ShopMain-tools {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.ShopMain-selectWrap {
+  position: relative;
+}
+
+.ShopMain-select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 46px;
+  min-width: 190px;
+  padding: 0 42px 0 16px;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 10px;
+  background: var(--ShopMain-card);
+  color: var(--ShopMain-ink);
+  font-size: 0.96rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ShopMain-select:hover {
+  border-color: #d9cdbb;
+}
+
+.ShopMain-select:focus-visible {
+  border-color: var(--ShopMain-gold);
+  box-shadow: 0 0 0 4px rgba(217, 138, 28, 0.15);
+}
+
+.ShopMain-selectIcon {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: var(--ShopMain-ink);
+  pointer-events: none;
+}
+
+.ShopMain-views {
+  display: flex;
+  gap: 8px;
+}
+
+.ShopMain-viewButton {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ShopMain-muted);
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.ShopMain-viewButton:hover {
+  border-color: var(--ShopMain-ink);
+  color: var(--ShopMain-ink);
+}
+
+.ShopMain-viewActive,
+.ShopMain-viewActive:hover {
+  border-color: var(--ShopMain-ink);
+  background: var(--ShopMain-ink);
+  color: var(--ShopMain-onInk);
+}
+
+.ShopMain-filterButton {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 16px;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 10px;
+  background: var(--ShopMain-card);
+  color: var(--ShopMain-ink);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ShopMain-filterCount {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--ShopMain-gold);
+  font-size: 0.75rem;
+  color: #ffffff;
+}
+
+/* ---------- Active filter chips ---------- */
+.ShopMain-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: -6px 0 24px;
+}
+
+.ShopMain-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--ShopMain-goldSoft);
+  color: var(--ShopMain-ink);
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.3s ease, transform 0.3s var(--ShopMain-ease);
+}
+
+.ShopMain-chip:hover {
+  border-color: var(--ShopMain-gold);
+  transform: translateY(-2px);
+}
+
+.ShopMain-chipsClear {
+  padding: 4px 6px;
+  border: 0;
+  background: none;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--ShopMain-muted);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.ShopMain-chipsClear:hover {
+  color: var(--ShopMain-gold);
+}
+
+/* ================= Grid ================= */
+.ShopMain-grid {
+  display: grid;
+  gap: clamp(20px, 2.4vw, 30px);
+  padding-bottom: 40px; /* room for the countdown that hangs below the image */
+}
+
+.ShopMain-gridThree {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ShopMain-gridTwo {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ================= Card ================= */
+.ShopMain-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 16px;
+  background: var(--ShopMain-card);
+  opacity: 0;
+  transition: transform 0.6s var(--ShopMain-ease),
+    box-shadow 0.6s var(--ShopMain-ease), border-color 0.4s ease;
+}
+
+.ShopMain-cardVisible {
+  opacity: 1;
+  animation: ShopMainCardIn 0.9s var(--ShopMain-ease) var(--delay, 0s) backwards;
+}
+
+.ShopMain-cardVisible:hover {
+  transform: translateY(-8px);
+  border-color: rgba(217, 138, 28, 0.55);
+  box-shadow: 0 36px 54px -32px rgba(70, 45, 10, 0.5);
+}
+
+@keyframes ShopMainCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Media ---------- */
+.ShopMain-media {
+  position: relative;
+}
+
+.ShopMain-imageWrap {
+  position: relative;
+  aspect-ratio: 1 / 1.08;
+  overflow: hidden;
+  border-radius: 15px 15px 0 0;
+  background:
+    radial-gradient(circle at 28% 30%, var(--p2) 0 26%, transparent 27%),
+    radial-gradient(circle at 74% 68%, var(--p3) 0 30%, transparent 31%),
+    linear-gradient(135deg, var(--p1), var(--p2));
+}
+
+.ShopMain-cardVisible .ShopMain-imageWrap {
+  animation: ShopMainReveal 1.3s var(--ShopMain-ease) var(--delay, 0s) backwards;
+}
+
+@keyframes ShopMainReveal {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.ShopMain-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.3s var(--ShopMain-ease), filter 0.8s ease;
+}
+
+.ShopMain-cardVisible .ShopMain-image {
+  animation: ShopMainZoomOut 1.9s var(--ShopMain-ease) var(--delay, 0s) backwards;
+}
+
+@keyframes ShopMainZoomOut {
+  from {
+    transform: scale(1.3);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.ShopMain-card:hover .ShopMain-image {
+  transform: scale(1.09);
+  filter: saturate(1.08) contrast(1.02);
+}
+
+.ShopMain-imageShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(20, 12, 5, 0.55),
+    rgba(20, 12, 5, 0) 55%
+  );
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+}
+
+.ShopMain-card:hover .ShopMain-imageShade,
+.ShopMain-card:focus-within .ShopMain-imageShade {
+  opacity: 1;
+}
+
+.ShopMain-view {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  padding: 11px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 0;
+  transform: translate(-50%, 16px);
+  transition: opacity 0.5s ease, transform 0.6s var(--ShopMain-ease),
+    background-color 0.3s ease, color 0.3s ease;
+}
+
+.ShopMain-view:hover {
+  background: #ffffff;
+  color: #1b1511;
+}
+
+.ShopMain-card:hover .ShopMain-view,
+.ShopMain-view:focus-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------- Badge + heart ---------- */
+.ShopMain-badge {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px 7px 14px;
+  border-radius: 0 8px 8px 0;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+  box-shadow: 0 10px 18px -10px rgba(0, 0, 0, 0.5);
+}
+
+.ShopMain-badgeLive {
+  background: var(--ShopMain-live);
+}
+
+.ShopMain-badgeUpcoming {
+  background: var(--ShopMain-upcoming);
+}
+
+.ShopMain-badgeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: ShopMainPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes ShopMainPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+  }
+}
+
+.ShopMain-like {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1b1511;
+  cursor: pointer;
+  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.55);
+  transition: transform 0.4s var(--ShopMain-ease), color 0.3s ease;
+}
+
+.ShopMain-like:hover {
+  transform: scale(1.12);
+  color: var(--ShopMain-live);
+}
+
+.ShopMain-likeActive {
+  color: var(--ShopMain-live);
+  animation: ShopMainPop 0.5s var(--ShopMain-ease);
+}
+
+@keyframes ShopMainPop {
+  0% {
+    transform: scale(0.7);
+  }
+  60% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ---------- Countdown ---------- */
+.ShopMain-countdown {
+  position: absolute;
+  z-index: 2;
+  left: 14px;
+  right: 14px;
+  bottom: -34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px 9px;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 12px;
+  background: var(--ShopMain-card);
+  box-shadow: 0 18px 30px -16px rgba(40, 25, 5, 0.5);
+}
+
+.ShopMain-countdownUnit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  line-height: 1.1;
+}
+
+.ShopMain-countdownValue {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.1rem, 1.7vw, 1.45rem);
+  font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--ShopMain-ink);
+}
+
+.ShopMain-countdownLabel {
+  margin-top: 3px;
+  font-size: clamp(0.62rem, 0.9vw, 0.76rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ShopMain-muted);
+}
+
+.ShopMain-countdownDot {
+  padding-bottom: 14px;
+  font-weight: 700;
+  color: var(--ShopMain-gold);
+}
+
+/* ---------- Body ---------- */
+.ShopMain-cardBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 56px clamp(16px, 1.8vw, 22px) clamp(18px, 2vw, 24px);
+}
+
+.ShopMain-cardTitle {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.7em;
+  margin: 0 0 12px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.08rem, 1.5vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ShopMain-ink);
+}
+
+.ShopMain-cardArtist,
+.ShopMain-cardBid {
+  margin: 0 0 6px;
+  font-size: 0.98rem;
+  color: var(--ShopMain-muted);
+}
+
+.ShopMain-cardArtist strong,
+.ShopMain-cardBid strong {
+  font-weight: 700;
+  color: var(--ShopMain-ink);
+}
+
+.ShopMain-cardBid {
+  margin-bottom: 18px;
+}
+
+.ShopMain-cardBid strong {
+  color: var(--ShopMain-gold);
+}
+
+.ShopMain-bidButton {
+  position: relative;
+  overflow: hidden;
+  align-self: flex-start;
+  margin-top: auto;
+  height: 46px;
+  padding: 0 24px;
+  border: 1.5px solid var(--ShopMain-ink);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ShopMain-ink);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 0;
+  transition: color 0.4s ease, border-color 0.4s ease;
+}
+
+.ShopMain-bidButton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ShopMain-ink);
+  transform: translateY(101%);
+  transition: transform 0.5s var(--ShopMain-ease);
+}
+
+.ShopMain-bidButton:hover {
+  color: var(--ShopMain-onInk);
+}
+
+.ShopMain-bidButton:hover::before {
+  transform: translateY(0);
+}
+
+.ShopMain-bidButton:focus-visible,
+.ShopMain-view:focus-visible,
+.ShopMain-like:focus-visible,
+.ShopMain-chip:focus-visible,
+.ShopMain-viewButton:focus-visible,
+.ShopMain-pageNumber:focus-visible,
+.ShopMain-pageStep:focus-visible,
+.ShopMain-groupHead:focus-visible,
+.ShopMain-filterButton:focus-visible {
+  outline: 3px solid rgba(217, 138, 28, 0.5);
+  outline-offset: 3px;
+}
+
+/* ================= Empty state ================= */
+.ShopMain-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 70px 24px;
+  border: 1.5px dashed var(--ShopMain-border);
+  border-radius: 18px;
+  text-align: center;
+}
+
+.ShopMain-emptyTitle {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.ShopMain-emptyText {
+  margin: 0 0 14px;
+  color: var(--ShopMain-muted);
+}
+
+.ShopMain-empty .ShopMain-bidButton {
+  align-self: center;
+}
+
+/* ================= Pagination ================= */
+.ShopMain-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px 18px;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 18px;
+  background: var(--ShopMain-panel);
+}
+
+.ShopMain-pageList {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.ShopMain-pageNumber {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 50%;
+  background: var(--ShopMain-card);
+  color: var(--ShopMain-ink);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color 0.35s ease, color 0.35s ease,
+    border-color 0.35s ease, transform 0.4s var(--ShopMain-ease);
+}
+
+.ShopMain-pageNumber:hover {
+  border-color: var(--ShopMain-ink);
+  transform: translateY(-3px);
+}
+
+.ShopMain-pageActive,
+.ShopMain-pageActive:hover {
+  border-color: var(--ShopMain-ink);
+  background: var(--ShopMain-ink);
+  color: var(--ShopMain-onInk);
+  transform: none;
+  box-shadow: 0 14px 22px -12px rgba(0, 0, 0, 0.6);
+}
+
+.ShopMain-pageGap {
+  padding: 0 4px;
+  color: var(--ShopMain-muted);
+  font-weight: 700;
+}
+
+.ShopMain-pageStep {
+  height: 46px;
+  padding: 0 22px;
+  border: 1px solid var(--ShopMain-border);
+  border-radius: 999px;
+  background: var(--ShopMain-card);
+  color: var(--ShopMain-ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.35s ease, color 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.ShopMain-pageStep:hover:not(:disabled) {
+  border-color: var(--ShopMain-ink);
+  background: var(--ShopMain-ink);
+  color: var(--ShopMain-onInk);
+}
+
+.ShopMain-pageStep:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ================= Visible state (page-enter animation) ================= */
+.ShopMain-visible .ShopMain-search,
+.ShopMain-visible .ShopMain-group {
+  opacity: 1;
+  transform: none;
+}
+
+.ShopMain-visible .ShopMain-toolbar {
+  opacity: 1;
+  transform: none;
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 1180px) {
+  .ShopMain-container {
+    grid-template-columns: 270px minmax(0, 1fr);
+  }
+
+  .ShopMain-gridThree {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ShopMain-views {
+    display: none;
+  }
+}
+
+/* Tablet & mobile: filters become a slide-in drawer */
+@media (max-width: 991px) {
+  .ShopMain-container {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ShopMain-views {
+    display: flex;
+  }
+
+  .ShopMain-gridThree {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ShopMain-filterButton {
+    display: inline-flex;
+  }
+
+  .ShopMain-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    width: min(88vw, 380px);
+    max-height: none;
+    padding: 20px;
+    border: 0;
+    border-radius: 0 20px 20px 0;
+    background: var(--ShopMain-bg);
+    transform: translateX(-104%);
+    visibility: hidden;
+    transition: transform 0.6s var(--ShopMain-ease), visibility 0s linear 0.6s;
+  }
+
+  .ShopMain-sidebarOpen {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.6s var(--ShopMain-ease), visibility 0s;
+  }
+
+  .ShopMain-sidebarHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .ShopMain-apply {
+    display: block;
+  }
+
+  .ShopMain-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(20, 12, 5, 0.55);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  .ShopMain-overlayOpen {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .ShopMain-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .ShopMain-results {
+    order: 3;
+    width: 100%;
+  }
+
+  .ShopMain-tools {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 860px) {
+  .ShopMain-gridThree {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ShopMain-views {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .ShopMain-container {
+    width: calc(100% - 32px);
+  }
+
+  .ShopMain-gridThree,
+  .ShopMain-gridTwo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ShopMain-select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .ShopMain-selectWrap {
+    flex: 1;
+  }
+
+  .ShopMain-tools {
+    flex: 1;
+    margin-left: 0;
+  }
+
+  .ShopMain-countdownValue {
+    font-size: 1.3rem;
+  }
+
+  .ShopMain-countdownLabel {
+    font-size: 0.72rem;
+  }
+
+  .ShopMain-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 14px;
+  }
+
+  .ShopMain-pageList {
+    order: -1;
+    width: 100%;
+  }
+
+  .ShopMain-pageNumber {
+    width: 42px;
+    height: 42px;
+  }
+
+  .ShopMain-pageStep {
+    flex: 1;
+  }
+}
+
+/* Touch devices: always show the "View Artwork" hint softly */
+@media (hover: none) {
+  .ShopMain-imageShade {
+    opacity: 0.6;
+  }
+
+  .ShopMain-view {
+    opacity: 1;
+    top: auto;
+    bottom: 56px;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ================= Accessibility ================= */
+@media (prefers-reduced-motion: reduce) {
+  .ShopMain *,
+  .ShopMain *::before,
+  .ShopMain *::after {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    animation: none !important;
+  }
+
+  .ShopMain-search,
+  .ShopMain-group,
+  .ShopMain-toolbar,
+  .ShopMain-card {
+    opacity: 1;
+    transform: none;
+  }
+}

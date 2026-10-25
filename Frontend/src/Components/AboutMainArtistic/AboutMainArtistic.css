@@ -1,0 +1,775 @@
+/* =========================================================
+   ABOUT MAIN ARTISTIC
+   Premium editorial gallery layout
+========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700;800&display=swap");
+
+/* ================= THEME ================= */
+
+.AboutMainArtistic {
+  --AboutMainArtistic-bg: #faf9f7;
+  --AboutMainArtistic-surface: #ffffff;
+  --AboutMainArtistic-ink: #172b43;
+  --AboutMainArtistic-muted: #66768a;
+  --AboutMainArtistic-accent: #12b978;
+  --AboutMainArtistic-accentDark: #078e59;
+  --AboutMainArtistic-gold: #d6ad61;
+  --AboutMainArtistic-border: #e8e6e0;
+  --AboutMainArtistic-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  padding: clamp(55px, 7vw, 100px) 0;
+  overflow: hidden;
+  background: var(--AboutMainArtistic-bg);
+  color: var(--AboutMainArtistic-ink);
+  font-family: "DM Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+[data-theme="dark"] .AboutMainArtistic {
+  --AboutMainArtistic-bg: #141a20;
+  --AboutMainArtistic-surface: #1c252d;
+  --AboutMainArtistic-ink: #f4f0e9;
+  --AboutMainArtistic-muted: #b7c0ca;
+  --AboutMainArtistic-border: #303b44;
+}
+
+.AboutMainArtistic *,
+.AboutMainArtistic *::before,
+.AboutMainArtistic *::after {
+  box-sizing: border-box;
+}
+
+.AboutMainArtistic img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ================= BACKGROUND DECORATION ================= */
+
+.AboutMainArtistic-decoration {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.AboutMainArtistic-orb {
+  position: absolute;
+  display: block;
+  border: 1px solid rgba(18, 185, 120, 0.09);
+  border-radius: 50%;
+}
+
+.AboutMainArtistic-orbOne {
+  top: 10%;
+  left: -180px;
+  width: 350px;
+  height: 350px;
+}
+
+.AboutMainArtistic-orbTwo {
+  right: -200px;
+  bottom: -5%;
+  width: 400px;
+  height: 400px;
+}
+
+/* ================= MAIN CONTAINER ================= */
+
+.AboutMainArtistic-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(36px, 5.5vw, 78px);
+  width: min(1320px, calc(100% - 64px));
+  margin: 0 auto;
+}
+
+/* ================= IMAGE SECTION ================= */
+
+.AboutMainArtistic-media {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  padding-bottom: 5px;
+}
+
+/* Small editorial label */
+
+.AboutMainArtistic-mediaLabel {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 16px;
+  color: var(--AboutMainArtistic-muted);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.AboutMainArtistic-labelLine {
+  display: block;
+  width: 30px;
+  height: 2px;
+  flex-shrink: 0;
+  background: var(--AboutMainArtistic-accent);
+}
+
+/* Artwork composition stage */
+
+.AboutMainArtistic-imageStage {
+  position: relative;
+  width: 100%;
+  padding: 0 17px 17px 0;
+}
+
+/* Offset premium frame */
+
+.AboutMainArtistic-frame {
+  position: absolute;
+  top: 23px;
+  right: 0;
+  bottom: 0;
+  left: 23px;
+  border: 1px solid var(--AboutMainArtistic-gold);
+  border-radius: 3px;
+  opacity: 0;
+  transform: translate(-12px, -12px);
+  transition:
+    opacity 0.9s ease 0.5s,
+    transform 1s var(--AboutMainArtistic-ease) 0.5s;
+}
+
+/* Ambient glow behind artwork */
+
+.AboutMainArtistic-glow {
+  position: absolute;
+  z-index: -1;
+  inset: 5% -7% -5% 5%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(214, 173, 97, 0.2) 0%,
+    rgba(18, 185, 120, 0.06) 42%,
+    transparent 72%
+  );
+  filter: blur(30px);
+  opacity: 0;
+  transition: opacity 1.4s ease 0.35s;
+}
+
+.AboutMainArtistic-figure {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+/*
+  Important:
+  The artwork image itself should contain the overlapping
+  painting composition shown in your reference.
+  "contain" preserves the entire composition without cropping.
+*/
+
+.AboutMainArtistic-imageWrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: 0 24px 60px -35px rgba(24, 35, 45, 0.28);
+  clip-path: inset(0 100% 0 0);
+  transition:
+    clip-path 1.25s var(--AboutMainArtistic-ease),
+    box-shadow 0.45s ease;
+}
+
+.AboutMainArtistic-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1.08 / 1;
+  object-fit: contain;
+  object-position: center;
+  transform: scale(1.045);
+  transition:
+    transform 1.2s var(--AboutMainArtistic-ease),
+    filter 0.45s ease;
+}
+
+/* Decorative corner */
+
+.AboutMainArtistic-imageCorner {
+  position: absolute;
+  z-index: 2;
+  right: 6px;
+  bottom: 6px;
+  width: 35px;
+  height: 35px;
+  border-right: 2px solid var(--AboutMainArtistic-accent);
+  border-bottom: 2px solid var(--AboutMainArtistic-accent);
+  opacity: 0;
+  transform: translate(-7px, -7px);
+  transition:
+    opacity 0.7s ease 0.65s,
+    transform 0.7s var(--AboutMainArtistic-ease) 0.65s;
+  pointer-events: none;
+}
+
+/* Image footer */
+
+.AboutMainArtistic-mediaFooter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-left: 2px;
+  color: var(--AboutMainArtistic-muted);
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+}
+
+.AboutMainArtistic-mediaFooter > span:first-child {
+  color: var(--AboutMainArtistic-accentDark);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.9rem;
+}
+
+.AboutMainArtistic-footerDivider {
+  width: 26px;
+  height: 1px;
+  background: var(--AboutMainArtistic-gold);
+}
+
+/* ================= CONTENT SECTION ================= */
+
+.AboutMainArtistic-content {
+  width: 100%;
+  max-width: 570px;
+  min-width: 0;
+}
+
+/* Eyebrow */
+
+.AboutMainArtistic-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 16px;
+  color: var(--AboutMainArtistic-accentDark);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 2.2px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s var(--AboutMainArtistic-ease);
+}
+
+.AboutMainArtistic-eyebrowLine {
+  display: block;
+  width: 29px;
+  height: 2px;
+  background: var(--AboutMainArtistic-accent);
+}
+
+/* Heading */
+
+.AboutMainArtistic-title {
+  margin: 0;
+  color: var(--AboutMainArtistic-ink);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(2.2rem, 3.55vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.19;
+  letter-spacing: -0.9px;
+  opacity: 0;
+  transform: translateY(25px);
+  transition:
+    opacity 0.85s var(--AboutMainArtistic-ease) 0.12s,
+    transform 0.85s var(--AboutMainArtistic-ease) 0.12s;
+}
+
+.AboutMainArtistic-titleAccent {
+  color: var(--AboutMainArtistic-accentDark);
+  font-style: italic;
+}
+
+.AboutMainArtistic-titleLine {
+  display: block;
+  width: 63px;
+  height: 3px;
+  margin: 20px 0 23px;
+  border-radius: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--AboutMainArtistic-accent),
+    var(--AboutMainArtistic-gold)
+  );
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.85s var(--AboutMainArtistic-ease) 0.35s;
+}
+
+/* Intro paragraph */
+
+.AboutMainArtistic-intro {
+  margin: 0 0 24px;
+  color: var(--AboutMainArtistic-muted);
+  font-size: clamp(0.98rem, 1.35vw, 1.1rem);
+  font-weight: 500;
+  line-height: 1.9;
+  letter-spacing: 0.005em;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.85s var(--AboutMainArtistic-ease) 0.25s,
+    transform 0.85s var(--AboutMainArtistic-ease) 0.25s;
+}
+
+/* ================= COMMITMENT LIST ================= */
+
+.AboutMainArtistic-list {
+  display: grid;
+  gap: 0;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.AboutMainArtistic-listItem {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  min-width: 0;
+  padding: 11px 0;
+  border-bottom: 1px solid transparent;
+  color: var(--AboutMainArtistic-ink);
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  font-weight: 600;
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateX(-17px);
+  transition:
+    opacity 0.7s var(--AboutMainArtistic-ease) var(--delay, 0s),
+    transform 0.7s var(--AboutMainArtistic-ease) var(--delay, 0s),
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* Elegant green arrows */
+
+.AboutMainArtistic-arrow {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  place-items: center;
+  color: var(--AboutMainArtistic-accent);
+  transition:
+    transform 0.35s var(--AboutMainArtistic-ease),
+    color 0.3s ease;
+}
+
+.AboutMainArtistic-arrow svg {
+  display: block;
+  width: 23px;
+  height: 23px;
+}
+
+/* Commitment label */
+
+.AboutMainArtistic-listText {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.AboutMainArtistic-listText::after {
+  position: absolute;
+  right: 0;
+  bottom: -4px;
+  left: 0;
+  height: 1px;
+  background: var(--AboutMainArtistic-accent);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--AboutMainArtistic-ease);
+}
+
+/* ================= OUTRO ================= */
+
+.AboutMainArtistic-outro {
+  margin: 3px 0 0;
+  color: var(--AboutMainArtistic-muted);
+  font-size: clamp(0.96rem, 1.3vw, 1.07rem);
+  line-height: 1.9;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.85s var(--AboutMainArtistic-ease) 0.8s,
+    transform 0.85s var(--AboutMainArtistic-ease) 0.8s;
+}
+
+/* ================= SIGNATURE ================= */
+
+.AboutMainArtistic-signature {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 24px;
+  color: var(--AboutMainArtistic-muted);
+  font-size: 0.61rem;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  line-height: 1.7;
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.8s ease 0.95s,
+    transform 0.8s var(--AboutMainArtistic-ease) 0.95s;
+}
+
+.AboutMainArtistic-signatureLine {
+  display: block;
+  width: 28px;
+  height: 1px;
+  flex: 0 0 28px;
+  background: var(--AboutMainArtistic-accent);
+}
+
+/* ================= ENTRANCE ANIMATIONS ================= */
+
+.AboutMainArtistic-visible .AboutMainArtistic-eyebrow,
+.AboutMainArtistic-visible .AboutMainArtistic-title,
+.AboutMainArtistic-visible .AboutMainArtistic-intro,
+.AboutMainArtistic-visible .AboutMainArtistic-listItem,
+.AboutMainArtistic-visible .AboutMainArtistic-outro,
+.AboutMainArtistic-visible .AboutMainArtistic-signature {
+  opacity: 1;
+  transform: translate(0);
+}
+
+.AboutMainArtistic-visible .AboutMainArtistic-titleLine {
+  transform: scaleX(1);
+}
+
+.AboutMainArtistic-visible .AboutMainArtistic-imageWrap {
+  clip-path: inset(0);
+}
+
+.AboutMainArtistic-visible .AboutMainArtistic-image {
+  transform: scale(1);
+}
+
+.AboutMainArtistic-visible .AboutMainArtistic-frame {
+  opacity: 1;
+  transform: translate(0);
+}
+
+.AboutMainArtistic-visible .AboutMainArtistic-glow {
+  opacity: 1;
+}
+
+.AboutMainArtistic-visible .AboutMainArtistic-imageCorner {
+  opacity: 1;
+  transform: translate(0);
+}
+
+/* ================= HOVER EFFECTS ================= */
+
+@media (hover: hover) {
+  .AboutMainArtistic-visible
+    .AboutMainArtistic-media:hover
+    .AboutMainArtistic-image {
+    transform: scale(1.025);
+    filter: saturate(1.04);
+  }
+
+  .AboutMainArtistic-visible
+    .AboutMainArtistic-media:hover
+    .AboutMainArtistic-imageWrap {
+    box-shadow: 0 32px 70px -30px rgba(24, 35, 45, 0.36);
+  }
+
+  .AboutMainArtistic-visible
+    .AboutMainArtistic-media:hover
+    .AboutMainArtistic-frame {
+    border-color: var(--AboutMainArtistic-accent);
+  }
+
+  .AboutMainArtistic-listItem:hover {
+    color: var(--AboutMainArtistic-accentDark);
+    border-bottom-color: var(--AboutMainArtistic-border);
+  }
+
+  .AboutMainArtistic-listItem:hover .AboutMainArtistic-arrow {
+    color: var(--AboutMainArtistic-accentDark);
+    transform: translateX(7px);
+  }
+
+  .AboutMainArtistic-listItem:hover .AboutMainArtistic-listText::after {
+    transform: scaleX(1);
+  }
+}
+
+/* ================= LAPTOP ================= */
+
+@media (max-width: 1150px) {
+  .AboutMainArtistic-container {
+    gap: 42px;
+    width: calc(100% - 54px);
+  }
+
+  .AboutMainArtistic-title {
+    font-size: clamp(2.1rem, 3.8vw, 2.85rem);
+  }
+
+  .AboutMainArtistic-intro,
+  .AboutMainArtistic-outro {
+    line-height: 1.8;
+  }
+
+  .AboutMainArtistic-listItem {
+    gap: 13px;
+  }
+}
+
+/* ================= TABLET ================= */
+
+@media (max-width: 900px) {
+  .AboutMainArtistic {
+    padding: 65px 0;
+  }
+
+  .AboutMainArtistic-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 43px;
+    width: min(740px, calc(100% - 48px));
+  }
+
+  .AboutMainArtistic-media {
+    width: 100%;
+    max-width: 690px;
+    margin: 0 auto;
+  }
+
+  .AboutMainArtistic-image {
+    aspect-ratio: 1.12 / 1;
+  }
+
+  .AboutMainArtistic-content {
+    max-width: 100%;
+  }
+
+  .AboutMainArtistic-title {
+    font-size: clamp(2.5rem, 5.8vw, 3.4rem);
+  }
+
+  .AboutMainArtistic-intro,
+  .AboutMainArtistic-outro {
+    max-width: 690px;
+  }
+
+  .AboutMainArtistic-listItem {
+    padding: 12px 0;
+  }
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 600px) {
+  .AboutMainArtistic {
+    padding: 48px 0;
+  }
+
+  .AboutMainArtistic-container {
+    width: calc(100% - 32px);
+    gap: 35px;
+  }
+
+  .AboutMainArtistic-mediaLabel {
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 0.59rem;
+    letter-spacing: 1.35px;
+  }
+
+  .AboutMainArtistic-labelLine {
+    width: 22px;
+  }
+
+  .AboutMainArtistic-imageStage {
+    padding: 0 11px 11px 0;
+  }
+
+  .AboutMainArtistic-frame {
+    top: 15px;
+    left: 15px;
+  }
+
+  .AboutMainArtistic-image {
+    aspect-ratio: 1 / 1;
+  }
+
+  .AboutMainArtistic-imageCorner {
+    right: 4px;
+    bottom: 4px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .AboutMainArtistic-mediaFooter {
+    gap: 9px;
+    margin-top: 13px;
+    font-size: 0.54rem;
+    letter-spacing: 1.1px;
+  }
+
+  .AboutMainArtistic-footerDivider {
+    width: 19px;
+  }
+
+  .AboutMainArtistic-eyebrow {
+    margin-bottom: 12px;
+    font-size: 0.63rem;
+    letter-spacing: 1.7px;
+  }
+
+  .AboutMainArtistic-title {
+    font-size: clamp(2.1rem, 7.5vw, 2.8rem);
+    line-height: 1.2;
+    letter-spacing: -0.6px;
+  }
+
+  .AboutMainArtistic-titleLine {
+    width: 52px;
+    margin: 17px 0 20px;
+  }
+
+  .AboutMainArtistic-intro {
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    line-height: 1.85;
+  }
+
+  .AboutMainArtistic-list {
+    margin-bottom: 20px;
+  }
+
+  .AboutMainArtistic-listItem {
+    gap: 12px;
+    padding: 10px 0;
+    font-size: 0.96rem;
+  }
+
+  .AboutMainArtistic-arrow {
+    width: 23px;
+    height: 23px;
+    flex-basis: 23px;
+  }
+
+  .AboutMainArtistic-arrow svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .AboutMainArtistic-outro {
+    font-size: 0.93rem;
+    line-height: 1.85;
+  }
+
+  .AboutMainArtistic-signature {
+    gap: 8px;
+    margin-top: 19px;
+    font-size: 0.53rem;
+    letter-spacing: 0.95px;
+  }
+
+  .AboutMainArtistic-signatureLine {
+    width: 20px;
+    flex-basis: 20px;
+  }
+}
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width: 380px) {
+  .AboutMainArtistic-container {
+    width: calc(100% - 26px);
+    gap: 30px;
+  }
+
+  .AboutMainArtistic-title {
+    font-size: 2rem;
+  }
+
+  .AboutMainArtistic-mediaLabel {
+    font-size: 0.53rem;
+    letter-spacing: 0.9px;
+  }
+
+  .AboutMainArtistic-mediaFooter {
+    font-size: 0.48rem;
+    letter-spacing: 0.8px;
+  }
+
+  .AboutMainArtistic-listItem {
+    gap: 9px;
+    font-size: 0.9rem;
+  }
+
+  .AboutMainArtistic-outro {
+    font-size: 0.89rem;
+  }
+}
+
+/* ================= ACCESSIBILITY ================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .AboutMainArtistic *,
+  .AboutMainArtistic *::before,
+  .AboutMainArtistic *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .AboutMainArtistic-eyebrow,
+  .AboutMainArtistic-title,
+  .AboutMainArtistic-intro,
+  .AboutMainArtistic-listItem,
+  .AboutMainArtistic-outro,
+  .AboutMainArtistic-signature {
+    opacity: 1;
+    transform: none;
+  }
+
+  .AboutMainArtistic-titleLine {
+    transform: scaleX(1);
+  }
+
+  .AboutMainArtistic-imageWrap {
+    clip-path: none;
+  }
+
+  .AboutMainArtistic-image {
+    transform: none;
+  }
+
+  .AboutMainArtistic-frame,
+  .AboutMainArtistic-glow,
+  .AboutMainArtistic-imageCorner {
+    opacity: 1;
+    transform: none;
+  }
+}
