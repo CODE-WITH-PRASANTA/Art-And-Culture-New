@@ -1,0 +1,236 @@
+.MainLayout {
+  /* Single source of truth for the sidebar's current width.
+     Values match Sidebar.css exactly (270px / 76px). */
+  --sidebar-width: 270px;
+
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f8fafc;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  /* Prevent horizontal overflow */
+  overflow-x: hidden;
+}
+
+
+/* =========================================================
+   COLLAPSED SIDEBAR
+   ========================================================= */
+
+.MainLayout.sidebar-collapsed {
+  --sidebar-width: 76px;
+}
+
+
+/* =========================================================
+   MAIN LAYOUT CONTAINER
+   ========================================================= */
+
+.MainLayout-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  margin-left: var(--sidebar-width);
+
+  min-width: 0;
+  min-height: 100vh;
+  width: calc(100% - var(--sidebar-width));
+
+  transition:
+    margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  position: relative;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.MainLayout-content {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+   ========================================================= */
+
+.MainLayout-placeholder {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.MainLayout-placeholder h2 {
+  color: #0066cc;
+  margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   MOBILE OVERLAY
+   ========================================================= */
+
+.MainLayout-overlay {
+  display: none;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+
+  z-index: 98;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   TABLET RESPONSIVE
+   769px - 1024px
+   ========================================================= */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .MainLayout {
+    --sidebar-width: 76px;
+  }
+
+  .MainLayout-container {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+  }
+
+  .MainLayout-content {
+    width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+
+/* =========================================================
+   MOBILE RESPONSIVE
+   768px AND BELOW
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .MainLayout,
+  .MainLayout.sidebar-collapsed {
+    --sidebar-width: 0px;
+
+    display: block;
+    width: 100%;
+    min-height: 100vh;
+
+    overflow-x: hidden;
+  }
+
+  .MainLayout-container {
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+
+    margin-left: 0;
+
+    transition: none;
+  }
+
+  .MainLayout-overlay {
+    display: block;
+  }
+
+  .MainLayout-content {
+    width: 100%;
+    min-width: 0;
+
+    padding: 16px;
+
+    box-sizing: border-box;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .MainLayout-placeholder {
+    padding: 28px 20px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   480px AND BELOW
+   ========================================================= */
+
+@media (max-width: 480px) {
+  .MainLayout-content {
+    padding: 12px;
+  }
+
+  .MainLayout-placeholder {
+    padding: 24px 16px;
+    border-radius: 10px;
+  }
+}
+
+
+/* =========================================================
+   EXTRA SMALL DEVICES
+   360px AND BELOW
+   ========================================================= */
+
+@media (max-width: 360px) {
+  .MainLayout-content {
+    padding: 10px;
+  }
+
+  .MainLayout-placeholder {
+    padding: 20px 14px;
+  }
+}
+
+
+/* =========================================================
+   LARGE DESKTOP
+   ========================================================= */
+
+@media (min-width: 1440px) {
+  .MainLayout-content {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY / REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .MainLayout-container {
+    transition: none;
+  }
+}
