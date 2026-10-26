@@ -1,0 +1,1346 @@
+
+/* =========================================================
+   TRAINING TWO — ART CLASS FILTERS & RESULTS
+========================================================= */
+
+.TrainingTwo {
+  --TrainingTwo-navy: #12304c;
+  --TrainingTwo-teal: #0b828b;
+  --TrainingTwo-teal-dark: #076e77;
+  --TrainingTwo-muted: #58718b;
+  --TrainingTwo-border: #d9e5ed;
+  --TrainingTwo-panel: #f5f8f9;
+  --TrainingTwo-orange: #f6a20d;
+  --TrainingTwo-white: #ffffff;
+
+  width: 100%;
+  min-height: 100vh;
+  padding: 14px 0 35px;
+  background: #ffffff;
+  color: var(--TrainingTwo-navy);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.TrainingTwo *,
+.TrainingTwo *::before,
+.TrainingTwo *::after {
+  box-sizing: border-box;
+}
+
+.TrainingTwo button,
+.TrainingTwo input,
+.TrainingTwo select,
+.TrainingTwo textarea {
+  font: inherit;
+}
+
+.TrainingTwo button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.TrainingTwo button:focus-visible,
+.TrainingTwo input:focus-visible,
+.TrainingTwo select:focus-visible,
+.TrainingTwo textarea:focus-visible {
+  outline: 2px solid rgba(11, 130, 139, 0.65);
+  outline-offset: 3px;
+}
+
+.TrainingTwo-container {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  align-items: start;
+  gap: 42px;
+  width: calc(100% - 80px);
+  max-width: 1430px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   FILTER SIDEBAR
+========================================================= */
+
+.TrainingTwo-sidebar {
+  position: sticky;
+  top: 14px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: min(762px, calc(100vh - 28px));
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 20px;
+  background: var(--TrainingTwo-white);
+}
+
+/* Sidebar heading */
+
+.TrainingTwo-sidebarHeader {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+  padding: 20px 24px 13px;
+  background: #ffffff;
+}
+
+.TrainingTwo-sidebarTitle {
+  margin: 0;
+  color: var(--TrainingTwo-navy);
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -0.45px;
+}
+
+.TrainingTwo-mobileClose {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 9px;
+  background: #ffffff;
+  color: var(--TrainingTwo-navy);
+  cursor: pointer;
+}
+
+/* Independently scrollable filter section */
+
+.TrainingTwo-filterContent {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 5px 24px 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #999999 #ffffff;
+  scrollbar-gutter: stable;
+}
+
+.TrainingTwo-filterContent::-webkit-scrollbar {
+  width: 7px;
+}
+
+.TrainingTwo-filterContent::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+.TrainingTwo-filterContent::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #999999;
+}
+
+.TrainingTwo-filterContent::-webkit-scrollbar-thumb:hover {
+  background: #777777;
+}
+
+/* =========================================================
+   FILTER GROUPS
+========================================================= */
+
+.TrainingTwo-filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.TrainingTwo-label {
+  display: block;
+  margin: 0;
+  color: #102d48;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.TrainingTwo-searchBox,
+.TrainingTwo-selectWrapper {
+  position: relative;
+  width: 100%;
+  height: 50px;
+}
+
+.TrainingTwo-searchBox input,
+.TrainingTwo-selectWrapper select,
+.TrainingTwo-feeInputs input {
+  width: 100%;
+  height: 50px;
+  min-width: 0;
+  padding: 0 17px;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 13px;
+  outline: none;
+  background: #ffffff;
+  color: var(--TrainingTwo-navy);
+  font-size: 15px;
+  font-weight: 400;
+  box-shadow: 0 1px 2px rgba(16, 45, 72, 0.015);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.TrainingTwo-searchBox input::placeholder,
+.TrainingTwo-feeInputs input::placeholder {
+  color: #8494a6;
+  opacity: 1;
+}
+
+.TrainingTwo-searchBox input:focus,
+.TrainingTwo-selectWrapper select:focus,
+.TrainingTwo-feeInputs input:focus {
+  border-color: var(--TrainingTwo-teal);
+  box-shadow: 0 0 0 3px rgba(11, 130, 139, 0.08);
+}
+
+.TrainingTwo-searchBox input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+/* Native select with custom chevron */
+
+.TrainingTwo-selectWrapper select {
+  padding-right: 42px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.TrainingTwo-selectWrapper > svg {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  color: #102d48;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+/* =========================================================
+   FEE INPUTS
+========================================================= */
+
+.TrainingTwo-feeInputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.TrainingTwo-feeInputs input {
+  appearance: textfield;
+}
+
+.TrainingTwo-feeInputs input::-webkit-inner-spin-button,
+.TrainingTwo-feeInputs input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+/* =========================================================
+   DAYS
+========================================================= */
+
+.TrainingTwo-daysGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.TrainingTwo-dayButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 48px;
+  padding: 0 5px;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 15px;
+  background: #ffffff;
+  color: #102d48;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.TrainingTwo-dayButton:hover {
+  border-color: var(--TrainingTwo-teal);
+}
+
+.TrainingTwo-dayButton--active {
+  border-color: var(--TrainingTwo-teal);
+  background: #e6f6f6;
+  color: var(--TrainingTwo-teal-dark);
+}
+
+/* =========================================================
+   CHECKBOXES
+========================================================= */
+
+.TrainingTwo-checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 1px 0 25px;
+}
+
+.TrainingTwo-checkboxLabel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 22px;
+  color: #102d48;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.TrainingTwo-checkboxLabel input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.TrainingTwo-customCheckbox {
+  display: flex;
+  flex: 0 0 20px;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #9aabb8;
+  border-radius: 4px;
+  background: #ffffff;
+  color: transparent;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.TrainingTwo-customCheckbox svg {
+  width: 14px;
+  height: 14px;
+}
+
+.TrainingTwo-checkboxLabel input:checked + .TrainingTwo-customCheckbox {
+  border-color: var(--TrainingTwo-teal);
+  background: var(--TrainingTwo-teal);
+  color: #ffffff;
+}
+
+.TrainingTwo-checkboxLabel input:focus-visible + .TrainingTwo-customCheckbox {
+  outline: 2px solid var(--TrainingTwo-teal);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   SIDEBAR ACTION BUTTONS
+========================================================= */
+
+.TrainingTwo-filterActions {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  flex-shrink: 0;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 14px 24px 24px;
+  background: #ffffff;
+}
+
+.TrainingTwo-applyButton,
+.TrainingTwo-clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.TrainingTwo-applyButton {
+  background: var(--TrainingTwo-teal);
+  color: #ffffff;
+}
+
+.TrainingTwo-applyButton:hover {
+  background: var(--TrainingTwo-teal-dark);
+}
+
+.TrainingTwo-clearButton {
+  border-color: var(--TrainingTwo-border);
+  background: #ffffff;
+  color: #102d48;
+}
+
+.TrainingTwo-clearButton:hover {
+  border-color: #aabecb;
+  background: #f7fafb;
+}
+
+/* =========================================================
+   RESULTS AREA
+========================================================= */
+
+.TrainingTwo-results {
+  min-width: 0;
+  width: 100%;
+}
+
+/* =========================================================
+   RESULTS TOOLBAR
+========================================================= */
+
+.TrainingTwo-resultsToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 64px;
+  margin-bottom: 28px;
+}
+
+.TrainingTwo-resultsCount {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  color: #102d48;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.TrainingTwo-countNumber {
+  font-weight: 750;
+}
+
+.TrainingTwo-filterApplied {
+  margin-left: 8px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: #e9f7f6;
+  color: var(--TrainingTwo-teal-dark);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.TrainingTwo-resultsControls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.TrainingTwo-sortWrapper {
+  position: relative;
+  width: 199px;
+  height: 50px;
+}
+
+.TrainingTwo-sortWrapper select {
+  width: 100%;
+  height: 50px;
+  padding: 0 42px 0 17px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 13px;
+  outline: none;
+  background: #ffffff;
+  color: #213d58;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.TrainingTwo-sortWrapper > svg {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  color: #102d48;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.TrainingTwo-nearbyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 138px;
+  height: 50px;
+  padding: 0 17px;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 13px;
+  background: #ffffff;
+  color: #102d48;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.TrainingTwo-nearbyButton:hover,
+.TrainingTwo-nearbyButton--active {
+  border-color: var(--TrainingTwo-teal);
+  background: #eff9f9;
+}
+
+.TrainingTwo-nearbyButton svg {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   EMPTY RESULTS PANEL
+========================================================= */
+
+.TrainingTwo-emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 410px;
+  padding: 45px 25px;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 21px;
+  background: var(--TrainingTwo-panel);
+  text-align: center;
+}
+
+/* Search icon box */
+
+.TrainingTwo-emptyIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 79px;
+  height: 79px;
+  margin-bottom: 26px;
+  border-radius: 21px;
+  background: #e1f0f0;
+  color: var(--TrainingTwo-teal);
+}
+
+/* Empty-state heading */
+
+.TrainingTwo-emptyTitle {
+  max-width: 750px;
+  margin: 0;
+  color: #12304c;
+  font-size: clamp(23px, 1.65vw, 29px);
+  font-weight: 800;
+  letter-spacing: -0.65px;
+  line-height: 1.4;
+}
+
+.TrainingTwo-emptyDescription {
+  max-width: 650px;
+  margin: 12px 0 29px;
+  color: #496783;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   EMPTY-STATE ACTIONS
+========================================================= */
+
+.TrainingTwo-emptyActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+.TrainingTwo-onlineButton,
+.TrainingTwo-nearbySuggestion,
+.TrainingTwo-requestButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 20px;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 13px;
+  background: #ffffff;
+  color: #102d48;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.TrainingTwo-onlineButton:hover,
+.TrainingTwo-nearbySuggestion:hover {
+  transform: translateY(-1px);
+  border-color: var(--TrainingTwo-teal);
+  background: #f1fbfb;
+}
+
+.TrainingTwo-onlineButton {
+  border-color: var(--TrainingTwo-teal);
+  color: var(--TrainingTwo-teal-dark);
+}
+
+.TrainingTwo-onlineButton:hover {
+  background: #e9f8f8;
+}
+
+.TrainingTwo-requestButton {
+  border-color: var(--TrainingTwo-orange);
+  background: var(--TrainingTwo-orange);
+  color: #102d48;
+}
+
+.TrainingTwo-requestButton:hover {
+  transform: translateY(-1px);
+  border-color: #e38f00;
+  background: #efa000;
+}
+
+/* =========================================================
+   RESULTS NOTE
+========================================================= */
+
+.TrainingTwo-resultsNote {
+  display: none;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 17px;
+  border: 1px solid #dce9ed;
+  border-radius: 13px;
+  background: #f8fbfc;
+  color: var(--TrainingTwo-teal);
+}
+
+.TrainingTwo-resultsNote svg {
+  flex-shrink: 0;
+}
+
+.TrainingTwo-resultsNote p {
+  margin: 0;
+  color: var(--TrainingTwo-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   REQUEST MODAL
+========================================================= */
+
+.TrainingTwo-modalBackdrop {
+  position: fixed;
+  z-index: 99999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+  background: rgba(10, 29, 46, 0.55);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.TrainingTwo-modal {
+  position: relative;
+  width: 100%;
+  max-width: 490px;
+  max-height: calc(100vh - 40px);
+  padding: 30px;
+  overflow-y: auto;
+  border: 1px solid #e0e9ee;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 25px 80px rgba(9, 30, 48, 0.22);
+  animation: TrainingTwo-modalAppear 0.22s ease;
+}
+
+@keyframes TrainingTwo-modalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.TrainingTwo-modalClose {
+  position: absolute;
+  top: 17px;
+  right: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 37px;
+  height: 37px;
+  padding: 0;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--TrainingTwo-navy);
+  cursor: pointer;
+}
+
+.TrainingTwo-modalClose:hover {
+  background: #f2f7f8;
+}
+
+.TrainingTwo-modalHeading {
+  padding-right: 20px;
+  margin-bottom: 24px;
+}
+
+.TrainingTwo-modalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 15px;
+  border-radius: 13px;
+  background: #e5f5f5;
+  color: var(--TrainingTwo-teal);
+}
+
+.TrainingTwo-modalHeading h2 {
+  margin: 0 0 8px;
+  color: var(--TrainingTwo-navy);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.TrainingTwo-modalHeading p {
+  margin: 0;
+  color: var(--TrainingTwo-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.TrainingTwo-requestForm {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.TrainingTwo-requestForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--TrainingTwo-navy);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.TrainingTwo-requestForm input,
+.TrainingTwo-requestForm select,
+.TrainingTwo-requestForm textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 13px;
+  border: 1px solid var(--TrainingTwo-border);
+  border-radius: 10px;
+  outline: none;
+  background: #ffffff;
+  color: var(--TrainingTwo-navy);
+  font-size: 14px;
+  font-weight: 400;
+  resize: vertical;
+}
+
+.TrainingTwo-requestForm input:focus,
+.TrainingTwo-requestForm select:focus,
+.TrainingTwo-requestForm textarea:focus {
+  border-color: var(--TrainingTwo-teal);
+  box-shadow: 0 0 0 3px rgba(11, 130, 139, 0.08);
+}
+
+.TrainingTwo-requestForm textarea {
+  min-height: 90px;
+}
+
+.TrainingTwo-submitRequest {
+  width: 100%;
+  margin-top: 3px;
+}
+
+.TrainingTwo-requestSuccess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 0 5px;
+  text-align: center;
+}
+
+.TrainingTwo-successIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: #e3f6ef;
+  color: #15845d;
+}
+
+.TrainingTwo-requestSuccess h2 {
+  margin: 0 0 10px;
+  color: var(--TrainingTwo-navy);
+  font-size: 24px;
+}
+
+.TrainingTwo-requestSuccess p {
+  margin: 0 0 22px;
+  color: var(--TrainingTwo-muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.TrainingTwo-requestSuccess .TrainingTwo-applyButton {
+  width: 100%;
+}
+
+/* =========================================================
+   LAPTOP RESPONSIVENESS
+========================================================= */
+
+@media (max-width: 1200px) {
+  .TrainingTwo-container {
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 26px;
+    width: calc(100% - 48px);
+  }
+
+  .TrainingTwo-sidebarHeader {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .TrainingTwo-filterContent {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .TrainingTwo-filterActions {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .TrainingTwo-emptyState {
+    min-height: 390px;
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .TrainingTwo-emptyDescription {
+    font-size: 17px;
+  }
+
+  .TrainingTwo-onlineButton,
+  .TrainingTwo-nearbySuggestion,
+  .TrainingTwo-requestButton {
+    padding-right: 14px;
+    padding-left: 14px;
+    font-size: 13px;
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 850px) {
+  .TrainingTwo {
+    padding-top: 20px;
+  }
+
+  .TrainingTwo-container {
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 20px;
+    width: calc(100% - 32px);
+  }
+
+  .TrainingTwo-sidebar {
+    top: 12px;
+    height: calc(100vh - 24px);
+    border-radius: 15px;
+  }
+
+  .TrainingTwo-sidebarHeader {
+    min-height: 62px;
+    padding: 16px 15px 10px;
+  }
+
+  .TrainingTwo-sidebarTitle {
+    font-size: 19px;
+  }
+
+  .TrainingTwo-filterContent {
+    padding: 5px 15px 18px;
+  }
+
+  .TrainingTwo-filterGroup {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .TrainingTwo-searchBox,
+  .TrainingTwo-selectWrapper,
+  .TrainingTwo-searchBox input,
+  .TrainingTwo-selectWrapper select,
+  .TrainingTwo-feeInputs input {
+    height: 45px;
+  }
+
+  .TrainingTwo-searchBox input,
+  .TrainingTwo-selectWrapper select,
+  .TrainingTwo-feeInputs input {
+    padding-right: 11px;
+    padding-left: 11px;
+    font-size: 13px;
+  }
+
+  .TrainingTwo-selectWrapper select {
+    padding-right: 31px;
+  }
+
+  .TrainingTwo-selectWrapper > svg {
+    right: 9px;
+    width: 17px;
+    height: 17px;
+  }
+
+  .TrainingTwo-label,
+  .TrainingTwo-checkboxLabel {
+    font-size: 13px;
+  }
+
+  .TrainingTwo-dayButton {
+    height: 42px;
+    font-size: 12px;
+  }
+
+  .TrainingTwo-filterActions {
+    gap: 8px;
+    padding: 12px 15px 16px;
+  }
+
+  .TrainingTwo-applyButton,
+  .TrainingTwo-clearButton {
+    min-height: 44px;
+    padding: 0 9px;
+    font-size: 13px;
+  }
+
+  .TrainingTwo-resultsToolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .TrainingTwo-resultsControls {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .TrainingTwo-sortWrapper {
+    flex: 1;
+    width: auto;
+  }
+
+  .TrainingTwo-nearbyButton {
+    min-width: 120px;
+  }
+
+  .TrainingTwo-emptyState {
+    min-height: 360px;
+    padding: 30px 16px;
+  }
+
+  .TrainingTwo-emptyIcon {
+    width: 65px;
+    height: 65px;
+    margin-bottom: 20px;
+  }
+
+  .TrainingTwo-emptyIcon svg {
+    width: 29px;
+    height: 29px;
+  }
+
+  .TrainingTwo-emptyTitle {
+    font-size: 23px;
+  }
+
+  .TrainingTwo-emptyDescription {
+    margin-bottom: 23px;
+    font-size: 15px;
+  }
+
+  .TrainingTwo-emptyActions {
+    gap: 8px;
+  }
+
+  .TrainingTwo-onlineButton,
+  .TrainingTwo-nearbySuggestion,
+  .TrainingTwo-requestButton {
+    min-height: 45px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   MOBILE — FILTERS ABOVE RESULTS
+========================================================= */
+
+@media (max-width: 600px) {
+  .TrainingTwo {
+    padding: 16px 0 30px;
+  }
+
+  .TrainingTwo-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: calc(100% - 28px);
+  }
+
+  .TrainingTwo-sidebar {
+    position: relative;
+    top: auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    border-radius: 15px;
+  }
+
+  .TrainingTwo-sidebarHeader {
+    min-height: 58px;
+    padding: 15px 16px 10px;
+  }
+
+  .TrainingTwo-sidebarTitle {
+    font-size: 20px;
+  }
+
+  .TrainingTwo-mobileClose {
+    display: none;
+  }
+
+  .TrainingTwo-filterContent {
+    flex: 0 1 auto;
+    max-height: none;
+    padding: 8px 16px 18px;
+    overflow: visible;
+    scrollbar-width: auto;
+    scrollbar-gutter: auto;
+  }
+
+  .TrainingTwo-filterGroup {
+    gap: 8px;
+    margin-bottom: 19px;
+  }
+
+  .TrainingTwo-label {
+    font-size: 13px;
+  }
+
+  .TrainingTwo-searchBox,
+  .TrainingTwo-selectWrapper {
+    height: 46px;
+  }
+
+  .TrainingTwo-searchBox input,
+  .TrainingTwo-selectWrapper select,
+  .TrainingTwo-feeInputs input {
+    height: 46px;
+    border-radius: 11px;
+    font-size: 14px;
+  }
+
+  .TrainingTwo-searchBox input,
+  .TrainingTwo-selectWrapper select,
+  .TrainingTwo-feeInputs input {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .TrainingTwo-selectWrapper select {
+    padding-right: 36px;
+  }
+
+  .TrainingTwo-selectWrapper > svg {
+    right: 12px;
+  }
+
+  .TrainingTwo-daysGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .TrainingTwo-dayButton {
+    height: 42px;
+    border-radius: 11px;
+    font-size: 13px;
+  }
+
+  .TrainingTwo-checkboxGroup {
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .TrainingTwo-checkboxLabel {
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .TrainingTwo-filterActions {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 12px 16px 17px;
+  }
+
+  .TrainingTwo-applyButton,
+  .TrainingTwo-clearButton {
+    min-height: 46px;
+    border-radius: 11px;
+    font-size: 14px;
+  }
+
+  /* Results */
+
+  .TrainingTwo-results {
+    width: 100%;
+  }
+
+  .TrainingTwo-resultsToolbar {
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 13px;
+    margin-bottom: 18px;
+  }
+
+  .TrainingTwo-resultsCount {
+    font-size: 16px;
+  }
+
+  .TrainingTwo-filterApplied {
+    font-size: 10px;
+  }
+
+  .TrainingTwo-resultsControls {
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .TrainingTwo-sortWrapper {
+    flex: 1;
+    height: 46px;
+  }
+
+  .TrainingTwo-sortWrapper select {
+    height: 46px;
+    padding-left: 12px;
+    border-radius: 11px;
+    font-size: 13px;
+  }
+
+  .TrainingTwo-sortWrapper > svg {
+    right: 10px;
+    width: 17px;
+    height: 17px;
+  }
+
+  .TrainingTwo-nearbyButton {
+    flex: 0 0 auto;
+    min-width: 115px;
+    height: 46px;
+    gap: 7px;
+    padding: 0 11px;
+    border-radius: 11px;
+    font-size: 13px;
+  }
+
+  .TrainingTwo-nearbyButton svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  /* Empty state */
+
+  .TrainingTwo-emptyState {
+    min-height: 0;
+    padding: 35px 17px;
+    border-radius: 16px;
+  }
+
+  .TrainingTwo-emptyIcon {
+    width: 62px;
+    height: 62px;
+    margin-bottom: 19px;
+    border-radius: 17px;
+  }
+
+  .TrainingTwo-emptyTitle {
+    font-size: 22px;
+    letter-spacing: -0.4px;
+    line-height: 1.4;
+  }
+
+  .TrainingTwo-emptyDescription {
+    margin: 12px 0 23px;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .TrainingTwo-desktopBreak {
+    display: none;
+  }
+
+  .TrainingTwo-emptyActions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .TrainingTwo-onlineButton,
+  .TrainingTwo-nearbySuggestion,
+  .TrainingTwo-requestButton {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 13px;
+    border-radius: 11px;
+    font-size: 13px;
+  }
+
+  .TrainingTwo-resultsNote {
+    display: flex;
+  }
+
+  /* Request modal */
+
+  .TrainingTwo-modalBackdrop {
+    align-items: center;
+    padding: 14px;
+  }
+
+  .TrainingTwo-modal {
+    max-height: calc(100dvh - 28px);
+    padding: 24px 19px;
+    border-radius: 16px;
+  }
+
+  .TrainingTwo-modalHeading h2 {
+    font-size: 21px;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+  .TrainingTwo-container {
+    width: calc(100% - 20px);
+  }
+
+  .TrainingTwo-sidebarHeader {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .TrainingTwo-filterContent {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .TrainingTwo-filterActions {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .TrainingTwo-resultsCount {
+    font-size: 14px;
+  }
+
+  .TrainingTwo-sortWrapper select {
+    font-size: 12px;
+  }
+
+  .TrainingTwo-nearbyButton {
+    min-width: 105px;
+    font-size: 12px;
+  }
+
+  .TrainingTwo-emptyState {
+    padding: 29px 13px;
+  }
+
+  .TrainingTwo-emptyTitle {
+    font-size: 20px;
+  }
+
+  .TrainingTwo-emptyDescription {
+    font-size: 13px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY — REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .TrainingTwo *,
+  .TrainingTwo *::before,
+  .TrainingTwo *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

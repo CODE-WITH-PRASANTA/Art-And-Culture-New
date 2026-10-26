@@ -1,0 +1,1798 @@
+
+/* =========================================================
+   ONLINE ART TWO — MAIN LAYOUT
+========================================================= */
+
+.OnlineArtTwo {
+  --OnlineArtTwo-navy: #122d47;
+  --OnlineArtTwo-text: #304b65;
+  --OnlineArtTwo-muted: #72849b;
+  --OnlineArtTwo-teal: #087f89;
+  --OnlineArtTwo-border: #d9e5ed;
+  --OnlineArtTwo-soft: #f5f9fa;
+  --OnlineArtTwo-white: #ffffff;
+  --OnlineArtTwo-gold: #f5a914;
+
+  width: 100%;
+  min-height: 100vh;
+  padding: 27px 0 60px;
+  background: #ffffff;
+  color: var(--OnlineArtTwo-navy);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.OnlineArtTwo *,
+.OnlineArtTwo *::before,
+.OnlineArtTwo *::after {
+  box-sizing: border-box;
+}
+
+.OnlineArtTwo button,
+.OnlineArtTwo input,
+.OnlineArtTwo select,
+.OnlineArtTwo textarea {
+  font: inherit;
+}
+
+.OnlineArtTwo button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.OnlineArtTwo-container {
+  display: grid;
+  grid-template-columns: 345px minmax(0, 1fr);
+  align-items: start;
+  gap: 40px;
+  width: calc(100% - 64px);
+  max-width: 1510px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   FILTER SIDEBAR
+========================================================= */
+
+.OnlineArtTwo-sidebar {
+  position: sticky;
+  top: 20px;
+  min-width: 0;
+}
+
+.OnlineArtTwo-filterPanel {
+  max-height: calc(100vh - 40px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 27px 25px 26px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 21px;
+  background: #ffffff;
+  scrollbar-width: thin;
+  scrollbar-color: #969696 transparent;
+  scrollbar-gutter: stable;
+}
+
+.OnlineArtTwo-filterPanel::-webkit-scrollbar {
+  width: 7px;
+}
+
+.OnlineArtTwo-filterPanel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.OnlineArtTwo-filterPanel::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #a0a0a0;
+}
+
+.OnlineArtTwo-filterHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.OnlineArtTwo-filterTitle {
+  margin: 0;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.45px;
+}
+
+.OnlineArtTwo-mobileFilterIcon {
+  display: none;
+  color: var(--OnlineArtTwo-teal);
+}
+
+/* =========================================================
+   FILTER GROUPS
+========================================================= */
+
+.OnlineArtTwo-filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  margin-bottom: 25px;
+}
+
+.OnlineArtTwo-label {
+  display: block;
+  margin: 0;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.OnlineArtTwo-input,
+.OnlineArtTwo-select {
+  width: 100%;
+  min-width: 0;
+  height: 50px;
+  padding: 0 16px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 13px;
+  outline: none;
+  background: #ffffff;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 15px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.OnlineArtTwo-input::placeholder {
+  color: #8b99aa;
+  opacity: 1;
+}
+
+.OnlineArtTwo-input:focus,
+.OnlineArtTwo-select:focus {
+  border-color: var(--OnlineArtTwo-teal);
+  box-shadow: 0 0 0 3px rgba(8, 127, 137, 0.09);
+}
+
+.OnlineArtTwo-input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+/* =========================================================
+   SEARCH INPUT
+========================================================= */
+
+.OnlineArtTwo-searchWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.OnlineArtTwo-searchIcon {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 13px;
+  transform: translateY(-50%);
+  color: var(--OnlineArtTwo-muted);
+  pointer-events: none;
+}
+
+.OnlineArtTwo-searchInput {
+  padding-left: 16px;
+}
+
+.OnlineArtTwo-searchInput::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/* =========================================================
+   CUSTOM SELECT
+========================================================= */
+
+.OnlineArtTwo-selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.OnlineArtTwo-selectWrapper > svg {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  width: 19px;
+  height: 19px;
+  transform: translateY(-50%);
+  color: var(--OnlineArtTwo-navy);
+  pointer-events: none;
+}
+
+.OnlineArtTwo-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 42px;
+  cursor: pointer;
+}
+
+.OnlineArtTwo-select option {
+  color: var(--OnlineArtTwo-navy);
+}
+
+/* =========================================================
+   PRICE FILTER
+========================================================= */
+
+.OnlineArtTwo-feeInputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.OnlineArtTwo-feeInputs .OnlineArtTwo-input {
+  padding: 0 14px;
+}
+
+.OnlineArtTwo-feeInputs input::-webkit-inner-spin-button,
+.OnlineArtTwo-feeInputs input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+/* =========================================================
+   DAYS FILTER
+========================================================= */
+
+.OnlineArtTwo-days {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.OnlineArtTwo-dayButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 47px;
+  padding: 0 4px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 13px;
+  background: #ffffff;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.OnlineArtTwo-dayButton:hover {
+  border-color: #9ccbd0;
+  background: #f3fbfb;
+}
+
+.OnlineArtTwo-dayButton--active {
+  border-color: var(--OnlineArtTwo-teal);
+  background: var(--OnlineArtTwo-teal);
+  color: #ffffff;
+}
+
+/* =========================================================
+   CHECKBOX FILTERS
+========================================================= */
+
+.OnlineArtTwo-checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: -1px;
+  margin-bottom: 25px;
+}
+
+.OnlineArtTwo-checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.OnlineArtTwo-checkLabel input,
+.OnlineArtTwo-compareLabel input {
+  flex: 0 0 auto;
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  accent-color: var(--OnlineArtTwo-teal);
+  cursor: pointer;
+}
+
+/* =========================================================
+   FILTER ACTIONS
+========================================================= */
+
+.OnlineArtTwo-filterActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.OnlineArtTwo-applyButton,
+.OnlineArtTwo-clearButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 49px;
+  padding: 0 15px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.OnlineArtTwo-applyButton {
+  border-color: var(--OnlineArtTwo-teal);
+  background: var(--OnlineArtTwo-teal);
+  color: #ffffff;
+}
+
+.OnlineArtTwo-applyButton:hover {
+  transform: translateY(-1px);
+  background: #066d75;
+}
+
+.OnlineArtTwo-clearButton {
+  background: #ffffff;
+  color: var(--OnlineArtTwo-navy);
+}
+
+.OnlineArtTwo-clearButton:hover {
+  border-color: #a8c7d2;
+  background: #f6fafb;
+}
+
+/* =========================================================
+   RESULTS AREA
+========================================================= */
+
+.OnlineArtTwo-results {
+  min-width: 0;
+  width: 100%;
+}
+
+/* =========================================================
+   RESULTS TOOLBAR
+========================================================= */
+
+.OnlineArtTwo-resultsToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 66px;
+  margin-bottom: 35px;
+}
+
+.OnlineArtTwo-resultsCount {
+  margin: 0;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 19px;
+  font-weight: 750;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.OnlineArtTwo-toolbarActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.OnlineArtTwo-sortWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 202px;
+  height: 50px;
+}
+
+.OnlineArtTwo-sortSelect {
+  width: 100%;
+  height: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0 42px 0 16px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 13px;
+  outline: none;
+  background: #ffffff;
+  color: var(--OnlineArtTwo-text);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.OnlineArtTwo-sortSelect:focus {
+  border-color: var(--OnlineArtTwo-teal);
+}
+
+.OnlineArtTwo-sortWrapper > svg {
+  position: absolute;
+  right: 13px;
+  color: var(--OnlineArtTwo-navy);
+  pointer-events: none;
+}
+
+.OnlineArtTwo-nearButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 141px;
+  height: 50px;
+  padding: 0 16px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 13px;
+  background: #ffffff;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.OnlineArtTwo-nearButton:hover {
+  border-color: #a7cbd3;
+  background: #f6fbfb;
+}
+
+/* =========================================================
+   CLASS RESULTS LIST
+========================================================= */
+
+.OnlineArtTwo-classList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* =========================================================
+   RESULT CARD
+========================================================= */
+
+.OnlineArtTwo-resultCard {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #72c1ca;
+  border-radius: 21px;
+  background: #ffffff;
+  box-shadow: 0 5px 16px rgba(18, 46, 73, 0.055);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.OnlineArtTwo-resultCard:hover {
+  transform: translateY(-2px);
+  border-color: #48aab6;
+  box-shadow: 0 9px 25px rgba(18, 46, 73, 0.09);
+}
+
+/* =========================================================
+   RESULT IMAGE
+========================================================= */
+
+.OnlineArtTwo-resultImage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 320px;
+  overflow: hidden;
+  background: #e8f2ed;
+  color: #269f76;
+}
+
+.OnlineArtTwo-resultPhoto {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.35s ease;
+}
+
+.OnlineArtTwo-resultCard:hover .OnlineArtTwo-resultPhoto {
+  transform: scale(1.035);
+}
+
+.OnlineArtTwo-resultImage--green {
+  background: #e5f3ed;
+  color: #26a174;
+}
+
+.OnlineArtTwo-resultImage--pink {
+  background: #f5dfe4;
+  color: #cf5571;
+}
+
+.OnlineArtTwo-resultImage--blue {
+  background: #e0edf7;
+  color: #3c8bd0;
+}
+
+.OnlineArtTwo-resultImage--orange {
+  background: #fbebdc;
+  color: #e58a43;
+}
+
+.OnlineArtTwo-resultIllustration {
+  width: 62px;
+  height: 62px;
+  max-width: 35%;
+  max-height: 35%;
+}
+
+/* =========================================================
+   RESULT CONTENT
+========================================================= */
+
+.OnlineArtTwo-resultContent {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 25px 24px 21px;
+}
+
+.OnlineArtTwo-resultTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  min-width: 0;
+}
+
+.OnlineArtTwo-resultMain {
+  flex: 1;
+  min-width: 0;
+}
+
+/* =========================================================
+   RESULT BADGES
+========================================================= */
+
+.OnlineArtTwo-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.OnlineArtTwo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 31px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.OnlineArtTwo-badge--featured {
+  background: #fff5df;
+  color: #a66c00;
+}
+
+.OnlineArtTwo-badge--verified {
+  background: #e7f6f6;
+  color: #0a8490;
+}
+
+.OnlineArtTwo-badge--category {
+  border-color: #e0e8ed;
+  background: #f5f8fa;
+  color: #58697e;
+}
+
+.OnlineArtTwo-badge--trial {
+  background: #e7f6ed;
+  color: #278354;
+}
+
+/* =========================================================
+   RESULT TITLE
+========================================================= */
+
+.OnlineArtTwo-resultTitle {
+  margin: 0 0 5px;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.65px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.OnlineArtTwo-resultTitle > span {
+  text-decoration-color: var(--OnlineArtTwo-gold);
+  text-decoration-line: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+.OnlineArtTwo-resultTeacher {
+  margin: 0;
+  color: var(--OnlineArtTwo-muted);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   PRICE BLOCK
+========================================================= */
+
+.OnlineArtTwo-priceBlock {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  min-width: 108px;
+  padding-top: 47px;
+  text-align: right;
+}
+
+.OnlineArtTwo-priceBlock strong {
+  color: var(--OnlineArtTwo-navy);
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.65px;
+  white-space: nowrap;
+}
+
+.OnlineArtTwo-priceBlock span {
+  color: var(--OnlineArtTwo-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   RESULT DESCRIPTION
+========================================================= */
+
+.OnlineArtTwo-resultDescription {
+  margin: 13px 0 14px;
+  color: #60718a;
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   RESULT METADATA
+========================================================= */
+
+.OnlineArtTwo-resultMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 19px;
+  margin-bottom: 20px;
+  color: #60718a;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.OnlineArtTwo-resultMeta > span {
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   RESULT FOOTER
+========================================================= */
+
+.OnlineArtTwo-resultFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  margin-top: auto;
+  padding-top: 19px;
+  border-top: 1px solid #e0e8ed;
+}
+
+.OnlineArtTwo-newListing {
+  flex-shrink: 0;
+  color: var(--OnlineArtTwo-muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.OnlineArtTwo-resultActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* =========================================================
+   COMPARE CHECKBOX
+========================================================= */
+
+.OnlineArtTwo-compareLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 14px;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.OnlineArtTwo-compareLabel input:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* =========================================================
+   FAVORITE BUTTON
+========================================================= */
+
+.OnlineArtTwo-favoriteButton {
+  display: inline-flex;
+  flex: 0 0 50px;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--OnlineArtTwo-navy);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.OnlineArtTwo-favoriteButton:hover {
+  transform: translateY(-1px);
+  border-color: #e5a0a7;
+  color: #d45c71;
+}
+
+.OnlineArtTwo-favoriteButton--active {
+  border-color: #f0ccd2;
+  background: #fff0f2;
+  color: #d44d66;
+}
+
+/* =========================================================
+   ENQUIRE BUTTON
+========================================================= */
+
+.OnlineArtTwo-enquireButton {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 104px;
+  height: 50px;
+  padding: 0 19px;
+  border: 1px solid var(--OnlineArtTwo-navy);
+  border-radius: 12px;
+  background: var(--OnlineArtTwo-navy);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.OnlineArtTwo-enquireButton:hover {
+  transform: translateY(-1px);
+  border-color: #1c4565;
+  background: #1c4565;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.OnlineArtTwo-emptyState {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 410px;
+  padding: 40px 25px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 21px;
+  background: #f5f9fa;
+  text-align: center;
+}
+
+.OnlineArtTwo-emptyIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 77px;
+  height: 77px;
+  margin-bottom: 23px;
+  border-radius: 22px;
+  background: #e2f0f1;
+  color: var(--OnlineArtTwo-teal);
+}
+
+.OnlineArtTwo-emptyState h3 {
+  margin: 0 0 11px;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.OnlineArtTwo-emptyState p {
+  max-width: 490px;
+  margin: 0 0 22px;
+  color: var(--OnlineArtTwo-text);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* =========================================================
+   COMPARE BAR
+========================================================= */
+
+.OnlineArtTwo-compareBar {
+  position: fixed;
+  z-index: 1000;
+  right: 24px;
+  bottom: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 22px;
+  border: 1px solid #cbdfe5;
+  border-radius: 17px;
+  background: #ffffff;
+  box-shadow: 0 12px 40px rgba(18, 46, 73, 0.17);
+}
+
+.OnlineArtTwo-compareBarText {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.OnlineArtTwo-compareBarText strong {
+  color: var(--OnlineArtTwo-navy);
+  font-size: 15px;
+}
+
+.OnlineArtTwo-compareBarText span {
+  color: var(--OnlineArtTwo-muted);
+  font-size: 13px;
+}
+
+.OnlineArtTwo-compareBarActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.OnlineArtTwo-compareViewButton,
+.OnlineArtTwo-compareClearButton {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.OnlineArtTwo-compareViewButton {
+  border-color: var(--OnlineArtTwo-teal);
+  background: var(--OnlineArtTwo-teal);
+  color: #ffffff;
+}
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+.OnlineArtTwo-modalOverlay {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+  background: rgba(9, 28, 46, 0.58);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.OnlineArtTwo-modal {
+  width: 100%;
+  max-width: 850px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 26px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 21px;
+  background: #ffffff;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+}
+
+.OnlineArtTwo-modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.OnlineArtTwo-modalHeader h2 {
+  margin: 0;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.OnlineArtTwo-modalHeader p {
+  margin: 6px 0 0;
+  color: var(--OnlineArtTwo-muted);
+  font-size: 14px;
+}
+
+.OnlineArtTwo-modalClose {
+  display: flex;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 11px;
+  background: #ffffff;
+  color: var(--OnlineArtTwo-navy);
+  cursor: pointer;
+}
+
+.OnlineArtTwo-modalClose:hover {
+  background: var(--OnlineArtTwo-soft);
+}
+
+.OnlineArtTwo-modalEyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--OnlineArtTwo-teal);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+/* =========================================================
+   COMPARE TABLE
+========================================================= */
+
+.OnlineArtTwo-compareTable {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.OnlineArtTwo-compareRow {
+  display: grid;
+  grid-template-columns: 130px repeat(
+    var(--OnlineArtTwo-compare-count, 3),
+    minmax(120px, 1fr)
+  );
+  gap: 15px;
+  min-width: 440px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--OnlineArtTwo-border);
+  color: var(--OnlineArtTwo-text);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.OnlineArtTwo-compareRow:first-child {
+  padding-top: 0;
+}
+
+.OnlineArtTwo-compareRow > strong {
+  color: var(--OnlineArtTwo-navy);
+}
+
+/* =========================================================
+   ENQUIRY MODAL
+========================================================= */
+
+.OnlineArtTwo-enquiryModal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 520px;
+}
+
+.OnlineArtTwo-enquiryModal .OnlineArtTwo-modalHeader {
+  margin-bottom: 10px;
+}
+
+.OnlineArtTwo-enquiryModal .OnlineArtTwo-modalHeader h2 {
+  max-width: 370px;
+  font-size: 21px;
+}
+
+.OnlineArtTwo-enquiryModal .OnlineArtTwo-input {
+  margin-bottom: 5px;
+}
+
+.OnlineArtTwo-textarea {
+  width: 100%;
+  min-height: 95px;
+  padding: 13px 15px;
+  resize: vertical;
+  border: 1px solid var(--OnlineArtTwo-border);
+  border-radius: 12px;
+  outline: none;
+  background: #ffffff;
+  color: var(--OnlineArtTwo-navy);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.OnlineArtTwo-textarea:focus {
+  border-color: var(--OnlineArtTwo-teal);
+  box-shadow: 0 0 0 3px rgba(8, 127, 137, 0.09);
+}
+
+.OnlineArtTwo-enquireButton--modal {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.OnlineArtTwo-modalNote {
+  margin: 0;
+  color: var(--OnlineArtTwo-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1200px) {
+  .OnlineArtTwo {
+    padding-top: 22px;
+  }
+
+  .OnlineArtTwo-container {
+    grid-template-columns: 290px minmax(0, 1fr);
+    gap: 24px;
+    width: calc(100% - 40px);
+  }
+
+  .OnlineArtTwo-filterPanel {
+    padding: 23px 18px;
+  }
+
+  .OnlineArtTwo-resultCard {
+    grid-template-columns: 185px minmax(0, 1fr);
+  }
+
+  .OnlineArtTwo-resultImage,
+  .OnlineArtTwo-resultPhoto {
+    min-height: 300px;
+  }
+
+  .OnlineArtTwo-resultContent {
+    padding: 20px 17px 17px;
+  }
+
+  .OnlineArtTwo-resultTop {
+    gap: 12px;
+  }
+
+  .OnlineArtTwo-resultTitle {
+    font-size: 20px;
+  }
+
+  .OnlineArtTwo-priceBlock {
+    min-width: 95px;
+    padding-top: 42px;
+  }
+
+  .OnlineArtTwo-priceBlock strong {
+    font-size: 21px;
+  }
+
+  .OnlineArtTwo-resultMeta {
+    gap: 7px 12px;
+    font-size: 13px;
+  }
+
+  .OnlineArtTwo-resultFooter {
+    gap: 10px;
+  }
+
+  .OnlineArtTwo-resultActions {
+    gap: 7px;
+  }
+
+  .OnlineArtTwo-favoriteButton {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .OnlineArtTwo-enquireButton {
+    min-width: 88px;
+    height: 44px;
+    padding: 0 13px;
+  }
+
+  .OnlineArtTwo-sortWrapper {
+    min-width: 165px;
+  }
+
+  .OnlineArtTwo-nearButton {
+    min-width: 112px;
+    padding: 0 12px;
+  }
+}
+
+/* =========================================================
+   SMALL LAPTOP / LARGE TABLET
+========================================================= */
+
+@media (max-width: 950px) {
+  .OnlineArtTwo-container {
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 18px;
+    width: calc(100% - 32px);
+  }
+
+  .OnlineArtTwo-filterPanel {
+    padding: 20px 15px;
+  }
+
+  .OnlineArtTwo-resultsToolbar {
+    flex-wrap: wrap;
+    margin-bottom: 23px;
+  }
+
+  .OnlineArtTwo-toolbarActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .OnlineArtTwo-sortWrapper {
+    flex: 1;
+  }
+
+  .OnlineArtTwo-resultCard {
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
+
+  .OnlineArtTwo-resultImage,
+  .OnlineArtTwo-resultPhoto {
+    min-height: 320px;
+  }
+
+  .OnlineArtTwo-resultContent {
+    padding: 17px 14px 14px;
+  }
+
+  .OnlineArtTwo-resultTop {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .OnlineArtTwo-priceBlock {
+    align-items: flex-start;
+    padding-top: 0;
+    text-align: left;
+  }
+
+  .OnlineArtTwo-badges {
+    gap: 6px;
+    margin-bottom: 11px;
+  }
+
+  .OnlineArtTwo-badge {
+    min-height: 27px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+
+  .OnlineArtTwo-resultTitle {
+    font-size: 18px;
+  }
+
+  .OnlineArtTwo-resultDescription {
+    margin-top: 11px;
+    font-size: 13px;
+  }
+
+  .OnlineArtTwo-resultMeta {
+    gap: 6px 10px;
+    font-size: 12px;
+  }
+
+  .OnlineArtTwo-newListing {
+    font-size: 12px;
+  }
+
+  .OnlineArtTwo-compareLabel {
+    gap: 5px;
+    font-size: 12px;
+  }
+
+  .OnlineArtTwo-compareLabel input {
+    width: 16px;
+    height: 16px;
+  }
+
+  .OnlineArtTwo-favoriteButton {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .OnlineArtTwo-favoriteButton svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .OnlineArtTwo-enquireButton {
+    min-width: 75px;
+    height: 38px;
+    padding: 0 9px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   MOBILE FILTER SIDEBAR
+========================================================= */
+
+@media (max-width: 700px) {
+  .OnlineArtTwo {
+    padding: 17px 0 45px;
+  }
+
+  .OnlineArtTwo-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 23px;
+    width: calc(100% - 30px);
+    max-width: 600px;
+  }
+
+  .OnlineArtTwo-sidebar {
+    position: static;
+    width: 100%;
+  }
+
+  .OnlineArtTwo-filterPanel {
+    max-height: none;
+    padding: 20px;
+    overflow: visible;
+    border-radius: 17px;
+    scrollbar-gutter: auto;
+  }
+
+  .OnlineArtTwo-filterHeading {
+    margin-bottom: 19px;
+  }
+
+  .OnlineArtTwo-filterTitle {
+    font-size: 20px;
+  }
+
+  .OnlineArtTwo-mobileFilterIcon {
+    display: block;
+  }
+
+  .OnlineArtTwo-filterGroup {
+    gap: 8px;
+    margin-bottom: 17px;
+  }
+
+  .OnlineArtTwo-label {
+    font-size: 13px;
+  }
+
+  .OnlineArtTwo-input,
+  .OnlineArtTwo-select {
+    height: 46px;
+    border-radius: 11px;
+    font-size: 14px;
+  }
+
+  .OnlineArtTwo-days {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .OnlineArtTwo-dayButton {
+    height: 40px;
+    border-radius: 10px;
+    font-size: 11px;
+  }
+
+  .OnlineArtTwo-checkboxGroup {
+    gap: 13px;
+    margin-bottom: 20px;
+  }
+
+  .OnlineArtTwo-checkLabel {
+    font-size: 13px;
+  }
+
+  .OnlineArtTwo-filterActions {
+    gap: 9px;
+  }
+
+  .OnlineArtTwo-applyButton,
+  .OnlineArtTwo-clearButton {
+    min-height: 45px;
+    border-radius: 11px;
+    font-size: 13px;
+  }
+
+  /* Results toolbar */
+
+  .OnlineArtTwo-resultsToolbar {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    min-height: auto;
+    margin-bottom: 18px;
+  }
+
+  .OnlineArtTwo-resultsCount {
+    font-size: 17px;
+  }
+
+  .OnlineArtTwo-toolbarActions {
+    gap: 8px;
+    width: auto;
+  }
+
+  .OnlineArtTwo-sortWrapper {
+    min-width: 0;
+    width: 165px;
+    height: 44px;
+  }
+
+  .OnlineArtTwo-sortSelect {
+    padding-left: 11px;
+    font-size: 12px;
+    border-radius: 10px;
+  }
+
+  .OnlineArtTwo-sortWrapper > svg {
+    right: 9px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .OnlineArtTwo-nearButton {
+    gap: 6px;
+    min-width: 0;
+    height: 44px;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .OnlineArtTwo-nearButton svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Result cards */
+
+  .OnlineArtTwo-classList {
+    gap: 15px;
+  }
+
+  .OnlineArtTwo-resultCard {
+    grid-template-columns: 125px minmax(0, 1fr);
+    border-radius: 15px;
+  }
+
+  .OnlineArtTwo-resultImage,
+  .OnlineArtTwo-resultPhoto {
+    min-height: 290px;
+  }
+
+  .OnlineArtTwo-resultIllustration {
+    width: 43px;
+    height: 43px;
+  }
+
+  .OnlineArtTwo-resultContent {
+    padding: 13px 12px;
+  }
+
+  .OnlineArtTwo-badges {
+    gap: 5px;
+    margin-bottom: 9px;
+  }
+
+  .OnlineArtTwo-badge {
+    min-height: 23px;
+    padding: 0 6px;
+    border-radius: 6px;
+    font-size: 9px;
+  }
+
+  .OnlineArtTwo-badge svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .OnlineArtTwo-resultTitle {
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .OnlineArtTwo-resultTeacher {
+    font-size: 12px;
+  }
+
+  .OnlineArtTwo-priceBlock {
+    gap: 2px;
+  }
+
+  .OnlineArtTwo-priceBlock strong {
+    font-size: 19px;
+  }
+
+  .OnlineArtTwo-priceBlock span {
+    font-size: 11px;
+  }
+
+  .OnlineArtTwo-resultDescription {
+    margin: 10px 0;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .OnlineArtTwo-resultMeta {
+    gap: 5px 9px;
+    margin-bottom: 13px;
+    font-size: 11px;
+  }
+
+  .OnlineArtTwo-resultFooter {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 12px;
+  }
+
+  .OnlineArtTwo-newListing {
+    font-size: 11px;
+  }
+
+  .OnlineArtTwo-resultActions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 7px;
+    width: 100%;
+  }
+
+  .OnlineArtTwo-compareLabel {
+    gap: 5px;
+    margin-right: auto;
+    font-size: 11px;
+  }
+
+  .OnlineArtTwo-favoriteButton {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .OnlineArtTwo-enquireButton {
+    min-width: 70px;
+    height: 36px;
+    font-size: 11px;
+  }
+
+  /* Empty state */
+
+  .OnlineArtTwo-emptyState {
+    min-height: 340px;
+    padding: 30px 18px;
+    border-radius: 16px;
+  }
+
+  .OnlineArtTwo-emptyState h3 {
+    font-size: 21px;
+  }
+
+  .OnlineArtTwo-emptyState p {
+    font-size: 14px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .OnlineArtTwo-container {
+    width: calc(100% - 24px);
+    gap: 19px;
+  }
+
+  .OnlineArtTwo-filterPanel {
+    padding: 17px 14px;
+  }
+
+  .OnlineArtTwo-resultsToolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .OnlineArtTwo-toolbarActions {
+    width: 100%;
+  }
+
+  .OnlineArtTwo-sortWrapper {
+    flex: 1;
+    width: auto;
+  }
+
+  .OnlineArtTwo-nearButton {
+    min-width: 105px;
+  }
+
+  .OnlineArtTwo-resultCard {
+    grid-template-columns: 1fr;
+  }
+
+  .OnlineArtTwo-resultImage {
+    min-height: 0;
+    height: 185px;
+  }
+
+  .OnlineArtTwo-resultPhoto {
+    min-height: 0;
+    height: 100%;
+  }
+
+  .OnlineArtTwo-resultContent {
+    padding: 15px;
+  }
+
+  .OnlineArtTwo-resultTop {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .OnlineArtTwo-resultMain {
+    flex: 1;
+  }
+
+  .OnlineArtTwo-badges {
+    gap: 5px;
+  }
+
+  .OnlineArtTwo-badge {
+    font-size: 10px;
+  }
+
+  .OnlineArtTwo-resultTitle {
+    font-size: 18px;
+    line-height: 1.4;
+  }
+
+  .OnlineArtTwo-resultTeacher {
+    font-size: 13px;
+  }
+
+  .OnlineArtTwo-priceBlock {
+    align-items: flex-end;
+    min-width: 83px;
+    padding-top: 3px;
+    text-align: right;
+  }
+
+  .OnlineArtTwo-priceBlock strong {
+    font-size: 19px;
+  }
+
+  .OnlineArtTwo-priceBlock span {
+    font-size: 10px;
+  }
+
+  .OnlineArtTwo-resultDescription {
+    font-size: 13px;
+  }
+
+  .OnlineArtTwo-resultMeta {
+    gap: 7px 12px;
+    font-size: 12px;
+  }
+
+  .OnlineArtTwo-resultFooter {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .OnlineArtTwo-resultActions {
+    justify-content: flex-end;
+    flex: 1;
+    width: auto;
+  }
+
+  .OnlineArtTwo-compareLabel {
+    margin-right: 0;
+  }
+
+  .OnlineArtTwo-compareBar {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 15px;
+    border-radius: 14px;
+  }
+
+  .OnlineArtTwo-compareBarText span {
+    font-size: 12px;
+  }
+
+  .OnlineArtTwo-compareBarActions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+
+  .OnlineArtTwo-compareViewButton,
+  .OnlineArtTwo-compareClearButton {
+    min-height: 40px;
+  }
+
+  .OnlineArtTwo-modalOverlay {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .OnlineArtTwo-modal {
+    max-height: calc(100vh - 24px);
+    margin: auto 0;
+    padding: 19px;
+    border-radius: 16px;
+  }
+
+  .OnlineArtTwo-modalHeader h2 {
+    font-size: 21px;
+  }
+
+  .OnlineArtTwo-enquiryModal .OnlineArtTwo-modalHeader h2 {
+    font-size: 19px;
+  }
+
+  .OnlineArtTwo-compareRow {
+    grid-template-columns: 95px repeat(3, minmax(115px, 1fr));
+    gap: 10px;
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL DEVICES
+========================================================= */
+
+@media (max-width: 350px) {
+  .OnlineArtTwo-container {
+    width: calc(100% - 18px);
+  }
+
+  .OnlineArtTwo-resultContent {
+    padding: 12px;
+  }
+
+  .OnlineArtTwo-resultTitle {
+    font-size: 16px;
+  }
+
+  .OnlineArtTwo-priceBlock {
+    min-width: 73px;
+  }
+
+  .OnlineArtTwo-priceBlock strong {
+    font-size: 16px;
+  }
+
+  .OnlineArtTwo-resultActions {
+    gap: 5px;
+  }
+
+  .OnlineArtTwo-compareLabel {
+    font-size: 10px;
+  }
+
+  .OnlineArtTwo-favoriteButton {
+    flex-basis: 33px;
+    width: 33px;
+    height: 34px;
+  }
+
+  .OnlineArtTwo-enquireButton {
+    min-width: 63px;
+    padding: 0 7px;
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .OnlineArtTwo *,
+  .OnlineArtTwo *::before,
+  .OnlineArtTwo *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,1005 @@
+
+/* =========================================================
+   TRAINING ONE — ART CLASSES PAGE
+========================================================= */
+
+.TrainingOne {
+  --TrainingOne-navy: #112d48;
+  --TrainingOne-blue: #49647e;
+  --TrainingOne-muted: #687c90;
+  --TrainingOne-border: #dce6ec;
+  --TrainingOne-teal: #008b98;
+  --TrainingOne-gold: #b57908;
+  --TrainingOne-white: #ffffff;
+
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  background: #ffffff;
+  color: var(--TrainingOne-navy);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.TrainingOne *,
+.TrainingOne *::before,
+.TrainingOne *::after {
+  box-sizing: border-box;
+}
+
+.TrainingOne a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.TrainingOne-container {
+  width: calc(100% - 80px);
+  max-width: 1426px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   HERO SECTION
+========================================================= */
+
+.TrainingOne-hero {
+  position: relative;
+  width: 100%;
+  padding: 32px 0 44px;
+  overflow: hidden;
+  border-top: 1px solid #dce7e9;
+  border-bottom: 1px solid #dce5eb;
+  background:
+    radial-gradient(
+      ellipse at 12% 0%,
+      rgba(191, 226, 229, 0.3),
+      transparent 54%
+    ),
+    linear-gradient(
+      180deg,
+      #eaf6f7 0%,
+      #f4fafa 58%,
+      #ffffff 100%
+    );
+}
+
+.TrainingOne-hero::after {
+  position: absolute;
+  right: -100px;
+  bottom: -175px;
+  width: 420px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(212, 232, 229, 0.28),
+    transparent 72%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.TrainingOne-hero .TrainingOne-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================================
+   BREADCRUMB
+========================================================= */
+
+.TrainingOne-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 11px;
+  margin: 0 0 25px;
+  color: #637e98;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.TrainingOne-breadcrumb a {
+  transition: color 0.2s ease;
+}
+
+.TrainingOne-breadcrumb a:hover {
+  color: var(--TrainingOne-teal);
+}
+
+.TrainingOne-breadcrumbSeparator {
+  color: #c1d0dc;
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.TrainingOne-breadcrumbCurrent {
+  color: var(--TrainingOne-navy);
+  font-weight: 700;
+}
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.TrainingOne-heroContent {
+  max-width: 1100px;
+}
+
+.TrainingOne-heroEyebrow {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--TrainingOne-teal);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.TrainingOne-title {
+  margin: 0;
+  color: var(--TrainingOne-navy);
+  font-size: clamp(38px, 3.25vw, 58px);
+  font-weight: 800;
+  letter-spacing: -1.8px;
+  line-height: 1.14;
+}
+
+.TrainingOne-description {
+  max-width: 1000px;
+  margin: 12px 0 0;
+  color: #405c78;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+.TrainingOne-heroHighlights {
+  display: none;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.TrainingOne-heroHighlights span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #496b76;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.TrainingOne-heroHighlights svg {
+  color: var(--TrainingOne-teal);
+}
+
+/* =========================================================
+   FEATURED SECTION
+========================================================= */
+
+.TrainingOne-featured {
+  width: 100%;
+  padding: 39px 0 48px;
+  background: #ffffff;
+}
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.TrainingOne-sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.TrainingOne-sectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.TrainingOne-sectionIcon {
+  display: flex;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #fff5df;
+  color: #b57908;
+}
+
+.TrainingOne-sectionTitle {
+  margin: 0;
+  color: #12304d;
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.45px;
+  line-height: 1.35;
+}
+
+.TrainingOne-sectionSubtitle {
+  display: none;
+  margin: 5px 0 0;
+  color: #73869a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.TrainingOne-allFeatured {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #d9e5ed;
+  border-radius: 30px;
+  background: #ffffff;
+  color: #008391;
+  font-size: 15px;
+  font-weight: 700;
+  transition:
+    color 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.TrainingOne-allFeatured:hover {
+  transform: translateY(-2px);
+  border-color: #008b98;
+  background: #f1fbfb;
+  color: #006e79;
+}
+
+/* =========================================================
+   CLASS CARD GRID
+========================================================= */
+
+.TrainingOne-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+}
+
+/* =========================================================
+   CLASS CARD
+========================================================= */
+
+.TrainingOne-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--TrainingOne-border);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(20, 53, 78, 0.025);
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.TrainingOne-card:hover {
+  transform: translateY(-4px);
+  border-color: #c9dbe5;
+  box-shadow: 0 12px 30px rgba(20, 53, 78, 0.09);
+}
+
+/* =========================================================
+   CARD IMAGE
+========================================================= */
+
+.TrainingOne-cardImageLink {
+  display: block;
+  width: 100%;
+}
+
+.TrainingOne-cardImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: #edf2f4;
+}
+
+.TrainingOne-cardImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.TrainingOne-card:hover .TrainingOne-cardImage {
+  transform: scale(1.045);
+}
+
+/* =========================================================
+   FEATURED BADGE
+========================================================= */
+
+.TrainingOne-featuredBadge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid rgba(245, 218, 153, 0.45);
+  border-radius: 8px;
+  background: #fff7e5;
+  color: #956000;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 2px 7px rgba(48, 38, 17, 0.05);
+}
+
+/* =========================================================
+   ONLINE / OFFLINE BADGE
+========================================================= */
+
+.TrainingOne-formatBadge {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  padding: 0 9px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.TrainingOne-card:hover .TrainingOne-formatBadge {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.TrainingOne-formatBadge--online {
+  background: rgba(231, 250, 248, 0.96);
+  color: #007f83;
+}
+
+.TrainingOne-formatBadge--offline {
+  background: rgba(255, 247, 229, 0.96);
+  color: #956000;
+}
+
+/* =========================================================
+   VERIFIED BADGE
+========================================================= */
+
+.TrainingOne-verifiedBadge {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 31px;
+  padding: 0 11px;
+  border: 1px solid #d9edef;
+  border-radius: 8px;
+  background: #eaf8f9;
+  color: #008497;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* =========================================================
+   CARD BODY
+========================================================= */
+
+.TrainingOne-cardBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 19px 19px 0;
+}
+
+.TrainingOne-cardDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.TrainingOne-cardTitle {
+  display: -webkit-box;
+  min-height: 24px;
+  margin: 0 0 8px;
+  overflow: hidden;
+  color: #12304d;
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: -0.3px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.TrainingOne-cardTitle a {
+  transition: color 0.2s ease;
+}
+
+.TrainingOne-cardTitle a:hover {
+  color: var(--TrainingOne-teal);
+}
+
+.TrainingOne-studio {
+  margin: 0 0 5px;
+  overflow: hidden;
+  color: #49647e;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.TrainingOne-cardMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  color: #71869c;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.TrainingOne-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.TrainingOne-location svg {
+  display: none;
+  flex-shrink: 0;
+}
+
+.TrainingOne-metaDivider {
+  color: #a9b8c6;
+}
+
+.TrainingOne-age {
+  white-space: normal;
+}
+
+/* =========================================================
+   PRICE FOOTER
+========================================================= */
+
+.TrainingOne-cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 64px;
+  margin-top: 21px;
+  border-top: 1px solid #dfe8ee;
+}
+
+.TrainingOne-price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-width: 0;
+}
+
+.TrainingOne-price strong {
+  color: #102d49;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+.TrainingOne-price > span {
+  color: #71849a;
+  font-size: 13px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.TrainingOne-newBadge {
+  flex-shrink: 0;
+  color: #112d48;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+/* =========================================================
+   BOTTOM INFORMATION
+========================================================= */
+
+.TrainingOne-bottomNote {
+  display: none;
+  align-items: center;
+  gap: 15px;
+  margin-top: 26px;
+  padding: 18px 22px;
+  border: 1px solid #e1ecef;
+  border-radius: 14px;
+  background: linear-gradient(110deg, #f0f9fa, #fffdf8);
+}
+
+.TrainingOne-bottomIcon {
+  display: flex;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #dff3f2;
+  color: #008b98;
+}
+
+.TrainingOne-bottomText {
+  flex: 1;
+}
+
+.TrainingOne-bottomText h3 {
+  margin: 0 0 4px;
+  color: var(--TrainingOne-navy);
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.TrainingOne-bottomText p {
+  margin: 0;
+  color: var(--TrainingOne-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.TrainingOne-bottomSparkle {
+  flex-shrink: 0;
+  color: #b57908;
+}
+
+/* =========================================================
+   LARGE DESKTOP
+========================================================= */
+
+@media (min-width: 1600px) {
+  .TrainingOne-container {
+    max-width: 1426px;
+  }
+
+  .TrainingOne-cardImageWrapper {
+    height: 220px;
+  }
+}
+
+/* =========================================================
+   SMALL DESKTOP / LAPTOP
+========================================================= */
+
+@media (max-width: 1250px) {
+  .TrainingOne-container {
+    width: calc(100% - 64px);
+  }
+
+  .TrainingOne-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .TrainingOne-cardImageWrapper {
+    height: 215px;
+  }
+
+  .TrainingOne-description {
+    font-size: 19px;
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .TrainingOne-container {
+    width: calc(100% - 44px);
+  }
+
+  .TrainingOne-hero {
+    padding: 28px 0 34px;
+  }
+
+  .TrainingOne-breadcrumb {
+    gap: 8px;
+    margin-bottom: 22px;
+    font-size: 14px;
+  }
+
+  .TrainingOne-title {
+    font-size: clamp(36px, 5.6vw, 49px);
+    letter-spacing: -1.2px;
+  }
+
+  .TrainingOne-description {
+    max-width: 740px;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .TrainingOne-featured {
+    padding: 30px 0 38px;
+  }
+
+  .TrainingOne-sectionTitle {
+    font-size: 20px;
+  }
+
+  .TrainingOne-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+  }
+
+  .TrainingOne-cardImageWrapper {
+    height: clamp(180px, 28vw, 240px);
+  }
+
+  .TrainingOne-cardBody {
+    padding: 16px 16px 0;
+  }
+
+  .TrainingOne-cardTitle {
+    font-size: 17px;
+  }
+
+  .TrainingOne-cardFooter {
+    margin-top: 18px;
+  }
+
+  .TrainingOne-price strong {
+    font-size: 17px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .TrainingOne-container {
+    width: calc(100% - 30px);
+  }
+
+  .TrainingOne-hero {
+    padding: 23px 0 28px;
+  }
+
+  .TrainingOne-breadcrumb {
+    gap: 7px;
+    margin-bottom: 19px;
+    font-size: 12px;
+  }
+
+  .TrainingOne-breadcrumbSeparator {
+    font-size: 16px;
+  }
+
+  .TrainingOne-heroEyebrow {
+    display: flex;
+    font-size: 10px;
+    letter-spacing: 0.8px;
+  }
+
+  .TrainingOne-title {
+    font-size: clamp(30px, 8.4vw, 42px);
+    letter-spacing: -1.1px;
+    line-height: 1.13;
+  }
+
+  .TrainingOne-description {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .TrainingOne-heroHighlights {
+    display: flex;
+    gap: 10px 14px;
+  }
+
+  .TrainingOne-heroHighlights span {
+    font-size: 11px;
+  }
+
+  .TrainingOne-featured {
+    padding: 25px 0 30px;
+  }
+
+  .TrainingOne-sectionHeader {
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 17px;
+  }
+
+  .TrainingOne-sectionHeading {
+    align-items: flex-start;
+    gap: 9px;
+  }
+
+  .TrainingOne-sectionIcon {
+    flex-basis: 30px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .TrainingOne-sectionIcon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .TrainingOne-sectionTitle {
+    font-size: 17px;
+    letter-spacing: -0.25px;
+    line-height: 1.45;
+  }
+
+  .TrainingOne-sectionSubtitle {
+    display: block;
+    font-size: 12px;
+  }
+
+  .TrainingOne-allFeatured {
+    gap: 5px;
+    min-height: 35px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .TrainingOne-allFeatured svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .TrainingOne-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .TrainingOne-card {
+    border-radius: 13px;
+  }
+
+  .TrainingOne-cardImageWrapper {
+    height: clamp(135px, 37vw, 205px);
+  }
+
+  .TrainingOne-featuredBadge {
+    top: 9px;
+    left: 8px;
+    min-height: 25px;
+    padding: 0 8px;
+    border-radius: 6px;
+    font-size: 10px;
+  }
+
+  .TrainingOne-verifiedBadge {
+    bottom: 8px;
+    left: 8px;
+    gap: 4px;
+    min-height: 25px;
+    padding: 0 7px;
+    border-radius: 6px;
+    font-size: 10px;
+  }
+
+  .TrainingOne-verifiedBadge svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .TrainingOne-formatBadge {
+    top: 9px;
+    right: 7px;
+    min-height: 22px;
+    padding: 0 6px;
+    font-size: 9px;
+    opacity: 1;
+    transform: none;
+  }
+
+  .TrainingOne-cardBody {
+    padding: 12px 10px 0;
+  }
+
+  .TrainingOne-cardTitle {
+    min-height: 0;
+    margin-bottom: 7px;
+    font-size: 14px;
+    line-height: 1.4;
+    -webkit-line-clamp: 3;
+  }
+
+  .TrainingOne-studio {
+    margin-bottom: 5px;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .TrainingOne-cardMeta {
+    gap: 4px;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .TrainingOne-location {
+    overflow-wrap: anywhere;
+  }
+
+  .TrainingOne-metaDivider {
+    display: none;
+  }
+
+  .TrainingOne-age {
+    flex-basis: 100%;
+  }
+
+  .TrainingOne-cardFooter {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: 62px;
+    margin-top: 13px;
+    padding: 9px 0;
+  }
+
+  .TrainingOne-price {
+    gap: 4px;
+  }
+
+  .TrainingOne-price strong {
+    font-size: 15px;
+  }
+
+  .TrainingOne-price > span {
+    font-size: 11px;
+  }
+
+  .TrainingOne-newBadge {
+    font-size: 11px;
+  }
+
+  .TrainingOne-bottomNote {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 14px 12px;
+  }
+
+  .TrainingOne-bottomIcon {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .TrainingOne-bottomIcon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .TrainingOne-bottomText h3 {
+    font-size: 13px;
+  }
+
+  .TrainingOne-bottomText p {
+    font-size: 11px;
+  }
+
+  .TrainingOne-bottomSparkle {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+  .TrainingOne-container {
+    width: calc(100% - 22px);
+  }
+
+  .TrainingOne-breadcrumb {
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  .TrainingOne-title {
+    font-size: 30px;
+  }
+
+  .TrainingOne-description {
+    font-size: 14px;
+  }
+
+  .TrainingOne-sectionTitle {
+    font-size: 15px;
+  }
+
+  .TrainingOne-sectionSubtitle {
+    font-size: 11px;
+  }
+
+  .TrainingOne-allFeatured {
+    font-size: 10px;
+  }
+
+  .TrainingOne-grid {
+    gap: 9px;
+  }
+
+  .TrainingOne-cardImageWrapper {
+    height: 132px;
+  }
+
+  .TrainingOne-cardBody {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .TrainingOne-cardTitle {
+    font-size: 13px;
+  }
+
+  .TrainingOne-studio {
+    font-size: 11px;
+  }
+
+  .TrainingOne-price strong {
+    font-size: 14px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .TrainingOne *,
+  .TrainingOne *::before,
+  .TrainingOne *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

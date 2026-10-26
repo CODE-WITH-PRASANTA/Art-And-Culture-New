@@ -1,0 +1,1025 @@
+
+/* =========================================================
+   ONLINE ART ONE — BASE
+========================================================= */
+
+.OnlineArtOne {
+  --OnlineArtOne-navy: #122e49;
+  --OnlineArtOne-text: #38536d;
+  --OnlineArtOne-muted: #6d8195;
+  --OnlineArtOne-teal: #07838c;
+  --OnlineArtOne-border: #d9e5ec;
+  --OnlineArtOne-hero-bg: #eef8f9;
+  --OnlineArtOne-gold: #f6a914;
+  --OnlineArtOne-white: #ffffff;
+
+  width: 100%;
+  overflow: hidden;
+  background: var(--OnlineArtOne-white);
+  color: var(--OnlineArtOne-navy);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.OnlineArtOne *,
+.OnlineArtOne *::before,
+.OnlineArtOne *::after {
+  box-sizing: border-box;
+}
+
+.OnlineArtOne a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.OnlineArtOne button {
+  font: inherit;
+}
+
+.OnlineArtOne-container {
+  width: calc(100% - 80px);
+  max-width: 1458px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   HERO SECTION
+========================================================= */
+
+.OnlineArtOne-hero {
+  position: relative;
+  width: 100%;
+  padding: 24px 0 42px;
+  border-top: 1px solid #dce9ed;
+  border-bottom: 1px solid var(--OnlineArtOne-border);
+  background:
+    radial-gradient(
+      ellipse at 90% 0%,
+      rgba(255, 255, 255, 0.88),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      #edf7f8 0%,
+      #f7fbfb 70%,
+      #ffffff 100%
+    );
+}
+
+.OnlineArtOne-heroContent {
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* =========================================================
+   HERO EYEBROW
+========================================================= */
+
+.OnlineArtOne-eyebrow {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 12px;
+  color: var(--OnlineArtOne-teal);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   HERO TITLE
+========================================================= */
+
+.OnlineArtOne-heroTitle {
+  margin: 0 0 10px;
+  color: var(--OnlineArtOne-navy);
+  font-size: clamp(42px, 4vw, 56px);
+  font-weight: 800;
+  letter-spacing: -1.9px;
+  line-height: 1.2;
+}
+
+/* =========================================================
+   HERO DESCRIPTION
+========================================================= */
+
+.OnlineArtOne-heroDescription {
+  max-width: 960px;
+  margin: 0;
+  color: var(--OnlineArtOne-text);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   CATEGORY FILTERS
+========================================================= */
+
+.OnlineArtOne-categoryFilters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.OnlineArtOne-filterButton {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 17px;
+  border: 1px solid var(--OnlineArtOne-border);
+  border-radius: 24px;
+  background: #ffffff;
+  color: var(--OnlineArtOne-navy);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.OnlineArtOne-filterButton:hover {
+  transform: translateY(-1px);
+  border-color: #b4d4de;
+  background: #f5fbfc;
+}
+
+.OnlineArtOne-filterButton--active {
+  border-color: var(--OnlineArtOne-navy);
+  background: var(--OnlineArtOne-navy);
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(18, 46, 73, 0.1);
+}
+
+.OnlineArtOne-filterButton--active:hover {
+  border-color: var(--OnlineArtOne-navy);
+  background: #1a405f;
+  color: #ffffff;
+}
+
+/* =========================================================
+   FEATURED SECTION
+========================================================= */
+
+.OnlineArtOne-featured {
+  width: 100%;
+  padding: 38px 0 40px;
+  background: #ffffff;
+}
+
+/* =========================================================
+   FEATURED HEADER
+========================================================= */
+
+.OnlineArtOne-featuredHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.OnlineArtOne-featuredHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.OnlineArtOne-featuredStar {
+  display: flex;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #fff5df;
+  color: #a36b00;
+}
+
+.OnlineArtOne-featuredTitle {
+  margin: 0;
+  color: var(--OnlineArtOne-navy);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.45px;
+  line-height: 1.4;
+}
+
+.OnlineArtOne-featuredCount {
+  display: none;
+  flex-shrink: 0;
+  color: var(--OnlineArtOne-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   FEATURED GRID
+========================================================= */
+
+.OnlineArtOne-featuredGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 345px));
+  align-items: stretch;
+  gap: 18px;
+}
+
+/* =========================================================
+   CLASS CARD
+========================================================= */
+
+.OnlineArtOne-classCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--OnlineArtOne-border);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(18, 46, 73, 0.015);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.OnlineArtOne-classCard:hover {
+  transform: translateY(-3px);
+  border-color: #c6d9e3;
+  box-shadow: 0 10px 25px rgba(18, 46, 73, 0.075);
+}
+
+/* =========================================================
+   CARD IMAGE
+========================================================= */
+
+.OnlineArtOne-cardImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 214px;
+  overflow: hidden;
+  background: #edf2f4;
+}
+
+.OnlineArtOne-cardImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.45s ease;
+}
+
+.OnlineArtOne-classCard:hover .OnlineArtOne-cardImage {
+  transform: scale(1.045);
+}
+
+/* =========================================================
+   FEATURED BADGE
+========================================================= */
+
+.OnlineArtOne-featuredBadge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 9px;
+  background: #fff6df;
+  color: #9b6400;
+  font-size: 12px;
+  font-weight: 750;
+  box-shadow: 0 2px 6px rgba(20, 40, 55, 0.05);
+}
+
+/* =========================================================
+   VERIFIED BADGE
+========================================================= */
+
+.OnlineArtOne-verifiedBadge {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 29px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: #e7f7f7;
+  color: #087c86;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+/* =========================================================
+   CARD BODY
+========================================================= */
+
+.OnlineArtOne-cardBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 19px 19px 15px;
+}
+
+.OnlineArtOne-cardTitle {
+  display: -webkit-box;
+  min-height: 25px;
+  margin: 0 0 6px;
+  overflow: hidden;
+  color: var(--OnlineArtOne-navy);
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.OnlineArtOne-cardProvider {
+  margin: 0 0 5px;
+  color: var(--OnlineArtOne-text);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.OnlineArtOne-cardMeta {
+  margin: 0;
+  color: var(--OnlineArtOne-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.OnlineArtOne-cardMeta span {
+  padding: 0 2px;
+  color: #8b9baa;
+}
+
+/* =========================================================
+   CARD FOOTER
+========================================================= */
+
+.OnlineArtOne-cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 17px;
+  border-top: 1px solid #e0e8ed;
+  margin-top: 19px;
+}
+
+.OnlineArtOne-cardPrice {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  color: var(--OnlineArtOne-navy);
+}
+
+.OnlineArtOne-cardPrice strong {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.25px;
+}
+
+.OnlineArtOne-cardPrice > span {
+  color: var(--OnlineArtOne-muted);
+  font-size: 12px;
+}
+
+.OnlineArtOne-cardStatus {
+  flex-shrink: 0;
+  color: var(--OnlineArtOne-navy);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+/* =========================================================
+   PROMOTIONAL CARD
+========================================================= */
+
+.OnlineArtOne-promoCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 418px;
+  padding: 28px;
+  border: 2px dashed #d8e6ed;
+  border-radius: 21px;
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      rgba(237, 248, 249, 0.42),
+      transparent 65%
+    ),
+    #ffffff;
+  text-align: center;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.OnlineArtOne-promoCard:hover {
+  transform: translateY(-2px);
+  border-color: #9ccfd4;
+  background: #fbfefe;
+}
+
+/* =========================================================
+   PROMO ICON
+========================================================= */
+
+.OnlineArtOne-promoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 17px;
+  border-radius: 19px;
+  background: #fff5df;
+  color: #a36b00;
+  transition: transform 0.25s ease;
+}
+
+.OnlineArtOne-promoCard:hover .OnlineArtOne-promoIcon {
+  transform: rotate(-7deg) scale(1.04);
+}
+
+/* =========================================================
+   PROMO TEXT
+========================================================= */
+
+.OnlineArtOne-promoTitle {
+  margin: 0 0 7px;
+  color: var(--OnlineArtOne-navy);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.OnlineArtOne-promoDescription {
+  max-width: 245px;
+  margin: 0;
+  color: var(--OnlineArtOne-muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* =========================================================
+   PROMO LINK
+========================================================= */
+
+.OnlineArtOne-promoLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 17px;
+  color: var(--OnlineArtOne-teal);
+  font-size: 14px;
+  font-weight: 750;
+  transition: gap 0.2s ease;
+}
+
+.OnlineArtOne-promoLink:hover {
+  gap: 10px;
+}
+
+.OnlineArtOne-promoLink svg {
+  transition: transform 0.2s ease;
+}
+
+.OnlineArtOne-promoLink:hover svg {
+  transform: translateX(2px);
+}
+
+/* =========================================================
+   ADDITIONAL ENQUIRY SECTION
+========================================================= */
+
+.OnlineArtOne-enquiryAnchor {
+  padding: 28px 0 55px;
+  background: #f5f9fa;
+}
+
+.OnlineArtOne-enquiryContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 28px 32px;
+  border: 1px solid var(--OnlineArtOne-border);
+  border-radius: 19px;
+  background: #ffffff;
+}
+
+.OnlineArtOne-enquiryTitle {
+  margin: 0 0 7px;
+  color: var(--OnlineArtOne-navy);
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.OnlineArtOne-enquiryDescription {
+  margin: 0;
+  color: var(--OnlineArtOne-text);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.OnlineArtOne-enquiryButton {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 49px;
+  padding: 0 20px;
+  border: 1px solid var(--OnlineArtOne-gold);
+  border-radius: 12px;
+  background: var(--OnlineArtOne-gold);
+  color: var(--OnlineArtOne-navy);
+  font-size: 14px;
+  font-weight: 750;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.OnlineArtOne-enquiryButton:hover {
+  transform: translateY(-2px);
+  background: #efa00b;
+}
+
+/* =========================================================
+   LARGE DESKTOP
+========================================================= */
+
+@media (min-width: 1600px) {
+  .OnlineArtOne-container {
+    max-width: 1458px;
+  }
+
+  .OnlineArtOne-cardImageWrapper {
+    height: 214px;
+  }
+}
+
+/* =========================================================
+   LAPTOP
+========================================================= */
+
+@media (max-width: 1200px) {
+  .OnlineArtOne-container {
+    width: calc(100% - 64px);
+  }
+
+  .OnlineArtOne-heroTitle {
+    font-size: 48px;
+  }
+
+  .OnlineArtOne-heroDescription {
+    font-size: 18px;
+  }
+
+  .OnlineArtOne-featuredGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+  }
+
+  .OnlineArtOne-cardImageWrapper {
+    height: 190px;
+  }
+
+  .OnlineArtOne-cardBody {
+    padding: 16px 14px 13px;
+  }
+
+  .OnlineArtOne-cardTitle {
+    font-size: 15px;
+  }
+
+  .OnlineArtOne-cardProvider {
+    font-size: 13px;
+  }
+
+  .OnlineArtOne-cardPrice strong {
+    font-size: 15px;
+  }
+
+  .OnlineArtOne-promoCard {
+    min-height: 380px;
+    padding: 20px;
+  }
+
+  .OnlineArtOne-filterButton {
+    padding: 0 14px;
+    font-size: 14px;
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 850px) {
+  .OnlineArtOne-container {
+    width: calc(100% - 44px);
+  }
+
+  .OnlineArtOne-hero {
+    padding: 27px 0 32px;
+  }
+
+  .OnlineArtOne-heroTitle {
+    font-size: 42px;
+    letter-spacing: -1.3px;
+  }
+
+  .OnlineArtOne-heroDescription {
+    font-size: 17px;
+  }
+
+  .OnlineArtOne-categoryFilters {
+    gap: 9px;
+    margin-top: 22px;
+  }
+
+  .OnlineArtOne-filterButton {
+    min-height: 39px;
+    padding: 0 13px;
+    font-size: 13px;
+  }
+
+  .OnlineArtOne-featured {
+    padding: 30px 0;
+  }
+
+  .OnlineArtOne-featuredTitle {
+    font-size: 20px;
+  }
+
+  .OnlineArtOne-featuredGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .OnlineArtOne-cardImageWrapper {
+    height: 210px;
+  }
+
+  .OnlineArtOne-promoCard {
+    grid-column: auto;
+    min-height: 320px;
+  }
+
+  .OnlineArtOne-cardBody {
+    padding: 17px 15px 14px;
+  }
+
+  .OnlineArtOne-enquiryContent {
+    padding: 24px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .OnlineArtOne-container {
+    width: calc(100% - 30px);
+  }
+
+  .OnlineArtOne-hero {
+    padding: 26px 0 27px;
+  }
+
+  .OnlineArtOne-eyebrow {
+    display: flex;
+    font-size: 10px;
+  }
+
+  .OnlineArtOne-heroTitle {
+    margin-bottom: 11px;
+    font-size: clamp(32px, 8vw, 42px);
+    letter-spacing: -1.1px;
+    line-height: 1.17;
+  }
+
+  .OnlineArtOne-heroDescription {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  /* Scrollable filters */
+
+  .OnlineArtOne-categoryFilters {
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 2px 1px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .OnlineArtOne-categoryFilters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .OnlineArtOne-filterButton {
+    min-height: 38px;
+    padding: 0 13px;
+    font-size: 13px;
+  }
+
+  /* Featured section */
+
+  .OnlineArtOne-featured {
+    padding: 26px 0 32px;
+  }
+
+  .OnlineArtOne-featuredHeader {
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 17px;
+  }
+
+  .OnlineArtOne-featuredHeading {
+    gap: 9px;
+  }
+
+  .OnlineArtOne-featuredStar {
+    flex-basis: 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+
+  .OnlineArtOne-featuredStar svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .OnlineArtOne-featuredTitle {
+    font-size: 17px;
+    letter-spacing: -0.3px;
+    line-height: 1.55;
+  }
+
+  .OnlineArtOne-featuredCount {
+    display: block;
+    padding-top: 6px;
+    font-size: 11px;
+  }
+
+  .OnlineArtOne-featuredGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  /* Class card */
+
+  .OnlineArtOne-classCard {
+    border-radius: 14px;
+  }
+
+  .OnlineArtOne-cardImageWrapper {
+    height: 150px;
+  }
+
+  .OnlineArtOne-featuredBadge {
+    top: 9px;
+    left: 9px;
+    min-height: 25px;
+    padding: 0 8px;
+    border-radius: 7px;
+    font-size: 10px;
+  }
+
+  .OnlineArtOne-verifiedBadge {
+    bottom: 9px;
+    left: 9px;
+    gap: 3px;
+    min-height: 24px;
+    padding: 0 7px;
+    border-radius: 6px;
+    font-size: 10px;
+  }
+
+  .OnlineArtOne-verifiedBadge svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .OnlineArtOne-cardBody {
+    padding: 12px 10px 11px;
+  }
+
+  .OnlineArtOne-cardTitle {
+    min-height: 0;
+    margin-bottom: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .OnlineArtOne-cardProvider {
+    margin-bottom: 5px;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .OnlineArtOne-cardMeta {
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .OnlineArtOne-cardFooter {
+    align-items: flex-start;
+    gap: 5px;
+    margin-top: auto;
+    padding-top: 11px;
+    margin-top: 13px;
+  }
+
+  .OnlineArtOne-cardPrice {
+    gap: 3px;
+  }
+
+  .OnlineArtOne-cardPrice strong {
+    font-size: 12px;
+  }
+
+  .OnlineArtOne-cardPrice > span {
+    font-size: 9px;
+  }
+
+  .OnlineArtOne-cardStatus {
+    padding-top: 2px;
+    font-size: 10px;
+  }
+
+  /* Promotional card */
+
+  .OnlineArtOne-promoCard {
+    grid-column: 1 / -1;
+    min-height: 235px;
+    padding: 23px 17px;
+    border-radius: 15px;
+  }
+
+  .OnlineArtOne-promoIcon {
+    width: 47px;
+    height: 47px;
+    margin-bottom: 13px;
+    border-radius: 15px;
+  }
+
+  .OnlineArtOne-promoIcon svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .OnlineArtOne-promoTitle {
+    font-size: 16px;
+  }
+
+  .OnlineArtOne-promoDescription {
+    max-width: 240px;
+    font-size: 13px;
+  }
+
+  .OnlineArtOne-promoLink {
+    margin-top: 13px;
+    font-size: 13px;
+  }
+
+  /* Enquiry */
+
+  .OnlineArtOne-enquiryAnchor {
+    padding: 22px 0 35px;
+  }
+
+  .OnlineArtOne-enquiryContent {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 17px;
+    padding: 20px 17px;
+    border-radius: 15px;
+  }
+
+  .OnlineArtOne-enquiryTitle {
+    font-size: 20px;
+  }
+
+  .OnlineArtOne-enquiryDescription {
+    font-size: 13px;
+  }
+
+  .OnlineArtOne-enquiryButton {
+    justify-content: space-between;
+    width: 100%;
+    min-height: 46px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL MOBILE
+========================================================= */
+
+@media (max-width: 370px) {
+  .OnlineArtOne-container {
+    width: calc(100% - 22px);
+  }
+
+  .OnlineArtOne-heroTitle {
+    font-size: 31px;
+  }
+
+  .OnlineArtOne-heroDescription {
+    font-size: 14px;
+  }
+
+  .OnlineArtOne-featuredTitle {
+    font-size: 15px;
+  }
+
+  .OnlineArtOne-featuredGrid {
+    gap: 9px;
+  }
+
+  .OnlineArtOne-cardImageWrapper {
+    height: 125px;
+  }
+
+  .OnlineArtOne-cardBody {
+    padding: 10px 8px;
+  }
+
+  .OnlineArtOne-cardTitle {
+    font-size: 12px;
+  }
+
+  .OnlineArtOne-cardProvider {
+    font-size: 10px;
+  }
+
+  .OnlineArtOne-cardPrice strong {
+    font-size: 11px;
+  }
+
+  .OnlineArtOne-cardPrice > span {
+    font-size: 8px;
+  }
+
+  .OnlineArtOne-cardStatus {
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .OnlineArtOne *,
+  .OnlineArtOne *::before,
+  .OnlineArtOne *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

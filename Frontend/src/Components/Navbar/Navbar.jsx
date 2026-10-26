@@ -18,11 +18,13 @@ const Navbar = () => {
   const navLinks = [
     { title: "Home", path: "/", dropdown: false },
     { title: "About Us", path: "/about-us", dropdown: false },
-    { title: "Shop", path: "/shop", dropdown: true },
+    { title: "Shop", path: "/shop", dropdown: false },
+    { title: "Blog", path: "/blog", dropdown: false },
+    { title: "Gallary", path: "/gallary", dropdown: false },
     {
       title: "Training & Course",
       path: "/training-and-course",
-      dropdown: true,
+      dropdown: false,
     },
     { title: "FAQ", path: "/faq", dropdown: false },
     { title: "Contact", path: "/contact", dropdown: false },

@@ -1,0 +1,504 @@
+
+/* ========================================
+   REQUEST ART CLASS — MAIN PAGE
+======================================== */
+
+.RequestArtClass {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: #ffffff;
+  color: #102d49;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.RequestArtClass,
+.RequestArtClass * {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   HEADER / HERO
+======================================== */
+
+.RequestArtClass-hero {
+  width: 100%;
+  padding: 32px 24px 46px;
+  background: linear-gradient(
+    180deg,
+    #eaf6f7 0%,
+    #f6fbfb 66%,
+    #ffffff 100%
+  );
+  border-top: 1px solid #e1ebee;
+  border-bottom: 1px solid #d8e5eb;
+}
+
+.RequestArtClass-heroInner {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* Breadcrumb */
+
+.RequestArtClass-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 0 0 25px;
+  color: #647c96;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.RequestArtClass-breadcrumb a {
+  color: #647c96;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.RequestArtClass-breadcrumb a:hover {
+  color: #087f8c;
+}
+
+.RequestArtClass-breadcrumb svg {
+  flex-shrink: 0;
+  color: #b4c5d1;
+}
+
+.RequestArtClass-breadcrumb span {
+  color: #102d49;
+  font-weight: 650;
+}
+
+/* Title */
+
+.RequestArtClass-title {
+  margin: 0;
+  color: #102d49;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 780;
+  letter-spacing: -1.8px;
+  line-height: 1.12;
+}
+
+.RequestArtClass-subtitle {
+  max-width: 1050px;
+  margin: 14px 0 0;
+  color: #3f5b78;
+  font-size: clamp(16px, 1.35vw, 21px);
+  line-height: 1.65;
+}
+
+/* ========================================
+   FORM SECTION
+======================================== */
+
+.RequestArtClass-content {
+  width: 100%;
+  padding: 50px 24px 64px;
+  background: #ffffff;
+}
+
+.RequestArtClass-formCard {
+  width: 100%;
+  max-width: 975px;
+  margin: 0 auto;
+  padding: 50px 50px 48px;
+  border: 1px solid #d6e3eb;
+  border-radius: 30px;
+  background: #ffffff;
+  box-shadow: 0 2px 5px rgba(16, 45, 73, 0.015);
+}
+
+/* Form Layout */
+
+.RequestArtClass-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+}
+
+.RequestArtClass-fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 25px;
+  width: 100%;
+}
+
+.RequestArtClass-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.RequestArtClass-fieldFull {
+  width: 100%;
+}
+
+/* Labels */
+
+.RequestArtClass-field label,
+.RequestArtClass-daysField legend {
+  display: block;
+  margin: 0;
+  color: #102d49;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Inputs */
+
+.RequestArtClass-field input,
+.RequestArtClass-field select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 60px;
+  padding: 0 18px;
+  border: 1px solid #d5e2eb;
+  border-radius: 15px;
+  outline: none;
+  background: #ffffff;
+  color: #102d49;
+  font-family: inherit;
+  font-size: 17px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.RequestArtClass-field input::placeholder {
+  color: #8997aa;
+  opacity: 1;
+}
+
+.RequestArtClass-field input:focus,
+.RequestArtClass-field select:focus {
+  border-color: #0b8792;
+  box-shadow: 0 0 0 3px rgba(11, 135, 146, 0.12);
+}
+
+/* Select Dropdown */
+
+.RequestArtClass-selectWrap {
+  position: relative;
+  width: 100%;
+}
+
+.RequestArtClass-selectWrap select {
+  padding-right: 45px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.RequestArtClass-selectWrap::after {
+  position: absolute;
+  top: 50%;
+  right: 19px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #102d49;
+  border-bottom: 2px solid #102d49;
+  content: "";
+  pointer-events: none;
+  transform: translateY(-70%) rotate(45deg);
+}
+
+/* ========================================
+   PREFERRED DAYS
+======================================== */
+
+.RequestArtClass-daysField {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.RequestArtClass-daysField legend {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.RequestArtClass-daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.RequestArtClass-dayButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 55px;
+  padding: 10px 8px;
+  border: 1px solid #d5e2eb;
+  border-radius: 15px;
+  background: #ffffff;
+  color: #102d49;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.RequestArtClass-dayButton:hover {
+  border-color: #0b8792;
+  transform: translateY(-1px);
+}
+
+.RequestArtClass-dayButtonActive {
+  border-color: #0b7f89;
+  background: #0b7f89;
+  color: #ffffff;
+}
+
+.RequestArtClass-dayButton:focus-visible,
+.RequestArtClass-submitButton:focus-visible {
+  outline: 3px solid rgba(11, 135, 146, 0.25);
+  outline-offset: 3px;
+}
+
+/* ========================================
+   SUBMIT BUTTON / PRIVACY NOTE
+======================================== */
+
+.RequestArtClass-submitArea {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 0;
+}
+
+.RequestArtClass-submitButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  padding: 0 28px;
+  border: 1px solid #f6a313;
+  border-radius: 16px;
+  background: #f6a313;
+  color: #102d49;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 5px 12px rgba(246, 163, 19, 0.08);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.RequestArtClass-submitButton:hover {
+  border-color: #e89500;
+  background: #e89500;
+  box-shadow: 0 8px 18px rgba(246, 163, 19, 0.2);
+  transform: translateY(-1px);
+}
+
+.RequestArtClass-privacyNote {
+  margin: 0;
+  color: #71849b;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* ========================================
+   SUCCESS STATE
+======================================== */
+
+.RequestArtClass-success {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 32px 12px;
+  text-align: center;
+}
+
+.RequestArtClass-successIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 18px;
+  border-radius: 22px;
+  background: #e8f6f0;
+  color: #23956d;
+}
+
+.RequestArtClass-success h2 {
+  margin: 0;
+  color: #102d49;
+  font-size: 28px;
+  line-height: 1.3;
+}
+
+.RequestArtClass-success p {
+  max-width: 560px;
+  margin: 12px 0 24px;
+  color: #647c96;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* ========================================
+   TABLET RESPONSIVENESS
+======================================== */
+
+@media (max-width: 900px) {
+  .RequestArtClass-hero {
+    padding: 28px 24px 38px;
+  }
+
+  .RequestArtClass-title {
+    letter-spacing: -1.2px;
+  }
+
+  .RequestArtClass-content {
+    padding: 36px 22px 48px;
+  }
+
+  .RequestArtClass-formCard {
+    max-width: 760px;
+    padding: 36px 32px;
+    border-radius: 24px;
+  }
+
+  .RequestArtClass-daysGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ========================================
+   MOBILE RESPONSIVENESS
+======================================== */
+
+@media (max-width: 600px) {
+  .RequestArtClass-hero {
+    padding: 23px 18px 30px;
+  }
+
+  .RequestArtClass-breadcrumb {
+    gap: 7px;
+    margin-bottom: 19px;
+    font-size: 13px;
+  }
+
+  .RequestArtClass-title {
+    font-size: clamp(32px, 9vw, 43px);
+    letter-spacing: -1px;
+    line-height: 1.12;
+  }
+
+  .RequestArtClass-subtitle {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .RequestArtClass-content {
+    padding: 22px 14px 34px;
+  }
+
+  .RequestArtClass-formCard {
+    padding: 25px 18px 26px;
+    border-radius: 21px;
+  }
+
+  .RequestArtClass-form {
+    gap: 22px;
+  }
+
+  .RequestArtClass-fieldGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .RequestArtClass-field {
+    gap: 8px;
+  }
+
+  .RequestArtClass-field input,
+  .RequestArtClass-field select {
+    height: 54px;
+    padding: 0 14px;
+    border-radius: 13px;
+    font-size: 16px;
+  }
+
+  .RequestArtClass-selectWrap select {
+    padding-right: 42px;
+  }
+
+  .RequestArtClass-selectWrap::after {
+    right: 17px;
+  }
+
+  .RequestArtClass-daysGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .RequestArtClass-dayButton {
+    min-height: 48px;
+    padding: 8px 4px;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+
+  .RequestArtClass-submitButton {
+    width: 100%;
+    min-height: 55px;
+    padding: 0 16px;
+    border-radius: 13px;
+    font-size: 16px;
+  }
+
+  .RequestArtClass-privacyNote {
+    font-size: 12px;
+  }
+
+  .RequestArtClass-success h2 {
+    font-size: 24px;
+  }
+
+  .RequestArtClass-success p {
+    font-size: 14px;
+  }
+}
+
+/* ========================================
+   EXTRA SMALL MOBILE
+======================================== */
+
+@media (max-width: 360px) {
+  .RequestArtClass-formCard {
+    padding: 22px 14px;
+  }
+
+  .RequestArtClass-daysGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
