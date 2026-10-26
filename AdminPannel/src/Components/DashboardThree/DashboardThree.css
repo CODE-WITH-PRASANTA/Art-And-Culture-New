@@ -1,0 +1,882 @@
+
+/* =========================================
+   DASHBOARD THREE
+========================================= */
+
+.DashboardThree {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  margin-top: 25px;
+  padding: 0;
+  color: #292521;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.DashboardThree *,
+.DashboardThree *::before,
+.DashboardThree *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   MAIN GRID
+========================================= */
+
+.DashboardThree .DashboardThree-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(290px, 1fr);
+  align-items: stretch;
+  gap: 14px;
+  width: 100%;
+}
+
+/* =========================================
+   SHARED PANELS
+========================================= */
+
+.DashboardThree .DashboardThree-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 18px 16px 0;
+  background: #ffffff;
+  border: 1px solid #eee5dc;
+  border-radius: 17px;
+  box-shadow: 0 3px 12px rgba(91, 61, 36, 0.025);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.DashboardThree .DashboardThree-panel:hover {
+  border-color: #e7d7c7;
+  box-shadow: 0 7px 22px rgba(91, 61, 36, 0.045);
+}
+
+/* =========================================
+   PANEL HEADER
+========================================= */
+
+.DashboardThree .DashboardThree-panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.DashboardThree .DashboardThree-panelHeading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.DashboardThree .DashboardThree-headingIcon {
+  display: flex;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #8b582b;
+  background: #f4e7d8;
+  border-radius: 12px;
+  font-size: 20px;
+}
+
+.DashboardThree .DashboardThree-headingIcon--activity {
+  color: #277a59;
+  background: #e1f1e6;
+}
+
+.DashboardThree .DashboardThree-panelHeading h2 {
+  margin: 0;
+  color: #292521;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.25px;
+}
+
+.DashboardThree .DashboardThree-panelHeading p {
+  margin: 4px 0 0;
+  color: #837b73;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   HEADER BUTTON
+========================================= */
+
+.DashboardThree .DashboardThree-textButton {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 9px;
+  color: #97602e;
+  background: #fbf6ef;
+  border: 1px solid #f0e3d4;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.DashboardThree .DashboardThree-textButton:hover {
+  background: #f2e4d3;
+  border-color: #e6d1ba;
+}
+
+.DashboardThree .DashboardThree-textButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* =========================================
+   TABLE WRAPPER
+========================================= */
+
+.DashboardThree .DashboardThree-tableWrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #dfcdb8 transparent;
+}
+
+.DashboardThree .DashboardThree-table {
+  width: 100%;
+  min-width: 510px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* =========================================
+   TABLE HEADER
+========================================= */
+
+.DashboardThree .DashboardThree-table thead {
+  background: #faf7f3;
+}
+
+.DashboardThree .DashboardThree-table th {
+  padding: 12px 9px;
+  color: #837a71;
+  border-bottom: 1px solid #eee5dc;
+  font-size: 10px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.DashboardThree .DashboardThree-table th:first-child {
+  padding-left: 11px;
+  border-radius: 8px 0 0 8px;
+}
+
+.DashboardThree .DashboardThree-table th:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+/* =========================================
+   TABLE BODY
+========================================= */
+
+.DashboardThree .DashboardThree-table td {
+  padding: 13px 9px;
+  color: #514941;
+  border-bottom: 1px solid #f2ece5;
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+.DashboardThree .DashboardThree-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.DashboardThree .DashboardThree-table tbody tr:hover {
+  background: #fdfaf6;
+}
+
+.DashboardThree .DashboardThree-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* =========================================
+   BLOG INFORMATION
+========================================= */
+
+.DashboardThree .DashboardThree-blogInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 165px;
+}
+
+.DashboardThree .DashboardThree-blogImage {
+  display: block;
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  object-fit: cover;
+  background: #f3e8dc;
+  border: 1px solid #eee3d7;
+  border-radius: 10px;
+}
+
+.DashboardThree .DashboardThree-blogDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.DashboardThree .DashboardThree-blogDetails strong {
+  display: block;
+  overflow: hidden;
+  max-width: 170px;
+  color: #302923;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DashboardThree .DashboardThree-blogDetails span {
+  display: block;
+  overflow: hidden;
+  max-width: 170px;
+  color: #97602e;
+  font-size: 10px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DashboardThree .DashboardThree-blogDetails small {
+  color: #898077;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* =========================================
+   STATUS BADGES
+========================================= */
+
+.DashboardThree .DashboardThree-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.DashboardThree .DashboardThree-statusDot {
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+}
+
+.DashboardThree .DashboardThree-status--published {
+  color: #1b8550;
+  background: #e3f4e9;
+}
+
+.DashboardThree .DashboardThree-status--draft {
+  color: #bd7c12;
+  background: #fff1d8;
+}
+
+.DashboardThree .DashboardThree-status--scheduled {
+  color: #7251b7;
+  background: #eee8ff;
+}
+
+/* =========================================
+   VIEWS AND DATE
+========================================= */
+
+.DashboardThree .DashboardThree-views {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #5d554d;
+  white-space: nowrap;
+}
+
+.DashboardThree .DashboardThree-views svg {
+  width: 13px;
+  height: 13px;
+  color: #a18a73;
+}
+
+.DashboardThree .DashboardThree-date {
+  color: #776e65;
+  white-space: nowrap;
+}
+
+/* =========================================
+   TABLE EDIT BUTTON
+========================================= */
+
+.DashboardThree .DashboardThree-editButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: #756657;
+  background: #faf6f0;
+  border: 1px solid #eee3d6;
+  border-radius: 9px;
+  font-size: 17px;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.DashboardThree .DashboardThree-editButton:hover {
+  color: #87501f;
+  background: #f0e2d1;
+}
+
+/* =========================================
+   BLOGS FOOTER
+========================================= */
+
+.DashboardThree .DashboardThree-blogsFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding: 14px 0;
+  border-top: 1px solid #f0e8df;
+}
+
+.DashboardThree .DashboardThree-blogsFooter > span {
+  color: #81786f;
+  font-size: 11px;
+}
+
+.DashboardThree .DashboardThree-blogsFooter > span strong {
+  color: #3a3027;
+}
+
+.DashboardThree .DashboardThree-blogsFooter button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0 5px 5px;
+  color: #93602f;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.DashboardThree .DashboardThree-blogsFooter button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* =========================================
+   ACTIVITY LIVE INDICATOR
+========================================= */
+
+.DashboardThree .DashboardThree-liveIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  color: #26774c;
+  background: #e9f6ed;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.DashboardThree .DashboardThree-liveIndicator > span {
+  width: 6px;
+  height: 6px;
+  background: #25955a;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(37, 149, 90, 0.1);
+}
+
+/* =========================================
+   ACTIVITY TIMELINE
+========================================= */
+
+.DashboardThree .DashboardThree-activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  padding: 3px 0 12px;
+}
+
+.DashboardThree .DashboardThree-activityItem {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  min-width: 0;
+}
+
+.DashboardThree .DashboardThree-activityRail {
+  display: flex;
+  flex: 0 0 35px;
+  flex-direction: column;
+  align-items: center;
+  min-width: 35px;
+}
+
+.DashboardThree .DashboardThree-activityIcon {
+  display: flex;
+  flex: 0 0 35px;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 11px;
+  font-size: 17px;
+}
+
+.DashboardThree .DashboardThree-activityIcon--green {
+  color: #1a8951;
+  background: #e0f3e6;
+}
+
+.DashboardThree .DashboardThree-activityIcon--blue {
+  color: #2776d5;
+  background: #e4edff;
+}
+
+.DashboardThree .DashboardThree-activityIcon--amber {
+  color: #ce891b;
+  background: #fff0d7;
+}
+
+.DashboardThree .DashboardThree-activityIcon--purple {
+  color: #7652bd;
+  background: #eee6ff;
+}
+
+.DashboardThree .DashboardThree-activityConnector {
+  flex: 1;
+  width: 1px;
+  min-height: 20px;
+  margin: 5px 0;
+  background: #e8ded3;
+}
+
+.DashboardThree .DashboardThree-activityContent {
+  flex: 1;
+  min-width: 0;
+  padding: 1px 0 19px;
+}
+
+.DashboardThree .DashboardThree-activityContent h3 {
+  margin: 0;
+  color: #302923;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.DashboardThree .DashboardThree-activityContent p {
+  margin: 4px 0 7px;
+  color: #80766d;
+  font-size: 10px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.DashboardThree .DashboardThree-activityTime {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #a0968b;
+  font-size: 10px;
+}
+
+.DashboardThree .DashboardThree-activityTime svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* =========================================
+   ACTIVITY FOOTER CARD
+========================================= */
+
+.DashboardThree .DashboardThree-activityFooter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto;
+  margin-bottom: 14px;
+  padding: 12px 10px;
+  text-align: left;
+  background: #faf4eb;
+  border: 1px solid #f0e2d1;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.DashboardThree .DashboardThree-activityFooter:hover {
+  background: #f4e7d7;
+}
+
+.DashboardThree .DashboardThree-activityFooterIcon {
+  display: flex;
+  flex: 0 0 35px;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  color: #8a572c;
+  background: #efddc8;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.DashboardThree .DashboardThree-activityFooter > span:nth-child(2) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.DashboardThree .DashboardThree-activityFooter strong {
+  color: #493522;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.DashboardThree .DashboardThree-activityFooter small {
+  color: #897866;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.DashboardThree .DashboardThree-activityFooterArrow {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  color: #916031;
+}
+
+/* =========================================
+   CREATE BLOG BANNER
+========================================= */
+
+.DashboardThree .DashboardThree-createBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 17px 20px;
+  background: linear-gradient(110deg, #faf3e9 0%, #fffdf9 100%);
+  border: 1px solid #eee0d0;
+  border-radius: 16px;
+}
+
+.DashboardThree .DashboardThree-createContent {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+}
+
+.DashboardThree .DashboardThree-createIcon {
+  display: flex;
+  flex: 0 0 43px;
+  align-items: center;
+  justify-content: center;
+  width: 43px;
+  height: 43px;
+  color: #8a572b;
+  background: #efddc7;
+  border-radius: 13px;
+  font-size: 23px;
+}
+
+.DashboardThree .DashboardThree-createContent h3 {
+  margin: 0;
+  color: #34281e;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.DashboardThree .DashboardThree-createContent p {
+  margin: 4px 0 0;
+  color: #86786a;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.DashboardThree .DashboardThree-createButton {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 41px;
+  padding: 0 16px;
+  color: #ffffff;
+  background: #8b582e;
+  border: 1px solid #8b582e;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.DashboardThree .DashboardThree-createButton:hover {
+  background: #704421;
+  border-color: #704421;
+  box-shadow: 0 5px 12px rgba(111, 66, 31, 0.16);
+  transform: translateY(-1px);
+}
+
+.DashboardThree .DashboardThree-createButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* =========================================
+   LAPTOPS
+========================================= */
+
+@media (max-width: 1200px) {
+  .DashboardThree .DashboardThree-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .DashboardThree .DashboardThree-activityPanel {
+    min-height: auto;
+  }
+
+  .DashboardThree .DashboardThree-activityList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 18px;
+  }
+
+  .DashboardThree .DashboardThree-activityItem {
+    min-width: 0;
+  }
+}
+
+/* =========================================
+   TABLETS
+========================================= */
+
+@media (max-width: 768px) {
+  .DashboardThree .DashboardThree-grid {
+    gap: 12px;
+  }
+
+  .DashboardThree .DashboardThree-panel {
+    padding: 15px 13px 0;
+    border-radius: 15px;
+  }
+
+  .DashboardThree .DashboardThree-panelHeader {
+    margin-bottom: 14px;
+  }
+
+  .DashboardThree .DashboardThree-table {
+    min-width: 520px;
+  }
+
+  .DashboardThree .DashboardThree-activityList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .DashboardThree .DashboardThree-activityContent {
+    padding-bottom: 16px;
+  }
+
+  .DashboardThree .DashboardThree-createBanner {
+    padding: 15px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+  .DashboardThree .DashboardThree-panel {
+    padding: 13px 11px 0;
+    border-radius: 13px;
+  }
+
+  .DashboardThree .DashboardThree-panelHeader {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .DashboardThree .DashboardThree-panelHeading {
+    gap: 8px;
+  }
+
+  .DashboardThree .DashboardThree-headingIcon {
+    flex-basis: 35px;
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    font-size: 17px;
+  }
+
+  .DashboardThree .DashboardThree-panelHeading h2 {
+    font-size: 13px;
+  }
+
+  .DashboardThree .DashboardThree-panelHeading p {
+    font-size: 10px;
+  }
+
+  .DashboardThree .DashboardThree-textButton {
+    gap: 3px;
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  .DashboardThree .DashboardThree-table {
+    min-width: 500px;
+  }
+
+  .DashboardThree .DashboardThree-table th {
+    padding: 10px 7px;
+    font-size: 9px;
+  }
+
+  .DashboardThree .DashboardThree-table td {
+    padding: 11px 7px;
+  }
+
+  .DashboardThree .DashboardThree-blogImage {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .DashboardThree .DashboardThree-blogInfo {
+    gap: 8px;
+  }
+
+  .DashboardThree .DashboardThree-blogsFooter {
+    flex-wrap: wrap;
+    padding: 12px 0;
+  }
+
+  .DashboardThree .DashboardThree-blogsFooter > span,
+  .DashboardThree .DashboardThree-blogsFooter button {
+    font-size: 10px;
+  }
+
+  .DashboardThree .DashboardThree-activityList {
+    gap: 0;
+  }
+
+  .DashboardThree .DashboardThree-activityContent h3 {
+    font-size: 11px;
+  }
+
+  .DashboardThree .DashboardThree-createBanner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px 12px;
+    border-radius: 13px;
+  }
+
+  .DashboardThree .DashboardThree-createContent {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .DashboardThree .DashboardThree-createIcon {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+
+  .DashboardThree .DashboardThree-createContent h3 {
+    font-size: 12px;
+  }
+
+  .DashboardThree .DashboardThree-createContent p {
+    font-size: 10px;
+  }
+
+  .DashboardThree .DashboardThree-createButton {
+    width: 100%;
+    min-height: 40px;
+  }
+}
+
+/* =========================================
+   EXTRA SMALL DEVICES
+========================================= */
+
+@media (max-width: 340px) {
+  .DashboardThree .DashboardThree-panelHeader {
+    flex-wrap: wrap;
+  }
+
+  .DashboardThree .DashboardThree-liveIndicator {
+    margin-left: 43px;
+  }
+
+  .DashboardThree .DashboardThree-activityItem {
+    gap: 9px;
+  }
+
+  .DashboardThree .DashboardThree-activityRail {
+    flex-basis: 31px;
+    min-width: 31px;
+  }
+
+  .DashboardThree .DashboardThree-activityIcon {
+    flex-basis: 31px;
+    width: 31px;
+    height: 31px;
+    font-size: 15px;
+  }
+}

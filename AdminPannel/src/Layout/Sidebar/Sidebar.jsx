@@ -1,18 +1,20 @@
-
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   FiGrid,
+  FiImage,
+  FiBookOpen,
   FiShoppingBag,
-  FiFeather,
-  FiLayers,
+  FiTag,
   FiUsers,
   FiClipboard,
-  FiX,
-  FiArrowUpRight,
   FiMessageSquare,
-  FiBookOpen,
-  FiHeart,
+  FiChevronDown,
+  FiFeather,
+  FiPlusSquare,
+  FiList,
+  FiFileText,
+  FiX,
 } from "react-icons/fi";
 
 import "./Sidebar.css";
@@ -22,43 +24,73 @@ const menuItems = [
     text: "Dashboard",
     path: "/dashboard",
     icon: FiGrid,
-    description: "Your creative overview",
   },
   {
-    text: "Shop",
-    path: "/shop",
-    icon: FiShoppingBag,
-    description: "Artisan products",
-  },
-  {
-    text: "Crafts",
-    path: "/crafts",
+    text: "Art Management",
     icon: FiFeather,
-    description: "Traditional crafts",
+    children: [
+      {
+        text: "Art Posting",
+        path: "/art-management/art-posting",
+        icon: FiPlusSquare,
+      },
+      {
+        text: "Manage Art",
+        path: "/art-management/manage-art",
+        icon: FiImage,
+      },
+      {
+        text: "Category Manage",
+        path: "/art-management/category-manage",
+        icon: FiList,
+      },
+    ],
   },
   {
-    text: "Categories",
-    path: "/categories",
-    icon: FiLayers,
-    description: "Explore collections",
+    text: "Blog",
+    icon: FiBookOpen,
+    children: [
+      {
+        text: "Blog Posting",
+        path: "/blog/blog-posting",
+        icon: FiFileText,
+      },
+      {
+        text: "Blog Management",
+        path: "/blog/blog-management",
+        icon: FiList,
+      },
+    ],
   },
   {
-    text: "Cold Lead",
-    path: "/cold-lead",
+    text: "Gallery",
+    path: "/gallery",
+    icon: FiImage,
+  },
+  {
+    text: "Order",
+    path: "/orders",
+    icon: FiShoppingBag,
+  },
+  {
+    text: "Coupon",
+    path: "/coupons",
+    icon: FiTag,
+  },
+  {
+    text: "User",
+    path: "/users",
     icon: FiUsers,
-    description: "Potential customers",
   },
   {
-    text: "Enquiry",
-    path: "/enquiries",
+    text: "Enquiry Management",
+    path: "/enquiry-management",
     icon: FiClipboard,
-    description: "Customer enquiries",
   },
   {
-    text: "Testimonial",
-    path: "/testimonial",
+    text: "Review Management",
+    path: "/review-management",
     icon: FiMessageSquare,
-    description: "Customer experiences",
   },
 ];
 
@@ -67,31 +99,47 @@ const Sidebar = ({
   isMobileOpen = false,
   onClose,
 }) => {
+  const location = useLocation();
+
+  const [openDropdowns, setOpenDropdowns] = useState({
+    "Art Management": true,
+    Blog: true,
+  });
+
   const handleNavClick = () => {
     if (isMobileOpen && onClose) {
       onClose();
     }
   };
 
+  const toggleDropdown = (title) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [title]: !prev[title],
+    }));
+  };
+
+  const isChildActive = (children) =>
+    children?.some((child) => location.pathname === child.path);
+
   return (
     <aside
       className={`rp-sidebar ${
         isCollapsed ? "rp-sidebar--collapsed" : ""
       } ${isMobileOpen ? "rp-sidebar--mobile-open" : ""}`}
-      aria-label="Art and culture navigation"
+      aria-label="Admin sidebar navigation"
     >
       {/* Brand */}
       <div className="rp-brand">
         <div className="rp-brand__logo">
           <FiFeather size={26} strokeWidth={1.6} />
-          <span className="rp-brand__sparkle">✦</span>
         </div>
 
         {(!isCollapsed || isMobileOpen) && (
           <div className="rp-brand__content">
-            <h2>Art & Culture</h2>
+            <h2>Art Admin</h2>
             <span className="rp-brand__subtitle">
-              HERITAGE • CRAFT • ART
+              MANAGEMENT PANEL
             </span>
           </div>
         )}
@@ -108,41 +156,103 @@ const Sidebar = ({
         )}
       </div>
 
-      {/* Culture identity card — no images */}
-      {(!isCollapsed || isMobileOpen) && (
-        <div className="rp-business-card">
-          <div className="rp-business-card__image">
-            <FiBookOpen size={23} strokeWidth={1.5} />
-          </div>
-
-          <div className="rp-business-card__text">
-            <span className="rp-eyebrow">OUR HERITAGE</span>
-            <h3>Living Traditions</h3>
-            <p>Celebrating India's creative roots.</p>
-          </div>
-
-          <span className="rp-business-card__status" />
-        </div>
-      )}
-
-      {/* Navigation section */}
-      <div className="rp-section-heading">
-        {(!isCollapsed || isMobileOpen) && (
-          <>
-            <span>COLLECTIONS & MANAGEMENT</span>
-            <span className="rp-section-line" />
-          </>
-        )}
-      </div>
-
       {/* Navigation */}
       <nav className="rp-nav">
-        {menuItems.map((item, index) => {
+        {menuItems.map((item) => {
           const Icon = item.icon;
+          const hasChildren = Boolean(item.children?.length);
+          const expanded = Boolean(openDropdowns[item.text]);
+          const childActive = isChildActive(item.children);
+
+          if (hasChildren) {
+            return (
+              <div
+                className={`rp-nav__group ${
+                  childActive ? "rp-nav__group--active" : ""
+                }`}
+                key={item.text}
+              >
+                <button
+                  type="button"
+                  className={`rp-nav__link rp-nav__dropdown ${
+                    childActive ? "rp-nav__link--active" : ""
+                  }`}
+                  onClick={() => {
+                    if (isCollapsed && !isMobileOpen) {
+                      toggleDropdown(item.text);
+                    } else {
+                      toggleDropdown(item.text);
+                    }
+                  }}
+                  title={
+                    isCollapsed && !isMobileOpen
+                      ? item.text
+                      : undefined
+                  }
+                  aria-expanded={expanded}
+                >
+                  <span className="rp-nav__icon">
+                    <Icon size={20} strokeWidth={1.8} />
+                  </span>
+
+                  {(!isCollapsed || isMobileOpen) && (
+                    <>
+                      <span className="rp-nav__details">
+                        <span className="rp-nav__title">
+                          {item.text}
+                        </span>
+                      </span>
+
+                      <FiChevronDown
+                        className={`rp-nav__chevron ${
+                          expanded ? "rp-nav__chevron--open" : ""
+                        }`}
+                        size={17}
+                      />
+                    </>
+                  )}
+                </button>
+
+                {expanded && (!isCollapsed || isMobileOpen) && (
+                  <div className="rp-subnav">
+                    {item.children.map((child) => {
+                      const ChildIcon = child.icon;
+
+                      return (
+                        <NavLink
+                          key={child.path}
+                          to={child.path}
+                          onClick={handleNavClick}
+                          className={({ isActive }) =>
+                            `rp-subnav__link ${
+                              isActive
+                                ? "rp-subnav__link--active"
+                                : ""
+                            }`
+                          }
+                        >
+                          <span className="rp-subnav__icon">
+                            <ChildIcon
+                              size={16}
+                              strokeWidth={1.8}
+                            />
+                          </span>
+
+                          <span className="rp-subnav__title">
+                            {child.text}
+                          </span>
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
 
           return (
             <NavLink
-              key={item.text}
+              key={item.path}
               to={item.path}
               onClick={handleNavClick}
               title={
@@ -161,56 +271,16 @@ const Sidebar = ({
               </span>
 
               {(!isCollapsed || isMobileOpen) && (
-                <>
-                  <span className="rp-nav__details">
-                    <span className="rp-nav__title">
-                      {item.text}
-                    </span>
-                    <span className="rp-nav__description">
-                      {item.description}
-                    </span>
+                <span className="rp-nav__details">
+                  <span className="rp-nav__title">
+                    {item.text}
                   </span>
-
-                  <span className="rp-nav__arrow">
-                    {index === 0 ? (
-                      <FiArrowUpRight size={16} />
-                    ) : (
-                      <span className="rp-nav__dot" />
-                    )}
-                  </span>
-                </>
+                </span>
               )}
             </NavLink>
           );
         })}
       </nav>
-
-      {/* Heritage note — text and icon only */}
-      {(!isCollapsed || isMobileOpen) && (
-        <div className="rp-inspiration">
-          <div className="rp-inspiration__pattern" />
-
-          <div className="rp-inspiration__icon">
-            <FiHeart size={20} />
-          </div>
-
-          <div className="rp-inspiration__content">
-            <span className="rp-inspiration__label">
-              ROOTED IN TRADITION
-            </span>
-            <h3>Art That Lives On.</h3>
-            <p>Every craft carries a story.</p>
-          </div>
-        </div>
-      )}
-
-      {/* Footer */}
-      {(!isCollapsed || isMobileOpen) && (
-        <div className="rp-footer">
-          <span className="rp-footer__symbol">✦</span>
-          <span>Preserving culture, inspiring tomorrow</span>
-        </div>
-      )}
     </aside>
   );
 };

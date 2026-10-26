@@ -1,0 +1,313 @@
+
+/* =========================================
+   DASHBOARD ONE - TOP STATISTIC CARDS
+========================================= */
+
+.DashboardOne {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.DashboardOne *,
+.DashboardOne *::before,
+.DashboardOne *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   STAT CARDS GRID
+========================================= */
+
+.DashboardOne .DashboardOne-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+/* =========================================
+   INDIVIDUAL CARD
+========================================= */
+
+.DashboardOne .DashboardOne-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+  min-height: 108px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #eee5dc;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(91, 61, 36, 0.025);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.DashboardOne .DashboardOne-card:hover {
+  transform: translateY(-3px);
+  border-color: #e4d3c1;
+  box-shadow: 0 8px 22px rgba(91, 61, 36, 0.07);
+}
+
+/* =========================================
+   ICON CONTAINER
+========================================= */
+
+.DashboardOne .DashboardOne-icon {
+  display: flex;
+  flex: 0 0 54px;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 17px;
+  font-size: 25px;
+}
+
+/* Blue icon */
+
+.DashboardOne .DashboardOne-icon--blue {
+  color: #1670df;
+  background: #e6efff;
+}
+
+/* Green icon */
+
+.DashboardOne .DashboardOne-icon--green {
+  color: #16854e;
+  background: #dff3e6;
+}
+
+/* Amber icon */
+
+.DashboardOne .DashboardOne-icon--amber {
+  color: #ed920e;
+  background: #fff0d9;
+}
+
+/* Purple icon */
+
+.DashboardOne .DashboardOne-icon--purple {
+  color: #6544d6;
+  background: #eee7ff;
+}
+
+/* =========================================
+   CARD CONTENT
+========================================= */
+
+.DashboardOne .DashboardOne-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.DashboardOne .DashboardOne-title {
+  display: block;
+  margin-bottom: 3px;
+  color: #292522;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.DashboardOne .DashboardOne-value {
+  display: block;
+  margin: 0;
+  color: #171717;
+  font-size: 27px;
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: -0.7px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================
+   GROWTH INDICATOR
+========================================= */
+
+.DashboardOne .DashboardOne-growth {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  min-width: 0;
+}
+
+.DashboardOne .DashboardOne-growthValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #168a50;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.DashboardOne .DashboardOne-growthValue svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.5;
+}
+
+.DashboardOne .DashboardOne-description {
+  color: #85817d;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* =========================================
+   LARGE LAPTOPS
+========================================= */
+
+@media (max-width: 1200px) {
+  .DashboardOne .DashboardOne-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .DashboardOne .DashboardOne-card {
+    min-height: 104px;
+  }
+}
+
+/* =========================================
+   TABLETS
+========================================= */
+
+@media (max-width: 768px) {
+  .DashboardOne .DashboardOne-grid {
+    gap: 12px;
+  }
+
+  .DashboardOne .DashboardOne-card {
+    gap: 12px;
+    min-height: 100px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .DashboardOne .DashboardOne-icon {
+    flex-basis: 46px;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    font-size: 22px;
+  }
+
+  .DashboardOne .DashboardOne-title {
+    font-size: 13px;
+  }
+
+  .DashboardOne .DashboardOne-value {
+    font-size: 25px;
+  }
+
+  .DashboardOne .DashboardOne-growth {
+    gap: 4px;
+    margin-top: 5px;
+  }
+
+  .DashboardOne .DashboardOne-growthValue,
+  .DashboardOne .DashboardOne-description {
+    font-size: 11px;
+  }
+}
+
+/* =========================================
+   MOBILE DEVICES
+========================================= */
+
+@media (max-width: 480px) {
+  .DashboardOne .DashboardOne-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .DashboardOne .DashboardOne-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 142px;
+    padding: 13px 12px;
+    border-radius: 13px;
+  }
+
+  .DashboardOne .DashboardOne-icon {
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 20px;
+  }
+
+  .DashboardOne .DashboardOne-content {
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .DashboardOne .DashboardOne-title {
+    margin-bottom: 3px;
+    font-size: 12px;
+  }
+
+  .DashboardOne .DashboardOne-value {
+    font-size: 25px;
+  }
+
+  .DashboardOne .DashboardOne-growth {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 6px;
+  }
+
+  .DashboardOne .DashboardOne-growthValue,
+  .DashboardOne .DashboardOne-description {
+    font-size: 11px;
+  }
+}
+
+/* =========================================
+   EXTRA SMALL MOBILE DEVICES
+========================================= */
+
+@media (max-width: 340px) {
+  .DashboardOne .DashboardOne-grid {
+    gap: 8px;
+  }
+
+  .DashboardOne .DashboardOne-card {
+    padding: 10px;
+    min-height: 136px;
+  }
+
+  .DashboardOne .DashboardOne-icon {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .DashboardOne .DashboardOne-value {
+    font-size: 22px;
+  }
+
+  .DashboardOne .DashboardOne-description,
+  .DashboardOne .DashboardOne-growthValue {
+    font-size: 10px;
+  }
+}
