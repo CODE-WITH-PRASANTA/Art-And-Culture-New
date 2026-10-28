@@ -1,5 +1,4 @@
-
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   FiTag,
   FiCheckCircle,
@@ -13,9 +12,13 @@ import {
   FiTrash2,
   FiX,
   FiCheck,
+  FiLoader,
+  FiRefreshCw,
 } from "react-icons/fi";
 
 import "./Coupons.css";
+
+import { COUPONS_API_URL as API_URL } from "../../config/api";
 
 /* ========================================
    AUTO-GENERATE COUPON CODE
@@ -34,65 +37,6 @@ const generateCouponCode = () => {
 
   return `ART-${randomCode}`;
 };
-
-/* ========================================
-   INITIAL COUPONS
-======================================== */
-
-const initialCoupons = [
-  {
-    id: 1,
-    code: "ART-WELCOME20",
-    type: "Percentage (%)",
-    value: 20,
-    start: "2026-10-01",
-    end: "2026-12-31",
-    minimum: 500,
-    limit: 100,
-    used: 42,
-    description: "Welcome discount for new customers",
-    disabled: false,
-  },
-  {
-    id: 2,
-    code: "ART-FESTIVE15",
-    type: "Percentage (%)",
-    value: 15,
-    start: "2026-10-01",
-    end: "2026-11-30",
-    minimum: 1000,
-    limit: 150,
-    used: 78,
-    description: "Festive season special offer",
-    disabled: false,
-  },
-  {
-    id: 3,
-    code: "ART-FLAT200",
-    type: "Fixed Amount (₹)",
-    value: 200,
-    start: "2026-09-01",
-    end: "2026-10-15",
-    minimum: 1500,
-    limit: 80,
-    used: 31,
-    description: "Flat discount on eligible purchases",
-    disabled: false,
-  },
-  {
-    id: 4,
-    code: "ART-NEWUSER",
-    type: "Percentage (%)",
-    value: 10,
-    start: "2026-11-01",
-    end: "2026-12-31",
-    minimum: 300,
-    limit: 200,
-    used: 0,
-    description: "Discount for new users",
-    disabled: false,
-  },
-];
 
 /* ========================================
    EMPTY FORM
@@ -163,18 +107,60 @@ const getStatus = (coupon) => {
 ======================================== */
 
 const Coupons = () => {
-  const [coupons, setCoupons] = useState(initialCoupons);
+  const [coupons, setCoupons] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   const [form, setForm] = useState(() => ({
     ...emptyForm,
     code: generateCouponCode(),
   }));
 
-  const [editingId, setEditingId] = useState(null);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
-  const [showForm, setShowForm] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
+
+  /* ========================================
+     FETCH COUPONS FROM DATABASE
+  ======================================== */
+
+  const fetchCoupons = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setCoupons(data.data);
+      } else {
+        setCoupons([]);
+      }
+    } catch (err) {
+      console.error("Failed to load coupons from backend:", err);
+      setCoupons([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCoupons();
+  }, []);
+
+  // Close modals on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        if (isModalOpen) handleCloseModal();
+        if (deleteId !== null) setDeleteId(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isModalOpen, deleteId]);
 
   /* ========================================
      SUMMARY COUNTS
@@ -201,21 +187,24 @@ const Coupons = () => {
 
   const filteredCoupons = useMemo(() => {
     return coupons.filter((coupon) => {
-      const matchesSearch =
-        coupon.code.toLowerCase().includes(search.toLowerCase()) ||
-        coupon.description.toLowerCase().includes(search.toLowerCase());
+      const codeMatch = (coupon.code || "")
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const descMatch = (coupon.description || "")
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
       const status = getStatus(coupon);
 
       const matchesStatus =
         filterStatus === "All" || status === filterStatus;
 
-      return matchesSearch && matchesStatus;
+      return (codeMatch || descMatch) && matchesStatus;
     });
   }, [coupons, search, filterStatus]);
 
   /* ========================================
-     RESET FORM
+     MODAL CONTROLS & FORM RESET
   ======================================== */
 
   const resetForm = () => {
@@ -223,23 +212,26 @@ const Coupons = () => {
       ...emptyForm,
       code: generateCouponCode(),
     });
-
     setEditingId(null);
   };
 
-  /* ========================================
-     OPEN CREATE FORM
-  ======================================== */
-
-  const handleCreate = () => {
+  const handleOpenCreateModal = () => {
     resetForm();
-    setShowForm(true);
+    setIsModalOpen(true);
+  };
 
-    setTimeout(() => {
-      document
-        .querySelector(".Coupons-form")
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    resetForm();
+  };
+
+  const handleRegenerateCode = () => {
+    if (!editingId) {
+      setForm((prev) => ({
+        ...prev,
+        code: generateCouponCode(),
+      }));
+    }
   };
 
   /* ========================================
@@ -256,27 +248,16 @@ const Coupons = () => {
   };
 
   /* ========================================
-     CREATE / UPDATE COUPON
+     CREATE / UPDATE COUPON (SAVED TO DATABASE)
   ======================================== */
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const code = form.code.trim().toUpperCase();
+    const code = (form.code || "").trim().toUpperCase();
 
     if (!code) {
       alert("Coupon code could not be generated. Please try again.");
-      return;
-    }
-
-    const duplicate = coupons.some(
-      (coupon) =>
-        coupon.code.toUpperCase() === code &&
-        coupon.id !== editingId
-    );
-
-    if (duplicate) {
-      alert("This coupon code already exists. Generate a new code.");
       return;
     }
 
@@ -286,103 +267,154 @@ const Coupons = () => {
     }
 
     if (form.end && form.start && form.end < form.start) {
-      alert("End date must be after the start date.");
+      alert("Expiry date must be after the start date.");
       return;
     }
 
-    const couponData = {
-      ...form,
+    const couponPayload = {
       code,
+      type: form.type,
       value: Number(form.value),
+      start: form.start || new Date().toISOString().slice(0, 10),
+      end: form.end || "",
       minimum: Number(form.minimum) || 0,
       limit: Number(form.limit) || 0,
-      used: editingId
-        ? coupons.find((coupon) => coupon.id === editingId)?.used || 0
-        : 0,
-      disabled: editingId
-        ? coupons.find((coupon) => coupon.id === editingId)?.disabled || false
-        : false,
+      description: (form.description || "").trim(),
     };
 
-    if (editingId) {
-      setCoupons((previous) =>
-        previous.map((coupon) =>
-          coupon.id === editingId
-            ? { ...coupon, ...couponData }
-            : coupon
-        )
-      );
+    try {
+      setSubmitting(true);
 
-      alert("Coupon updated successfully!");
-    } else {
-      setCoupons((previous) => [
-        {
-          id: Date.now(),
-          ...couponData,
-        },
-        ...previous,
-      ]);
+      if (editingId) {
+        // UPDATE COUPON IN DATABASE
+        const res = await fetch(`${API_URL}/${editingId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(couponPayload),
+        });
 
-      alert("Coupon created successfully!");
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          alert(data.message || "Failed to update coupon in database.");
+          return;
+        }
+
+        setCoupons((previous) =>
+          previous.map((c) =>
+            (c._id === editingId || c.id === editingId) ? data.data : c
+          )
+        );
+
+        alert("Coupon updated successfully in database!");
+      } else {
+        // SAVE NEW COUPON TO DATABASE
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(couponPayload),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          alert(data.message || "Failed to save coupon into database.");
+          return;
+        }
+
+        setCoupons((previous) => [data.data, ...previous]);
+        alert("Coupon successfully saved into database!");
+      }
+
+      handleCloseModal();
+    } catch (err) {
+      console.error("Error saving coupon into database:", err);
+      alert("Server connection error. Please make sure backend is running.");
+    } finally {
+      setSubmitting(false);
     }
-
-    resetForm();
   };
 
   /* ========================================
-     EDIT COUPON
+     EDIT COUPON (OPENS MODAL)
   ======================================== */
 
   const handleEdit = (coupon) => {
+    const couponId = coupon._id || coupon.id;
+
     setForm({
-      code: coupon.code,
-      type: coupon.type,
-      value: coupon.value,
-      start: coupon.start,
-      end: coupon.end,
-      minimum: coupon.minimum,
-      limit: coupon.limit,
-      description: coupon.description,
+      code: coupon.code || "",
+      type: coupon.type || "Percentage (%)",
+      value: coupon.value || "",
+      start: coupon.start || "",
+      end: coupon.end || "",
+      minimum: coupon.minimum ?? "",
+      limit: coupon.limit ?? "",
+      description: coupon.description || "",
     });
 
-    setEditingId(coupon.id);
-    setShowForm(true);
-
-    setTimeout(() => {
-      document
-        .querySelector(".Coupons-form")
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
+    setEditingId(couponId);
+    setIsModalOpen(true);
   };
 
   /* ========================================
-     DELETE COUPON
+     DELETE COUPON (FROM DATABASE)
   ======================================== */
 
-  const handleDelete = (id) => {
-    setCoupons((previous) =>
-      previous.filter((coupon) => coupon.id !== id)
-    );
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+      });
 
-    if (editingId === id) {
-      resetForm();
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        alert(data.message || "Failed to delete coupon from database.");
+        return;
+      }
+
+      setCoupons((previous) =>
+        previous.filter((coupon) => (coupon._id !== id && coupon.id !== id))
+      );
+
+      if (editingId === id) {
+        handleCloseModal();
+      }
+
+      setDeleteId(null);
+    } catch (err) {
+      console.error("Error deleting coupon from database:", err);
+      alert("Could not delete coupon. Make sure backend is running.");
     }
-
-    setDeleteId(null);
   };
 
   /* ========================================
-     TOGGLE COUPON STATUS
+     TOGGLE COUPON STATUS (SAVED TO DATABASE)
   ======================================== */
 
-  const toggleCoupon = (id) => {
-    setCoupons((previous) =>
-      previous.map((coupon) =>
-        coupon.id === id
-          ? { ...coupon, disabled: !coupon.disabled }
-          : coupon
-      )
-    );
+  const toggleCoupon = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/${id}/toggle`, {
+        method: "PATCH",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        alert(data.message || "Failed to toggle coupon status.");
+        return;
+      }
+
+      setCoupons((previous) =>
+        previous.map((coupon) =>
+          (coupon._id === id || coupon.id === id) ? data.data : coupon
+        )
+      );
+    } catch (err) {
+      console.error("Error toggling coupon status:", err);
+      alert("Could not update coupon status on server.");
+    }
   };
 
   /* ========================================
@@ -402,10 +434,6 @@ const Coupons = () => {
     );
   };
 
-  /* ========================================
-     RENDER
-  ======================================== */
-
   return (
     <div className="Coupons">
       {/* HEADER */}
@@ -419,7 +447,7 @@ const Coupons = () => {
           <div>
             <h1 className="Coupons-title">Coupon Management</h1>
             <p className="Coupons-subtitle">
-              Create, manage and track your promotional coupons.
+              Create, manage, and track promotional coupons stored in the database.
             </p>
           </div>
         </div>
@@ -427,7 +455,7 @@ const Coupons = () => {
         <button
           type="button"
           className="Coupons-primary-button"
-          onClick={handleCreate}
+          onClick={handleOpenCreateModal}
         >
           <FiPlus />
           Create Coupon
@@ -482,243 +510,15 @@ const Coupons = () => {
         </div>
       </div>
 
-      {/* MAIN CONTENT */}
+      {/* FULL-WIDTH TABLE CONTENT */}
 
       <div className="Coupons-content">
-        {/* COUPON FORM */}
-
-        {showForm && (
-          <section className="Coupons-form-section">
-            <div className="Coupons-section-header">
-              <div>
-                <h2>
-                  {editingId ? "Edit Coupon" : "Create New Coupon"}
-                </h2>
-
-                <p>
-                  {editingId
-                    ? "Update the coupon details below."
-                    : "Set up a promotional offer for your customers."}
-                </p>
-              </div>
-
-              <button
-                type="button"
-                className="Coupons-close-button"
-                aria-label="Close coupon form"
-                onClick={() => {
-                  setShowForm(false);
-                  resetForm();
-                }}
-              >
-                <FiX />
-              </button>
-            </div>
-
-            <form className="Coupons-form" onSubmit={handleSubmit}>
-              {/* AUTO-GENERATED CODE */}
-
-              <div className="Coupons-field">
-                <label htmlFor="Coupons-code">
-                  Auto-Generated Coupon Code
-                </label>
-
-                <input
-                  id="Coupons-code"
-                  name="code"
-                  value={form.code}
-                  readOnly
-                  required
-                  aria-label="Automatically generated coupon code"
-                />
-
-                <small className="Coupons-code-hint">
-                  Your unique coupon code is generated automatically.
-                </small>
-              </div>
-
-              {/* DISCOUNT TYPE */}
-
-              <div className="Coupons-field">
-                <label htmlFor="Coupons-type">Discount Type</label>
-
-                <div className="Coupons-select-wrapper">
-                  <select
-                    id="Coupons-type"
-                    name="type"
-                    value={form.type}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="Percentage (%)">Percentage (%)</option>
-                    <option value="Fixed Amount (₹)">
-                      Fixed Amount (₹)
-                    </option>
-                  </select>
-
-                  <FiChevronDown />
-                </div>
-              </div>
-
-              {/* DISCOUNT VALUE */}
-
-              <div className="Coupons-field">
-                <label htmlFor="Coupons-value">Discount Value</label>
-
-                <input
-                  id="Coupons-value"
-                  type="number"
-                  name="value"
-                  value={form.value}
-                  onChange={handleChange}
-                  min="1"
-                  step="any"
-                  placeholder={
-                    form.type === "Percentage (%)"
-                      ? "Enter percentage"
-                      : "Enter amount in ₹"
-                  }
-                  required
-                />
-
-                {form.type === "Percentage (%)" && (
-                  <small>Enter a percentage from 1 to 100.</small>
-                )}
-              </div>
-
-              {/* START DATE */}
-
-              <div className="Coupons-field">
-                <label htmlFor="Coupons-start">Start Date</label>
-
-                <div className="Coupons-date-wrapper">
-                  <input
-                    id="Coupons-start"
-                    type="date"
-                    name="start"
-                    value={form.start}
-                    onChange={handleChange}
-                    required
-                  />
-
-                  <FiCalendar />
-                </div>
-              </div>
-
-              {/* END DATE */}
-
-              <div className="Coupons-field">
-                <label htmlFor="Coupons-end">Expiry Date</label>
-
-                <div className="Coupons-date-wrapper">
-                  <input
-                    id="Coupons-end"
-                    type="date"
-                    name="end"
-                    value={form.end}
-                    onChange={handleChange}
-                    min={form.start || undefined}
-                    required
-                  />
-
-                  <FiCalendar />
-                </div>
-              </div>
-
-              {/* MINIMUM PURCHASE */}
-
-              <div className="Coupons-field">
-                <label htmlFor="Coupons-minimum">
-                  Minimum Purchase (₹)
-                </label>
-
-                <input
-                  id="Coupons-minimum"
-                  type="number"
-                  name="minimum"
-                  value={form.minimum}
-                  onChange={handleChange}
-                  min="0"
-                  placeholder="e.g. 500"
-                />
-              </div>
-
-              {/* USAGE LIMIT */}
-
-              <div className="Coupons-field">
-                <label htmlFor="Coupons-limit">Usage Limit</label>
-
-                <input
-                  id="Coupons-limit"
-                  type="number"
-                  name="limit"
-                  value={form.limit}
-                  onChange={handleChange}
-                  min="1"
-                  placeholder="e.g. 100"
-                  required
-                />
-              </div>
-
-              {/* DESCRIPTION */}
-
-              <div className="Coupons-field Coupons-field-full">
-                <label htmlFor="Coupons-description">Description</label>
-
-                <textarea
-                  id="Coupons-description"
-                  name="description"
-                  value={form.description}
-                  onChange={handleChange}
-                  placeholder="Describe the coupon offer..."
-                  rows="3"
-                  required
-                />
-              </div>
-
-              {/* ACTION BUTTONS */}
-
-              <div className="Coupons-form-actions">
-                <button
-                  type="button"
-                  className="Coupons-secondary-button"
-                  onClick={resetForm}
-                >
-                  <FiX />
-                  Reset
-                </button>
-
-                <button
-                  type="submit"
-                  className="Coupons-primary-button"
-                >
-                  <FiCheck />
-                  {editingId ? "Update Coupon" : "Save Coupon"}
-                </button>
-              </div>
-            </form>
-          </section>
-        )}
-
-        {/* COUPON TABLE */}
-
         <section className="Coupons-table-section">
           <div className="Coupons-section-header Coupons-table-header">
             <div>
               <h2>All Coupons</h2>
-              <p>Manage your existing promotional offers.</p>
+              <p>Promotional offers stored securely in your MongoDB database.</p>
             </div>
-
-            {!showForm && (
-              <button
-                type="button"
-                className="Coupons-primary-button"
-                onClick={handleCreate}
-              >
-                <FiPlus />
-                Add Coupon
-              </button>
-            )}
           </div>
 
           {/* SEARCH AND FILTER */}
@@ -729,7 +529,7 @@ const Coupons = () => {
 
               <input
                 type="text"
-                placeholder="Search coupon code..."
+                placeholder="Search coupon code or description..."
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 aria-label="Search coupons"
@@ -772,8 +572,18 @@ const Coupons = () => {
               </thead>
 
               <tbody>
-                {filteredCoupons.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="6">
+                      <div className="Coupons-empty-state">
+                        <FiLoader className="Coupons-spinning" />
+                        <h3>Loading coupons from database...</h3>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredCoupons.length > 0 ? (
                   filteredCoupons.map((coupon) => {
+                    const couponId = coupon._id || coupon.id;
                     const status = getStatus(coupon);
 
                     const usagePercentage =
@@ -787,12 +597,12 @@ const Coupons = () => {
                         : 0;
 
                     return (
-                      <tr key={coupon.id}>
+                      <tr key={couponId}>
                         <td>
                           <div className="Coupons-code-cell">
                             <strong>{coupon.code}</strong>
 
-                            <span>{coupon.description}</span>
+                            <span>{coupon.description || "—"}</span>
                           </div>
                         </td>
 
@@ -823,7 +633,7 @@ const Coupons = () => {
                         <td>
                           <div className="Coupons-usage-cell">
                             <div className="Coupons-usage-text">
-                              <strong>{coupon.used}</strong>
+                              <strong>{coupon.used || 0}</strong>
                               <span>
                                 / {coupon.limit || "Unlimited"}
                               </span>
@@ -867,7 +677,7 @@ const Coupons = () => {
                                   ? `Enable ${coupon.code}`
                                   : `Disable ${coupon.code}`
                               }
-                              onClick={() => toggleCoupon(coupon.id)}
+                              onClick={() => toggleCoupon(couponId)}
                             >
                               {coupon.disabled ? (
                                 <FiCheckCircle />
@@ -881,7 +691,7 @@ const Coupons = () => {
                               className="Coupons-action-button Coupons-delete-button"
                               title="Delete coupon"
                               aria-label={`Delete ${coupon.code}`}
-                              onClick={() => setDeleteId(coupon.id)}
+                              onClick={() => setDeleteId(couponId)}
                             >
                               <FiTrash2 />
                             </button>
@@ -895,15 +705,15 @@ const Coupons = () => {
                     <td colSpan="6">
                       <div className="Coupons-empty-state">
                         <FiTag />
-                        <h3>No coupons found</h3>
+                        <h3>No coupons found in database</h3>
                         <p>
-                          Try changing your search or create a new coupon.
+                          Create your first promotional coupon to get started.
                         </p>
 
                         <button
                           type="button"
                           className="Coupons-primary-button"
-                          onClick={handleCreate}
+                          onClick={handleOpenCreateModal}
                         >
                           <FiPlus />
                           Create Coupon
@@ -921,13 +731,279 @@ const Coupons = () => {
           <div className="Coupons-table-footer">
             <p>
               Showing <strong>{filteredCoupons.length}</strong> of{" "}
-              <strong>{coupons.length}</strong> coupons
+              <strong>{coupons.length}</strong> coupons in database
             </p>
           </div>
         </section>
       </div>
 
-      {/* DELETE CONFIRMATION */}
+      {/* ========================================
+         CREATE / EDIT COUPON MODAL
+      ======================================== */}
+
+      {isModalOpen && (
+        <div
+          className="Coupons-modal-overlay"
+          onClick={handleCloseModal}
+        >
+          <div
+            className="Coupons-form-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="Coupons-form-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="Coupons-form-modal-header">
+              <div className="Coupons-modal-header-info">
+                <div className="Coupons-modal-icon-badge">
+                  <FiTag />
+                </div>
+                <div>
+                  <h2 id="Coupons-form-modal-title">
+                    {editingId ? "Edit Coupon" : "Create New Coupon"}
+                  </h2>
+                  <p>
+                    {editingId
+                      ? "Update coupon parameters and apply updates to database."
+                      : "Configure rules, discount rates, and validity for your promotion."}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="Coupons-close-button"
+                aria-label="Close coupon modal"
+                onClick={handleCloseModal}
+              >
+                <FiX />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              <div className="Coupons-form-modal-body">
+                <div className="Coupons-form-grid">
+                  {/* AUTO-GENERATED CODE */}
+
+                  <div className="Coupons-field Coupons-field-full">
+                    <label htmlFor="Coupons-code">
+                      Coupon Code
+                    </label>
+
+                    <div className="Coupons-code-input-group">
+                      <input
+                        id="Coupons-code"
+                        name="code"
+                        value={form.code}
+                        readOnly
+                        required
+                        aria-label="Coupon code"
+                      />
+
+                      {!editingId && (
+                        <button
+                          type="button"
+                          className="Coupons-regenerate-btn"
+                          title="Generate new random code"
+                          onClick={handleRegenerateCode}
+                        >
+                          <FiRefreshCw />
+                          Regenerate
+                        </button>
+                      )}
+                    </div>
+
+                    <small className="Coupons-code-hint">
+                      {editingId
+                        ? "Unique coupon code for this promotion."
+                        : "Unique coupon code generated automatically. Click Regenerate if needed."}
+                    </small>
+                  </div>
+
+                  {/* DISCOUNT TYPE */}
+
+                  <div className="Coupons-field">
+                    <label htmlFor="Coupons-type">Discount Type</label>
+
+                    <div className="Coupons-select-wrapper">
+                      <select
+                        id="Coupons-type"
+                        name="type"
+                        value={form.type}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="Percentage (%)">
+                          Percentage (%)
+                        </option>
+                        <option value="Fixed Amount (₹)">
+                          Fixed Amount (₹)
+                        </option>
+                      </select>
+
+                      <FiChevronDown />
+                    </div>
+                  </div>
+
+                  {/* DISCOUNT VALUE */}
+
+                  <div className="Coupons-field">
+                    <label htmlFor="Coupons-value">Discount Value</label>
+
+                    <input
+                      id="Coupons-value"
+                      type="number"
+                      name="value"
+                      value={form.value}
+                      onChange={handleChange}
+                      min="1"
+                      step="any"
+                      placeholder={
+                        form.type === "Percentage (%)"
+                          ? "Enter percentage"
+                          : "Enter amount in ₹"
+                      }
+                      required
+                    />
+
+                    {form.type === "Percentage (%)" && (
+                      <small>Enter a percentage from 1 to 100.</small>
+                    )}
+                  </div>
+
+                  {/* START DATE */}
+
+                  <div className="Coupons-field">
+                    <label htmlFor="Coupons-start">Start Date</label>
+
+                    <div className="Coupons-date-wrapper">
+                      <input
+                        id="Coupons-start"
+                        type="date"
+                        name="start"
+                        value={form.start}
+                        onChange={handleChange}
+                        required
+                      />
+
+                      <FiCalendar />
+                    </div>
+                  </div>
+
+                  {/* END DATE */}
+
+                  <div className="Coupons-field">
+                    <label htmlFor="Coupons-end">Expiry Date</label>
+
+                    <div className="Coupons-date-wrapper">
+                      <input
+                        id="Coupons-end"
+                        type="date"
+                        name="end"
+                        value={form.end}
+                        onChange={handleChange}
+                        min={form.start || undefined}
+                        required
+                      />
+
+                      <FiCalendar />
+                    </div>
+                  </div>
+
+                  {/* MINIMUM PURCHASE */}
+
+                  <div className="Coupons-field">
+                    <label htmlFor="Coupons-minimum">
+                      Minimum Purchase (₹)
+                    </label>
+
+                    <input
+                      id="Coupons-minimum"
+                      type="number"
+                      name="minimum"
+                      value={form.minimum}
+                      onChange={handleChange}
+                      min="0"
+                      placeholder="e.g. 500"
+                    />
+                  </div>
+
+                  {/* USAGE LIMIT */}
+
+                  <div className="Coupons-field">
+                    <label htmlFor="Coupons-limit">Usage Limit</label>
+
+                    <input
+                      id="Coupons-limit"
+                      type="number"
+                      name="limit"
+                      value={form.limit}
+                      onChange={handleChange}
+                      min="1"
+                      placeholder="e.g. 100"
+                      required
+                    />
+                  </div>
+
+                  {/* DESCRIPTION */}
+
+                  <div className="Coupons-field Coupons-field-full">
+                    <label htmlFor="Coupons-description">
+                      Description
+                    </label>
+
+                    <textarea
+                      id="Coupons-description"
+                      name="description"
+                      value={form.description}
+                      onChange={handleChange}
+                      placeholder="Describe the coupon offer..."
+                      rows="3"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* MODAL FOOTER */}
+
+              <div className="Coupons-form-modal-footer">
+                <button
+                  type="button"
+                  className="Coupons-secondary-button"
+                  onClick={handleCloseModal}
+                  disabled={submitting}
+                >
+                  <FiX />
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="Coupons-primary-button"
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <>
+                      <FiLoader className="Coupons-spinning" />
+                      Saving to Database...
+                    </>
+                  ) : (
+                    <>
+                      <FiCheck />
+                      {editingId ? "Update Coupon" : "Save Coupon"}
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================
+         DELETE CONFIRMATION MODAL
+      ======================================== */}
 
       {deleteId !== null && (
         <div
@@ -954,11 +1030,10 @@ const Coupons = () => {
               <FiX />
             </button>
 
-            <h3 id="Coupons-delete-title">Delete Coupon?</h3>
+            <h3 id="Coupons-delete-title">Delete Coupon from Database?</h3>
 
             <p>
-              Are you sure you want to delete this coupon? This action cannot
-              be undone.
+              Are you sure you want to delete this coupon? It will be permanently removed from the database.
             </p>
 
             <div className="Coupons-modal-actions">

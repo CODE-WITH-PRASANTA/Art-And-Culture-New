@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FiPlus,
   FiTag,
@@ -7,22 +6,20 @@ import {
   FiTrash2,
   FiX,
   FiCheck,
-  FiLayers,
   FiSearch,
   FiFolder,
   FiAlertCircle,
+  FiLoader,
 } from "react-icons/fi";
 
 import "./ArtCatagory.css";
 
+import { CATEGORIES_API_URL as API_URL } from "../../config/api";
+
 const ArtCatagory = () => {
-  const [categories, setCategories] = useState([
-    { id: 1, name: "Traditional Art" },
-    { id: 2, name: "Modern Art" },
-    { id: 3, name: "Canvas Painting" },
-    { id: 4, name: "Handmade Crafts" },
-    { id: 5, name: "Sculptures" },
-  ]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [categoryName, setCategoryName] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -36,7 +33,36 @@ const ArtCatagory = () => {
     setSuccess("");
   };
 
-  const handleSubmit = (event) => {
+  /* =====================================
+     FETCH CATEGORIES FROM DATABASE
+  ====================================== */
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setCategories(data.data);
+      } else {
+        setCategories([]);
+      }
+    } catch (err) {
+      console.error("Failed to load categories from database:", err);
+      setError("Could not connect to backend server. Please verify it is running.");
+      setCategories([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  /* =====================================
+     HANDLE SUBMIT (SAVE / UPDATE TO DB)
+  ====================================== */
+  const handleSubmit = async (event) => {
     event.preventDefault();
     resetMessages();
 
@@ -47,45 +73,78 @@ const ArtCatagory = () => {
       return;
     }
 
-    const duplicate = categories.some(
-      (category) =>
+    const duplicate = categories.some((category) => {
+      const catId = category._id || category.id;
+      return (
         category.name.toLowerCase() === trimmedName.toLowerCase() &&
-        category.id !== editingId
-    );
+        catId !== editingId
+      );
+    });
 
     if (duplicate) {
       setError("This category already exists. Please use another name.");
       return;
     }
 
-    if (editingId !== null) {
-      setCategories((previous) =>
-        previous.map((category) =>
-          category.id === editingId
-            ? { ...category, name: trimmedName }
-            : category
-        )
-      );
+    try {
+      setSubmitting(true);
 
-      setSuccess("Category updated successfully.");
-    } else {
-      const newCategory = {
-        id: Date.now(),
-        name: trimmedName,
-      };
+      if (editingId !== null) {
+        // UPDATE IN DATABASE
+        const res = await fetch(`${API_URL}/${editingId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: trimmedName }),
+        });
 
-      setCategories((previous) => [...previous, newCategory]);
-      setSuccess("New category added successfully.");
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          setError(data.message || "Failed to update category in database.");
+          return;
+        }
+
+        setCategories((previous) =>
+          previous.map((category) => {
+            const catId = category._id || category.id;
+            return catId === editingId ? data.data : category;
+          })
+        );
+
+        setSuccess("Category updated successfully in database.");
+      } else {
+        // CREATE IN DATABASE
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: trimmedName }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          setError(data.message || "Failed to save category into database.");
+          return;
+        }
+
+        setCategories((previous) => [data.data, ...previous]);
+        setSuccess("New category added and saved into database successfully.");
+      }
+
+      setCategoryName("");
+      setEditingId(null);
+    } catch (err) {
+      console.error("Error saving category into database:", err);
+      setError("Network or server error while saving category.");
+    } finally {
+      setSubmitting(false);
     }
-
-    setCategoryName("");
-    setEditingId(null);
   };
 
   const handleEdit = (category) => {
     resetMessages();
     setCategoryName(category.name);
-    setEditingId(category.id);
+    setEditingId(category._id || category.id);
   };
 
   const handleCancelEdit = () => {
@@ -94,30 +153,55 @@ const ArtCatagory = () => {
     resetMessages();
   };
 
-  const handleDelete = () => {
+  /* =====================================
+     HANDLE DELETE (DELETE FROM DB)
+  ====================================== */
+  const handleDelete = async () => {
     if (deleteId === null) return;
 
-    setCategories((previous) =>
-      previous.filter((category) => category.id !== deleteId)
-    );
+    try {
+      const res = await fetch(`${API_URL}/${deleteId}`, {
+        method: "DELETE",
+      });
 
-    if (editingId === deleteId) {
-      setCategoryName("");
-      setEditingId(null);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setError(data.message || "Failed to delete category from database.");
+        return;
+      }
+
+      setCategories((previous) =>
+        previous.filter((category) => {
+          const catId = category._id || category.id;
+          return catId !== deleteId;
+        })
+      );
+
+      if (editingId === deleteId) {
+        setCategoryName("");
+        setEditingId(null);
+      }
+
+      setDeleteId(null);
+      setSuccess("Category deleted successfully from database.");
+      setError("");
+    } catch (err) {
+      console.error("Error deleting category from database:", err);
+      setError("Network or server error while deleting category.");
     }
-
-    setDeleteId(null);
-    setSuccess("Category deleted successfully.");
-    setError("");
   };
 
   const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+    (category.name || "")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase().trim())
   );
 
-  const deletingCategory = categories.find(
-    (category) => category.id === deleteId
-  );
+  const deletingCategory = categories.find((category) => {
+    const catId = category._id || category.id;
+    return catId === deleteId;
+  });
 
   return (
     <section className="ArtCatagory">
@@ -134,20 +218,10 @@ const ArtCatagory = () => {
 
           <p>
             Organize your artwork categories and keep your creative
-            collection structured.
+            collection structured in the database.
           </p>
         </div>
 
-        <div className="ArtCatagory-header__badge">
-          <span className="ArtCatagory-header__badge-icon">
-            <FiLayers size={18} />
-          </span>
-
-          <div>
-            <strong>{categories.length}</strong>
-            <span>Total Categories</span>
-          </div>
-        </div>
       </header>
 
       {/* =====================================
@@ -180,8 +254,8 @@ const ArtCatagory = () => {
 
           <p className="ArtCatagory-form-description">
             {editingId !== null
-              ? "Update the name of your selected category."
-              : "Create a new category to organize your artworks."}
+              ? "Update the name of your selected category in the database."
+              : "Create a new category to organize your artworks and save directly into database."}
           </p>
 
           <form
@@ -262,8 +336,14 @@ const ArtCatagory = () => {
               <button
                 type="submit"
                 className="ArtCatagory-button ArtCatagory-button--primary"
+                disabled={submitting}
               >
-                {editingId !== null ? (
+                {submitting ? (
+                  <>
+                    <FiLoader size={18} className="Coupons-spinning" />
+                    Saving...
+                  </>
+                ) : editingId !== null ? (
                   <>
                     <FiCheck size={17} />
                     Update Category
@@ -281,6 +361,7 @@ const ArtCatagory = () => {
                   type="button"
                   className="ArtCatagory-button ArtCatagory-button--secondary"
                   onClick={handleCancelEdit}
+                  disabled={submitting}
                 >
                   <FiX size={17} />
                   Cancel
@@ -289,20 +370,6 @@ const ArtCatagory = () => {
             </div>
           </form>
 
-          {/* FORM INFORMATION CARD */}
-          <div className="ArtCatagory-info-card">
-            <div className="ArtCatagory-info-card__icon">
-              <FiFolder size={20} />
-            </div>
-
-            <div>
-              <h3>Keep It Organized</h3>
-              <p>
-                Use meaningful category names to help organize and
-                identify your artwork collection.
-              </p>
-            </div>
-          </div>
         </aside>
 
         {/* ===================================
@@ -317,13 +384,9 @@ const ArtCatagory = () => {
 
               <h2>All Categories</h2>
 
-              <p>View and manage your existing categories.</p>
+              <p>View and manage existing categories stored in database.</p>
             </div>
 
-            <span className="ArtCatagory-count">
-              {filteredCategories.length}{" "}
-              {filteredCategories.length === 1 ? "category" : "categories"}
-            </span>
           </div>
 
           {/* TABLE SEARCH */}
@@ -365,58 +428,65 @@ const ArtCatagory = () => {
               </thead>
 
               <tbody>
-                {filteredCategories.length > 0 ? (
-                  filteredCategories.map((category, index) => (
-                    <tr key={category.id}>
-                      <td className="ArtCatagory-table__serial">
-                        <span className="ArtCatagory-serial-badge">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                      </td>
-
-                      <td>
-                        <div className="ArtCatagory-category-cell">
-                          <span className="ArtCatagory-category-cell__icon">
-                            <FiTag size={17} />
+                {loading ? (
+                  <tr>
+                    <td colSpan={3}>
+                      <div className="ArtCatagory-empty">
+                        <FiLoader size={26} className="Coupons-spinning" />
+                        <h3>Loading categories from database...</h3>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredCategories.length > 0 ? (
+                  filteredCategories.map((category, index) => {
+                    const catId = category._id || category.id;
+                    return (
+                      <tr key={catId}>
+                        <td className="ArtCatagory-table__serial">
+                          <span className="ArtCatagory-serial-badge">
+                            {String(index + 1).padStart(2, "0")}
                           </span>
+                        </td>
 
-                          <div className="ArtCatagory-category-cell__content">
-                            <strong>{category.name}</strong>
-                            <span>Artwork category</span>
+                        <td>
+                          <div className="ArtCatagory-category-cell">
+                            <div className="ArtCatagory-category-cell__content">
+                              <strong>{category.name}</strong>
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      <td className="ArtCatagory-table__actions">
-                        <div className="ArtCatagory-row-actions">
-                          <button
-                            type="button"
-                            className="ArtCatagory-action-button ArtCatagory-action-button--edit"
-                            onClick={() => handleEdit(category)}
-                            aria-label={`Edit ${category.name}`}
-                            title="Edit category"
-                          >
-                            <FiEdit2 size={16} />
-                            <span>Edit</span>
-                          </button>
+                        <td className="ArtCatagory-table__actions">
+                          <div className="ArtCatagory-row-actions">
+                            <button
+                              type="button"
+                              className="ArtCatagory-action-button ArtCatagory-action-button--edit"
+                              onClick={() => handleEdit(category)}
+                              aria-label={`Edit ${category.name}`}
+                              title="Edit category"
+                            >
+                              <FiEdit2 size={16} />
+                              <span>Edit</span>
+                            </button>
 
-                          <button
-                            type="button"
-                            className="ArtCatagory-action-button ArtCatagory-action-button--delete"
-                            onClick={() => {
-                              resetMessages();
-                              setDeleteId(category.id);
-                            }}
-                            aria-label={`Delete ${category.name}`}
-                            title="Delete category"
-                          >
-                            <FiTrash2 size={16} />
-                            <span>Delete</span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                            <button
+                              type="button"
+                              className="ArtCatagory-action-button ArtCatagory-action-button--delete"
+                              onClick={() => {
+                                resetMessages();
+                                setDeleteId(catId);
+                              }}
+                              aria-label={`Delete ${category.name}`}
+                              title="Delete category"
+                            >
+                              <FiTrash2 size={16} />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
                     <td colSpan={3}>
@@ -434,7 +504,7 @@ const ArtCatagory = () => {
                         <p>
                           {searchTerm
                             ? "Try searching with another category name."
-                            : "Add your first category using the form on the left."}
+                            : "Add your first category using the form on the left to save it to database."}
                         </p>
 
                         {searchTerm && (
@@ -454,19 +524,6 @@ const ArtCatagory = () => {
             </table>
           </div>
 
-          {/* TABLE FOOTER */}
-          <div className="ArtCatagory-table-footer">
-            <span>
-              Showing{" "}
-              <strong>{filteredCategories.length}</strong> of{" "}
-              <strong>{categories.length}</strong> categories
-            </span>
-
-            <span className="ArtCatagory-table-footer__note">
-              <FiCheck size={14} />
-              Category overview
-            </span>
-          </div>
         </div>
       </div>
 
@@ -497,8 +554,7 @@ const ArtCatagory = () => {
 
             <p id="ArtCatagory-delete-description">
               Are you sure you want to delete{" "}
-              <strong>{deletingCategory?.name}</strong>? This action
-              cannot be undone.
+              <strong>{deletingCategory?.name}</strong>? This will permanently remove it from the database.
             </p>
 
             <div className="ArtCatagory-delete-modal__actions">

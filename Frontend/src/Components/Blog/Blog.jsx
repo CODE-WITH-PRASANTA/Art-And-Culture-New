@@ -1,5 +1,7 @@
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { BLOGS_API_URL, formatImageUrl } from "../../config/api";
 import {
   ArrowRight,
   BookOpen,
@@ -18,7 +20,20 @@ import {
 import "./Blog.css";
 
 const Blog = () => {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("All Posts");
+  const [liveBlogs, setLiveBlogs] = useState([]);
+
+  useEffect(() => {
+    fetch(`${BLOGS_API_URL}?status=Published`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.blogs)) {
+          setLiveBlogs(data.blogs);
+        }
+      })
+      .catch((err) => console.error("Error fetching published blogs:", err));
+  }, []);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAll, setShowAll] = useState(false);
 
@@ -139,13 +154,43 @@ const Blog = () => {
     },
   ];
 
-  const filteredPosts = useMemo(() => {
-    if (activeCategory === "All Posts") return blogPosts;
+  const tagColors = ["orange", "green", "blue"];
 
-    return blogPosts.filter(
+  const dynamicPosts = useMemo(() => {
+    if (liveBlogs && liveBlogs.length > 0) {
+      return liveBlogs.map((b, idx) => ({
+        id: b._id || b.id,
+        slug: b.slug,
+        category: b.category || "Art & Culture",
+        date: b.publishDate
+          ? new Date(b.publishDate).toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            })
+          : "Recent",
+        comments: b.commentsCount || 0,
+        title: b.title,
+        description:
+          b.excerpt ||
+          (b.description
+            ? b.description.replace(/<[^>]+>/g, " ").slice(0, 150)
+            : ""),
+        image: formatImageUrl(b.mainImage || b.image),
+        tagColor: tagColors[idx % tagColors.length],
+        readTime: b.readTime || "5 min read",
+      }));
+    }
+    return blogPosts;
+  }, [liveBlogs]);
+
+  const filteredPosts = useMemo(() => {
+    if (activeCategory === "All Posts") return dynamicPosts;
+
+    return dynamicPosts.filter(
       (post) => post.category === activeCategory
     );
-  }, [activeCategory]);
+  }, [activeCategory, dynamicPosts]);
 
   const visiblePosts = useMemo(() => {
     if (showAll) return filteredPosts;
@@ -178,12 +223,9 @@ const Blog = () => {
   };
 
   const handleReadArticle = (post) => {
-    // Replace this with your React Router article route when available.
-    window.dispatchEvent(
-      new CustomEvent("blog:openArticle", {
-        detail: post,
-      })
-    );
+    const slugOrId = post.slug || post.id;
+    navigate(`/blog/${slugOrId}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -283,7 +325,7 @@ const Blog = () => {
           >
             {visiblePosts.map((post) => (
               <article className="Blog-card" key={post.id}>
-                <div className="Blog-cardImageWrapper">
+                <div className="Blog-cardImageWrapper" style={{ cursor: "pointer" }} onClick={() => handleReadArticle(post)}>
                   <img
                     className="Blog-cardImage"
                     src={post.image}
@@ -315,7 +357,7 @@ const Blog = () => {
                     </span>
                   </div>
 
-                  <h3 className="Blog-cardTitle">
+                  <h3 className="Blog-cardTitle" style={{ cursor: "pointer" }} onClick={() => handleReadArticle(post)}>
                     {post.title}
                   </h3>
 

@@ -247,9 +247,16 @@ const CollectionDetailsOne = () => {
               About This Artwork
             </h2>
 
-            <p className="CollectionDetailsOne-description">
-              {collection.description}
-            </p>
+            {typeof collection.description === "string" && collection.description.includes("<") ? (
+              <div
+                className="CollectionDetailsOne-description"
+                dangerouslySetInnerHTML={{ __html: collection.description }}
+              />
+            ) : (
+              <p className="CollectionDetailsOne-description">
+                {collection.description}
+              </p>
+            )}
           </div>
 
           {/* ================= SPECIFICATIONS ================= */}

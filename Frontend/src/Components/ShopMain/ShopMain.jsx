@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import shop1 from "../../assets/shop-1.webp";
 import shop2 from "../../assets/shop-2.webp";
 import shop3 from "../../assets/shop-3.webp";
@@ -14,52 +15,28 @@ import "./ShopMain.css";
 ===================================================================== */
 const shopImages = [shop1, shop2, shop3, shop4, shop5, shop6];
 const PER_PAGE = 6;
+import { API_BASE_URL, ARTS_API_URL, CATEGORIES_API_URL } from "../../config/api";
+import { useWishlist } from "../../context/WishlistContext";
+import { useCart } from "../../context/CartContext";
 
-const artworks = [
-  { id: 1, title: "Watercolor Masterpieces for Every Room Decor", artist: "Diego Rivera", category: "Watercolor", price: 21999 },
-  { id: 2, title: "Dreamy Landscapes Inspired by Nature", artist: "Claude Monet", category: "Landscape Art", price: 18500 },
-  { id: 3, title: "Abstract Expressions in Vibrant Colors", artist: "Pablo Picasso", category: "Abstract Art", price: 24500 },
-  { id: 4, title: "Stories Told Through Hands of Time", artist: "Henri Matisse", category: "Modern Art", price: 30500 },
-  { id: 5, title: "Bold Statements: Geometric Wall Art Pieces", artist: "Joan Miró", category: "Abstract Art", price: 16500 },
-  { id: 6, title: "Infinity Explored in Every Tiny Detail", artist: "Frida Kahlo", category: "Watercolor", price: 31000 },
-  { id: 7, title: "Golden Hour Over the Quiet Harbor", artist: "Claude Monet", category: "Landscape Art", price: 43000 },
-  { id: 8, title: "The Weight of Blue Silence", artist: "Pablo Picasso", category: "Modern Art", price: 53000 },
-  { id: 9, title: "Dancing Light in the Garden of Memory", artist: "Claude Monet", category: "Watercolor", price: 24500 },
-  { id: 10, title: "Fragments of a Distant Cosmos", artist: "Yayoi Kusama", category: "Abstract Art", price: 36000 },
-  { id: 11, title: "Portrait of a Restless Dream", artist: "Salvador Dalí", category: "Modern Art", price: 73000 },
-  { id: 12, title: "Rhythm of the Midnight City", artist: "Andy Warhol", category: "Street Art", price: 29000 },
-  { id: 13, title: "Soft Rain on Terracotta Rooftops", artist: "Diego Rivera", category: "Landscape Art", price: 23000 },
-  { id: 14, title: "The Gilded Embrace", artist: "Gustav Klimt", category: "Modern Art", price: 80000 },
-  { id: 15, title: "Echoes from the Northern Shore", artist: "Edvard Munch", category: "Landscape Art", price: 34000 },
-  { id: 16, title: "Wild Poppies at First Light", artist: "Mark Jon", category: "Watercolor", price: 15000 },
-  { id: 17, title: "Spirals of a Thousand Suns", artist: "Yayoi Kusama", category: "Abstract Art", price: 42000 },
-  { id: 18, title: "Study in Bronze and Shadow", artist: "Leonardo Da Vinci", category: "Sculpture", price: 100000 },
-].map((item, i) => ({ ...item, image: shopImages[i % shopImages.length] }));
-
-const artistOptions = [
-  "Claude Monet",
-  "Diego Rivera",
-  "Pablo Picasso",
-  "Henri Matisse",
-  "Frida Kahlo",
-  "Yayoi Kusama",
-  "Joan Miró",
-  "Andy Warhol",
-  "Gustav Klimt",
-  "Salvador Dalí",
-  "Edvard Munch",
-  "Leonardo Da Vinci",
-  "Mark Jon",
-];
-
-const categoryOptions = [
-  "Watercolor",
-  "Landscape Art",
-  "Abstract Art",
-  "Modern Art",
-  "Street Art",
-  "Sculpture",
-];
+const getArtImage = (art, fallbackIndex = 0) => {
+  if (art.photos && art.photos.length > 0) {
+    const p = art.photos[0];
+    if (p.url) {
+      if (p.url.startsWith("http")) return p.url;
+      return `${API_BASE_URL}${p.url}`;
+    }
+    if (p.dataUrl) {
+      if (p.dataUrl.startsWith("http") || p.dataUrl.startsWith("data:")) return p.dataUrl;
+      return `${API_BASE_URL}${p.dataUrl}`;
+    }
+  }
+  if (art.image) {
+    if (art.image.startsWith("http") || art.image.startsWith("data:")) return art.image;
+    return `${API_BASE_URL}${art.image}`;
+  }
+  return shopImages[fallbackIndex % shopImages.length];
+};
 
 const priceOptions = [
   { value: "under20", label: "Under ₹20,000", min: 0, max: 20000 },
@@ -209,10 +186,23 @@ const useInView = (threshold = 0.15) => {
   return [ref, inView];
 };
 
+const toArtSlug = (title, id) => {
+  if (!title) return id || "";
+  return encodeURIComponent(
+    title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+  );
+};
+
 /* ---------------- Product card ---------------- */
 const ShopMainCard = ({ item, index, liked, inCart, onLike, onCart, onView }) => {
+  const navigate = useNavigate();
   const [ref, inView] = useInView(0.12);
   const [failed, setFailed] = useState(false);
+  const artUrl = `/shop/${toArtSlug(item.title, item.id)}`;
 
   return (
     <article
@@ -221,7 +211,14 @@ const ShopMainCard = ({ item, index, liked, inCart, onLike, onCart, onView }) =>
       style={{ "--delay": `${(index % PER_PAGE) * 0.07}s` }}
     >
       <div className="ShopMain-media">
-        <div className="ShopMain-imageWrap">
+        <div
+          className="ShopMain-imageWrap"
+          style={{ cursor: "pointer" }}
+          onClick={(e) => {
+            if (e.target.closest(".ShopMain-view")) return;
+            navigate(artUrl);
+          }}
+        >
           {!failed && (
             <img
               className="ShopMain-image"
@@ -235,7 +232,10 @@ const ShopMainCard = ({ item, index, liked, inCart, onLike, onCart, onView }) =>
           <button
             type="button"
             className="ShopMain-view"
-            onClick={() => onView && onView(item)}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onView) onView(item);
+            }}
           >
             <EyeIcon />
             <span>Quick View</span>
@@ -245,18 +245,44 @@ const ShopMainCard = ({ item, index, liked, inCart, onLike, onCart, onView }) =>
         <button
           type="button"
           className={`ShopMain-like ${liked ? "ShopMain-likeActive" : ""}`}
-          onClick={() => onLike(item.id)}
+          onClick={() => onLike(item)}
           aria-pressed={liked}
           aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
         >
           <HeartIcon filled={liked} />
         </button>
 
+        {item.discount > 0 && (
+          <span
+            style={{
+              position: "absolute",
+              top: "12px",
+              left: "12px",
+              background: "#8f382a",
+              color: "#fff",
+              padding: "3px 8px",
+              borderRadius: "6px",
+              fontSize: "11px",
+              fontWeight: "700",
+              letterSpacing: "0.5px",
+              zIndex: 3,
+            }}
+          >
+            {item.discount}% OFF
+          </span>
+        )}
+
         <span className="ShopMain-tag">{item.category}</span>
       </div>
 
       <div className="ShopMain-cardBody">
-        <h3 className="ShopMain-cardTitle">{item.title}</h3>
+        <h3
+          className="ShopMain-cardTitle"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate(artUrl)}
+        >
+          {item.title}
+        </h3>
 
         <p className="ShopMain-cardMeta">
           <span>Artist:</span> <strong>{item.artist}</strong>
@@ -264,6 +290,19 @@ const ShopMainCard = ({ item, index, liked, inCart, onLike, onCart, onView }) =>
 
         <p className="ShopMain-cardMeta ShopMain-cardPrice">
           <span>Price:</span> <strong>{formatMoney(item.price)}</strong>
+          {item.discount > 0 && (
+            <span
+              style={{
+                marginLeft: "8px",
+                textDecoration: "line-through",
+                color: "#998e82",
+                fontSize: "12px",
+                fontWeight: 500,
+              }}
+            >
+              {formatMoney(item.originalPrice)}
+            </span>
+          )}
         </p>
 
         <button
@@ -271,11 +310,18 @@ const ShopMainCard = ({ item, index, liked, inCart, onLike, onCart, onView }) =>
           className={`ShopMain-cartButton ${inCart ? "ShopMain-cartAdded" : ""}`}
           onClick={() => onCart(item)}
           aria-pressed={inCart}
+          disabled={item.stock <= 0}
         >
           <span className="ShopMain-cartIcon">
             {inCart ? <CheckIcon size={17} stroke={2.6} /> : <CartIcon />}
           </span>
-          <span>{inCart ? "Added to Cart" : "Add to Cart"}</span>
+          <span>
+            {item.stock <= 0
+              ? "Out of Stock"
+              : inCart
+              ? "Added to Cart"
+              : "Add to Cart"}
+          </span>
         </button>
       </div>
     </article>
@@ -337,7 +383,7 @@ const ShopMainGroup = ({
                       <CheckIcon />
                     </span>
                     <span className="ShopMain-optionLabel">{label}</span>
-                    <span className="ShopMain-optionCount">{counts[value] || 0}</span>
+                    
                   </label>
                 </li>
               );
@@ -364,18 +410,24 @@ const ShopMainGroup = ({
    Optional props:  onAddToCart(item, added)   onView(item)
 ===================================================================== */
 const ShopMain = ({ onAddToCart, onView }) => {
+  const navigate = useNavigate();
   const [rootRef, rootInView] = useInView(0.05);
   const resultsRef = useRef(null);
   const firstRender = useRef(true);
   const toastTimer = useRef(null);
+
+  const [artworks, setArtworks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [backendCategories, setBackendCategories] = useState([]);
+  const [quickViewItem, setQuickViewItem] = useState(null);
 
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState(emptyFilters);
   const [sort, setSort] = useState("default");
   const [columns, setColumns] = useState(3);
   const [page, setPage] = useState(1);
-  const [liked, setLiked] = useState(() => new Set());
-  const [cart, setCart] = useState(() => new Set());
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { isInCart, addToCart, removeFromCart } = useCart();
   const [toast, setToast] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState({
@@ -384,17 +436,99 @@ const ShopMain = ({ onAddToCart, onView }) => {
     price: true,
   });
 
+  /* Fetch live artworks and categories from database */
+  useEffect(() => {
+    let isMounted = true;
+    const fetchShopData = async () => {
+      try {
+        setLoading(true);
+        const [artsRes, catsRes] = await Promise.all([
+          fetch(`${ARTS_API_URL}?isPublished=true`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(CATEGORIES_API_URL).then((r) => r.json()).catch(() => ({ success: false })),
+        ]);
+
+        if (!isMounted) return;
+
+        if (artsRes.success && Array.isArray(artsRes.data)) {
+          const publishedArts = artsRes.data.filter((art) => {
+            return art.isPublished !== false && art.status !== "Unpublished";
+          });
+
+          const mapped = publishedArts.map((art, idx) => {
+            const numPrice = Number(art.price) || 0;
+            const numDiscount = Number(art.discount) || 0;
+            const finalPrice =
+              numDiscount > 0 ? numPrice * (1 - numDiscount / 100) : numPrice;
+
+            return {
+              ...art,
+              id: art._id || art.id || `art-${idx}`,
+              title: art.title || "Untitled Artwork",
+              artist: art.artistName || art.artist || "Unknown Artist",
+              category: art.category || "General",
+              price: finalPrice,
+              originalPrice: numPrice,
+              discount: numDiscount,
+              image: getArtImage(art, idx),
+              stock:
+                art.stockQuantity !== undefined
+                  ? Number(art.stockQuantity)
+                  : Number(art.stock || 0),
+            };
+          });
+          setArtworks(mapped);
+        } else {
+          setArtworks([]);
+        }
+
+        if (catsRes.success && Array.isArray(catsRes.data)) {
+          setBackendCategories(catsRes.data.map((c) => c.name));
+        }
+      } catch (err) {
+        console.error("Failed to load shop artworks:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchShopData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  /* Categories and Artists dynamically computed from database */
+  const categoryOptions = useMemo(() => {
+    const set = new Set(backendCategories);
+    artworks.forEach((a) => {
+      if (a.category) set.add(a.category);
+    });
+    return Array.from(set).filter(Boolean);
+  }, [backendCategories, artworks]);
+
+  const artistOptions = useMemo(() => {
+    const set = new Set();
+    artworks.forEach((a) => {
+      if (a.artist) set.add(a.artist);
+    });
+    return Array.from(set).filter(Boolean);
+  }, [artworks]);
+
   /* Counters shown beside each filter option */
   const counts = useMemo(() => {
     const result = { category: {}, artist: {}, price: {} };
     artworks.forEach((item) => {
-      result.category[item.category] = (result.category[item.category] || 0) + 1;
-      result.artist[item.artist] = (result.artist[item.artist] || 0) + 1;
+      if (item.category) {
+        result.category[item.category] = (result.category[item.category] || 0) + 1;
+      }
+      if (item.artist) {
+        result.artist[item.artist] = (result.artist[item.artist] || 0) + 1;
+      }
       const range = priceOptions.find((p) => item.price >= p.min && item.price < p.max);
       if (range) result.price[range.value] = (result.price[range.value] || 0) + 1;
     });
     return result;
-  }, []);
+  }, [artworks]);
 
   /* Filter + sort */
   const filtered = useMemo(() => {
@@ -405,7 +539,9 @@ const ShopMain = ({ onAddToCart, onView }) => {
       if (
         query &&
         !item.artist.toLowerCase().includes(query) &&
-        !item.title.toLowerCase().includes(query)
+        !item.title.toLowerCase().includes(query) &&
+        !(item.category || "").toLowerCase().includes(query) &&
+        !(item.tags || []).some((t) => String(t).toLowerCase().includes(query))
       )
         return false;
       if (filters.category.length && !filters.category.includes(item.category))
@@ -422,7 +558,7 @@ const ShopMain = ({ onAddToCart, onView }) => {
     if (sort === "priceHigh") sorted.sort((a, b) => b.price - a.price);
     if (sort === "az") sorted.sort((a, b) => a.title.localeCompare(b.title));
     return sorted;
-  }, [search, filters, sort]);
+  }, [artworks, search, filters, sort]);
 
   const total = filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
@@ -485,13 +621,10 @@ const ShopMain = ({ onAddToCart, onView }) => {
   const toggleGroup = (id) =>
     setOpenGroups((prev) => ({ ...prev, [id]: !prev[id] }));
 
-  const toggleLike = (id) =>
-    setLiked((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  const toggleLike = (item) => {
+    const added = toggleWishlist(item);
+    showToast(added ? "Added to your wishlist" : "Removed from your wishlist");
+  };
 
   const showToast = (message) => {
     clearTimeout(toastTimer.current);
@@ -500,15 +633,17 @@ const ShopMain = ({ onAddToCart, onView }) => {
   };
 
   const toggleCart = (item) => {
-    const adding = !cart.has(item.id);
-    setCart((prev) => {
-      const next = new Set(prev);
-      if (adding) next.add(item.id);
-      else next.delete(item.id);
-      return next;
-    });
-    showToast(adding ? "Added to your cart" : "Removed from your cart");
-    if (onAddToCart) onAddToCart(item, adding);
+    const itemId = item.id || item._id;
+    const inCartAlready = isInCart(itemId);
+    if (inCartAlready) {
+      removeFromCart(itemId);
+      showToast(`"${item.title}" removed from cart`);
+      if (onAddToCart) onAddToCart(item, false);
+    } else {
+      addToCart(item, 1);
+      showToast(`"${item.title}" added to your cart`);
+      if (onAddToCart) onAddToCart(item, true);
+    }
   };
 
   const goToPage = (value) => {
@@ -645,16 +780,7 @@ const ShopMain = ({ onAddToCart, onView }) => {
               )}
             </button>
 
-            <p className="ShopMain-results" aria-live="polite">
-              Showing <strong>{pageItems.length}</strong> of <strong>{total}</strong> results
-            </p>
-
             <div className="ShopMain-tools">
-              <div className="ShopMain-cartSummary" aria-live="polite">
-                <CartIcon size={18} />
-                <span>Cart</span>
-                <b className="ShopMain-cartCount">{cart.size}</b>
-              </div>
 
               <div className="ShopMain-selectWrap">
                 <select
@@ -719,7 +845,12 @@ const ShopMain = ({ onAddToCart, onView }) => {
             </div>
           )}
 
-          {pageItems.length > 0 ? (
+          {loading ? (
+            <div className="ShopMain-empty" style={{ padding: "80px 20px" }}>
+              <h3 className="ShopMain-emptyTitle">Loading Artworks...</h3>
+              <p className="ShopMain-emptyText">Fetching the latest collection from the gallery.</p>
+            </div>
+          ) : pageItems.length > 0 ? (
             <div
               className={`ShopMain-grid ${
                 columns === 2 ? "ShopMain-gridTwo" : "ShopMain-gridThree"
@@ -730,11 +861,11 @@ const ShopMain = ({ onAddToCart, onView }) => {
                   key={`${currentPage}-${item.id}`}
                   item={item}
                   index={index}
-                  liked={liked.has(item.id)}
-                  inCart={cart.has(item.id)}
+                  liked={isInWishlist(item.id)}
+                  inCart={isInCart(item.id)}
                   onLike={toggleLike}
                   onCart={toggleCart}
-                  onView={onView}
+                  onView={onView ? onView : (clicked) => setQuickViewItem(clicked)}
                 />
               ))}
             </div>
@@ -742,11 +873,15 @@ const ShopMain = ({ onAddToCart, onView }) => {
             <div className="ShopMain-empty">
               <h3 className="ShopMain-emptyTitle">No artworks found</h3>
               <p className="ShopMain-emptyText">
-                Try a different artist name or remove some filters.
+                {artworks.length
+                  ? "Try a different search term or remove some filters."
+                  : "Artworks will appear here once added in the admin panel."}
               </p>
-              <button type="button" className="ShopMain-cartButton" onClick={clearAll}>
-                Clear all filters
-              </button>
+              {artworks.length > 0 && (
+                <button type="button" className="ShopMain-cartButton" onClick={clearAll}>
+                  Clear all filters
+                </button>
+              )}
             </div>
           )}
 
@@ -798,6 +933,169 @@ const ShopMain = ({ onAddToCart, onView }) => {
           )}
         </div>
       </div>
+
+      {/* Quick View Modal */}
+      {quickViewItem && (
+        <div
+          className="ShopMain-quickModalOverlay"
+          onClick={() => setQuickViewItem(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(23, 20, 16, 0.65)",
+            backdropFilter: "blur(6px)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+        >
+          <div
+            className="ShopMain-quickModal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff",
+              borderRadius: "16px",
+              maxWidth: "760px",
+              width: "100%",
+              maxHeight: "90vh",
+              overflowY: "auto",
+              boxShadow: "0 24px 50px rgba(0,0,0,0.22)",
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "24px",
+              padding: "28px",
+              position: "relative",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setQuickViewItem(null)}
+              style={{
+                position: "absolute",
+                top: "16px",
+                right: "16px",
+                background: "#f4ede2",
+                border: "none",
+                borderRadius: "50%",
+                width: "36px",
+                height: "36px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "#463d33",
+              }}
+            >
+              <CloseIcon size={18} />
+            </button>
+
+            <div>
+              <img
+                src={quickViewItem.image}
+                alt={quickViewItem.title}
+                style={{
+                  width: "100%",
+                  height: "330px",
+                  objectFit: "cover",
+                  borderRadius: "12px",
+                  background: "#f7f2ea",
+                }}
+              />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <span
+                style={{
+                  display: "inline-block",
+                  background: "#eee4d5",
+                  color: "#6b5438",
+                  padding: "4px 10px",
+                  borderRadius: "6px",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  width: "fit-content",
+                }}
+              >
+                {quickViewItem.category}
+              </span>
+
+              <h2 style={{ fontSize: "20px", color: "#2d2419", margin: 0 }}>
+                {quickViewItem.title}
+              </h2>
+
+              <p style={{ margin: 0, color: "#776c5f", fontSize: "14px" }}>
+                By <strong>{quickViewItem.artist}</strong>
+              </p>
+
+              <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
+                <span style={{ fontSize: "24px", fontWeight: "800", color: "#7d5a36" }}>
+                  {formatMoney(quickViewItem.price)}
+                </span>
+                {quickViewItem.discount > 0 && (
+                  <>
+                    <del style={{ color: "#998e82", fontSize: "15px" }}>
+                      {formatMoney(quickViewItem.originalPrice)}
+                    </del>
+                    <span style={{ color: "#8f382a", fontSize: "13px", fontWeight: 700 }}>
+                      {quickViewItem.discount}% OFF
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {quickViewItem.description && (
+                <div
+                  style={{
+                    color: "#5f5548",
+                    fontSize: "13px",
+                    lineHeight: "1.7",
+                    maxHeight: "130px",
+                    overflowY: "auto",
+                  }}
+                  dangerouslySetInnerHTML={{ __html: quickViewItem.description }}
+                />
+              )}
+
+              <div style={{ marginTop: "auto", paddingTop: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                <button
+                  type="button"
+                  className="ShopMain-cartButton"
+                  style={{ width: "100%", background: "#513f2f", borderColor: "#513f2f" }}
+                  onClick={() => navigate(`/shop/${toArtSlug(quickViewItem.title, quickViewItem.id)}`)}
+                >
+                  View Full Details
+                </button>
+                <button
+                  type="button"
+                  className={`ShopMain-cartButton ${
+                    isInCart(quickViewItem.id) ? "ShopMain-cartAdded" : ""
+                  }`}
+                  onClick={() => toggleCart(quickViewItem)}
+                  disabled={quickViewItem.stock <= 0}
+                  style={{ width: "100%" }}
+                >
+                  <span className="ShopMain-cartIcon">
+                    {isInCart(quickViewItem.id) ? (
+                      <CheckIcon size={17} stroke={2.6} />
+                    ) : (
+                      <CartIcon />
+                    )}
+                  </span>
+                  <span>
+                    {quickViewItem.stock <= 0
+                      ? "Out of Stock"
+                      : isInCart(quickViewItem.id)
+                      ? "Added to Cart"
+                      : "Add to Cart"}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div
         className={`ShopMain-toast ${toast ? "ShopMain-toastShow" : ""}`}

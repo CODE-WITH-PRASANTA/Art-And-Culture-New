@@ -1,6 +1,5 @@
-
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaChevronLeft,
   FaChevronRight,
@@ -11,89 +10,115 @@ import {
 } from "react-icons/fa";
 
 import "./Artwork.css";
+import { useCart } from "../../context/CartContext";
+import { API_BASE_URL, ARTS_API_URL } from "../../config/api";
+import { toArtSlug } from "../../utils/slug";
+import { useWishlist } from "../../context/WishlistContext";
 
-const artworkItems = [
-  {
-    id: 1,
-    title: "Custom Portraits That Tell Your Story",
-    artist: "Salvador Dalí",
-    price: 22750,
-    category: "Portrait Art",
-    image:
-      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 2,
-    title: "Cosmic Beauty: Galaxy-Inspired Resin Coasters",
-    artist: "Leonardo da Vinci",
-    price: 17900,
-    category: "Classic Art",
-    image:
-      "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 3,
-    title: "Golden Horizon: Metallic Sunset Wall Décor",
-    artist: "Andy Warhol",
-    price: 21250,
-    category: "Modern Art",
-    image:
-      "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 4,
-    title: "Watercolor Masterpieces for Every Room Decor",
-    artist: "Diego Rivera",
-    price: 21999,
-    category: "Watercolor",
-    image:
-      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 5,
-    title: "Dreamy Landscapes Inspired by Nature",
-    artist: "Claude Monet",
-    price: 18500,
-    category: "Landscape Art",
-    image:
-      "https://images.unsplash.com/photo-1577083288073-40892c0860a4?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 6,
-    title: "Abstract Expressions in Vibrant Colors",
-    artist: "Pablo Picasso",
-    price: 24500,
-    category: "Abstract Art",
-    image:
-      "https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 7,
-    title: "A Timeless Journey Through Fine Art",
-    artist: "Vincent van Gogh",
-    price: 19900,
-    category: "Fine Art",
-    image:
-      "https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 8,
-    title: "Floral Stories Painted with Passion",
-    artist: "Georgia O'Keeffe",
-    price: 16500,
-    category: "Floral Art",
-    image:
-      "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=85",
-  },
-];
+const getImageUrl = (photo) => {
+  if (!photo) return "";
+  if (typeof photo === "string") {
+    if (photo.startsWith("data:") || photo.startsWith("http")) return photo;
+    return `${API_BASE_URL}${photo}`;
+  }
+  if (photo.url) {
+    if (photo.url.startsWith("http")) return photo.url;
+    return `${API_BASE_URL}${photo.url}`;
+  }
+  if (photo.dataUrl) {
+    if (photo.dataUrl.startsWith("http") || photo.dataUrl.startsWith("data:")) return photo.dataUrl;
+    return `${API_BASE_URL}${photo.dataUrl}`;
+  }
+  return "";
+};
+
+const getArtImage = (art) => {
+  if (art.photos && art.photos.length > 0) {
+    const img = getImageUrl(art.photos[0]);
+    if (img) return img;
+  }
+  if (art.image) {
+    return getImageUrl(art.image);
+  }
+  return "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=900&q=85";
+};
 
 const Artwork = () => {
+  const navigate = useNavigate();
   const trackRef = useRef(null);
   const intervalRef = useRef(null);
 
-  const [wishlist, setWishlist] = useState([]);
-  const [cart, setCart] = useState([]);
+  const { isInWishlist, toggleWishlist } = useWishlist();
+
+  const [artworkItems, setArtworkItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { isInCart, addToCart: addItemToCart } = useCart();
   const [notice, setNotice] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchGeneralArts = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${ARTS_API_URL}?isGeneralArtwork=true`);
+        const json = await res.json();
+
+        if (!isMounted) return;
+
+        if (json.success && Array.isArray(json.data)) {
+          // Keep only products whose general artwork status is active and published
+          const activeGeneral = json.data.filter((art) => {
+            const isGeneral = art.isGeneralArtwork !== false;
+            const isPublished =
+              art.isPublished !== false && art.status !== "Unpublished";
+            return isGeneral && isPublished;
+          });
+
+          const mapped = activeGeneral.map((art, idx) => {
+            const numPrice = Number(art.price) || 0;
+            const numDiscount = Number(art.discount) || 0;
+            const finalPrice =
+              numDiscount > 0
+                ? Math.round(numPrice * (1 - numDiscount / 100))
+                : numPrice;
+
+            return {
+              id: art._id || art.id || `general-${idx}`,
+              artNo: art.artNo,
+              title: art.title || "Untitled Artwork",
+              artist: art.artistName || art.artist || "Unknown Artist",
+              category: art.category || "General Artwork",
+              price: finalPrice,
+              originalPrice: numPrice,
+              discount: numDiscount,
+              image: getArtImage(art),
+              description: art.description || "",
+              stock:
+                art.stockQuantity !== undefined
+                  ? Number(art.stockQuantity) > 0
+                  : true,
+            };
+          });
+
+          setArtworkItems(mapped);
+        } else {
+          setArtworkItems([]);
+        }
+      } catch (err) {
+        console.error("Failed to load general artworks:", err);
+        setArtworkItems([]);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchGeneralArts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const formatPrice = (price) =>
     new Intl.NumberFormat("en-IN", {
@@ -134,6 +159,8 @@ const Artwork = () => {
 
   // Automatically advance the carousel every four seconds.
   useEffect(() => {
+    if (artworkItems.length <= 1) return;
+
     intervalRef.current = window.setInterval(() => {
       const track = trackRef.current;
 
@@ -145,15 +172,7 @@ const Artwork = () => {
     }, 4000);
 
     return () => window.clearInterval(intervalRef.current);
-  }, [scrollArtwork]);
-
-  const toggleWishlist = (id) => {
-    setWishlist((previous) =>
-      previous.includes(id)
-        ? previous.filter((item) => item !== id)
-        : [...previous, id]
-    );
-  };
+  }, [scrollArtwork, artworkItems]);
 
   const addToCart = (item) => {
     setCart((previous) =>
@@ -206,11 +225,16 @@ const Artwork = () => {
 
           <div className="Artwork-track" ref={trackRef}>
             {artworkItems.map((item) => {
-              const isWishlisted = wishlist.includes(item.id);
-              const isAdded = cart.includes(item.id);
+              const isWishlisted = isInWishlist(item.id);
+              const isAdded = isInCart(item.id);
 
               return (
-                <article className="Artwork-card" key={item.id}>
+                <article
+                  className="Artwork-card"
+                  key={item.id}
+                  onClick={() => navigate(`/shop/${toArtSlug(item.title, item.id)}`)}
+                  style={{ cursor: "pointer" }}
+                >
                   {/* Image and wishlist */}
                   <div className="Artwork-image-wrapper">
                     <img
@@ -218,6 +242,11 @@ const Artwork = () => {
                       src={item.image}
                       alt={`${item.title} by ${item.artist}`}
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src =
+                          "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=900&q=85";
+                      }}
                     />
 
                     <span className="Artwork-category-badge">
@@ -229,7 +258,13 @@ const Artwork = () => {
                       className={`Artwork-wishlist ${
                         isWishlisted ? "Artwork-wishlist-active" : ""
                       }`}
-                      onClick={() => toggleWishlist(item.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const added = toggleWishlist(item);
+                        setNotice(added ? `${item.title} added to wishlist.` : `${item.title} removed from wishlist.`);
+                        window.clearTimeout(addToCart.noticeTimer);
+                        addToCart.noticeTimer = window.setTimeout(() => setNotice(""), 2500);
+                      }}
                       aria-label={
                         isWishlisted
                           ? "Remove from wishlist"
@@ -258,7 +293,10 @@ const Artwork = () => {
                       className={`Artwork-buy-button ${
                         isAdded ? "Artwork-buy-button-added" : ""
                       }`}
-                      onClick={() => addToCart(item)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart(item);
+                      }}
                       disabled={isAdded}
                     >
                       {isAdded ? <FaCheck /> : <FaShoppingCart />}

@@ -1,5 +1,4 @@
-
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart,
@@ -14,73 +13,68 @@ import {
   X,
 } from "lucide-react";
 
-import shop1 from "../../assets/shop-details-1.webp";
-import shop2 from "../../assets/shop-details-2.webp";
-
-
 import "./WishlistMain.css";
-
-const initialWishlist = [
-  {
-    id: 1,
-    title: "Whispers of Colors in Silent Shadows",
-    artist: "Henri Matisse",
-    price: 34000,
-    category: ["Painting", "Street Art", "Colorful"],
-    image: shop1,
-    stock: true,
-    description:
-      "A vibrant artwork celebrating color, architecture, and the beauty of everyday life.",
-  },
-  {
-    id: 2,
-    title: "Harmony Emerges in Chaos of Creation",
-    artist: "Vincent van Gogh",
-    price: 28500,
-    category: ["Oil Painting", "Abstract", "Nature"],
-    image: shop2,
-    stock: true,
-    description:
-      "An expressive floral composition inspired by nature, texture, and artistic freedom.",
-  },
-];
+import { toArtSlug } from "../../utils/slug";
+import { useWishlist } from "../../context/WishlistContext";
+import { useCart } from "../../context/CartContext";
 
 const formatPrice = (price) =>
   new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,
-  }).format(price);
+  }).format(price || 0);
 
-const WishlistMain = ({
-  initialItems = initialWishlist,
-  onAddToCart,
-  onViewDetails,
-  onRemove,
-}) => {
+const WishlistMain = ({ onAddToCart }) => {
   const navigate = useNavigate();
+  const { wishlist, removeFromWishlist, removeMultiple } = useWishlist();
 
-  const [items, setItems] = useState(initialItems);
   const [selectedItems, setSelectedItems] = useState([]);
   const [sortBy, setSortBy] = useState("default");
   const [viewMode, setViewMode] = useState("list");
-  const [cartItems, setCartItems] = useState([]);
+  const { isInCart, addToCart: addItemToCart } = useCart();
   const [message, setMessage] = useState("");
-  const [removingId, setRemovingId] = useState(null);
+
+  const messageTimerRef = useRef(null);
+
+  const showNotification = (text) => {
+    if (messageTimerRef.current) {
+      clearTimeout(messageTimerRef.current);
+    }
+    setMessage(text);
+    messageTimerRef.current = setTimeout(() => {
+      setMessage("");
+    }, 3500);
+  };
+
+  const dismissMessage = () => {
+    if (messageTimerRef.current) {
+      clearTimeout(messageTimerRef.current);
+    }
+    setMessage("");
+  };
+
+  useEffect(() => {
+    return () => {
+      if (messageTimerRef.current) {
+        clearTimeout(messageTimerRef.current);
+      }
+    };
+  }, []);
 
   const sortedItems = useMemo(() => {
-    const result = [...items];
+    const result = [...wishlist];
 
     if (sortBy === "price-low") {
-      result.sort((a, b) => a.price - b.price);
+      result.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
     } else if (sortBy === "price-high") {
-      result.sort((a, b) => b.price - a.price);
+      result.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
     } else if (sortBy === "name") {
-      result.sort((a, b) => a.title.localeCompare(b.title));
+      result.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
     }
 
     return result;
-  }, [items, sortBy]);
+  }, [wishlist, sortBy]);
 
   const toggleSelected = (id) => {
     setSelectedItems((previous) =>
@@ -90,80 +84,41 @@ const WishlistMain = ({
     );
   };
 
-  const toggleSelectAll = () => {
-    setSelectedItems((previous) =>
-      previous.length === items.length
-        ? []
-        : items.map((item) => item.id)
-    );
-  };
-
   const removeItem = (id) => {
-    const removedItem = items.find((item) => item.id === id);
-
-    if (!removedItem) return;
-
-    setItems((previous) => previous.filter((item) => item.id !== id));
-    setSelectedItems((previous) =>
-      previous.filter((itemId) => itemId !== id)
-    );
-    setRemovingId(null);
-    setMessage("Artwork removed from your wishlist.");
-
-    onRemove?.(removedItem);
+    const item = wishlist.find((i) => i.id === id || i._id === id);
+    removeFromWishlist(id);
+    setSelectedItems((prev) => prev.filter((i) => i !== id));
+    showNotification(`"${item ? item.title : "Artwork"}" removed from your wishlist.`);
   };
 
   const removeSelected = () => {
     if (!selectedItems.length) {
-      setMessage("Select at least one artwork to remove.");
+      showNotification("Select at least one artwork to remove.");
       return;
     }
-
-    const removedItems = items.filter((item) =>
-      selectedItems.includes(item.id)
-    );
-
-    setItems((previous) =>
-      previous.filter((item) => !selectedItems.includes(item.id))
-    );
+    const count = selectedItems.length;
+    removeMultiple(selectedItems);
     setSelectedItems([]);
-    setMessage(`${removedItems.length} artwork(s) removed from wishlist.`);
-
-    removedItems.forEach((item) => onRemove?.(item));
+    showNotification(`${count} artwork(s) removed from wishlist.`);
   };
 
   const addToCart = async (item) => {
-    if (!item.stock) {
-      setMessage("This artwork is currently out of stock.");
+    if (item.stock === false) {
+      showNotification("This artwork is currently out of stock.");
       return;
     }
 
     try {
-      if (onAddToCart) {
-        await onAddToCart(item);
-      } else {
-        setCartItems((previous) =>
-          previous.includes(item.id)
-            ? previous
-            : [...previous, item.id]
-        );
-      }
-
-      setMessage(`${item.title} added to your cart.`);
+      addItemToCart(item, 1);
+      if (onAddToCart) await onAddToCart(item);
+      showNotification(`"${item.title}" added to your cart.`);
     } catch {
-      setMessage("Unable to add this artwork. Please try again.");
+      showNotification("Unable to add this artwork. Please try again.");
     }
   };
 
   const viewDetails = (item) => {
-    if (onViewDetails) {
-      onViewDetails(item);
-      return;
-    }
-
-    navigate(`/shop-details/${item.id}`, {
-      state: { product: item },
-    });
+    navigate(`/shop/${toArtSlug(item.title, item.id)}`);
   };
 
   const exploreCollection = () => {
@@ -181,21 +136,21 @@ const WishlistMain = ({
           <span>Wishlist</span>
         </div>
 
-      
         {message && (
-          <div
-            className="WishlistMain-message"
-            role="status"
-          >
-            <Check size={17} />
-            <span>{message}</span>
+          <div className="WishlistMain-message" role="status" key={message}>
+            <div className="WishlistMain-messageContent">
+              <Check size={18} className="WishlistMain-messageIcon" />
+              <span>{message}</span>
+            </div>
             <button
               type="button"
-              onClick={() => setMessage("")}
+              onClick={dismissMessage}
               aria-label="Dismiss message"
+              title="Dismiss"
             >
               <X size={16} />
             </button>
+            <div className="WishlistMain-messageTimeline" />
           </div>
         )}
 
@@ -203,8 +158,8 @@ const WishlistMain = ({
           <div className="WishlistMain-toolbar">
             <div className="WishlistMain-count">
               <h2>
-                {items.length}{" "}
-                {items.length === 1 ? "Item" : "Items"} in your wishlist
+                {wishlist.length}{" "}
+                {wishlist.length === 1 ? "Item" : "Items"} in your wishlist
               </h2>
               {selectedItems.length > 0 && (
                 <span className="WishlistMain-selectedCount">
@@ -214,7 +169,7 @@ const WishlistMain = ({
             </div>
 
             <div className="WishlistMain-toolbarActions">
-              {items.length > 0 && (
+              {wishlist.length > 0 && (
                 <>
                   {selectedItems.length > 0 && (
                     <button
@@ -276,12 +231,15 @@ const WishlistMain = ({
             </div>
           </div>
 
-          {items.length > 0 ? (
+          {wishlist.length > 0 ? (
             <div
               className={`WishlistMain-items WishlistMain-items-${viewMode}`}
             >
               {sortedItems.map((item, index) => {
-                const isInCart = cartItems.includes(item.id);
+                const itemInCart = isInCart(item.id);
+                const categories = Array.isArray(item.category)
+                  ? item.category
+                  : [item.category || "Artwork"];
 
                 return (
                   <article
@@ -319,6 +277,11 @@ const WishlistMain = ({
                         src={item.image}
                         alt={item.title}
                         loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src =
+                            "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=900&q=85";
+                        }}
                       />
                     </button>
 
@@ -336,8 +299,8 @@ const WishlistMain = ({
                       </p>
 
                       <div className="WishlistMain-tags">
-                        {item.category.map((category) => (
-                          <span key={category}>{category}</span>
+                        {categories.map((category, catIdx) => (
+                          <span key={`${category}-${catIdx}`}>{category}</span>
                         ))}
                       </div>
 
@@ -349,31 +312,31 @@ const WishlistMain = ({
                     <div className="WishlistMain-productActions">
                       <span
                         className={
-                          item.stock
+                          item.stock !== false
                             ? "WishlistMain-stock"
                             : "WishlistMain-stock WishlistMain-stockOut"
                         }
                       >
                         <span />
-                        {item.stock ? "In Stock" : "Out of Stock"}
+                        {item.stock !== false ? "In Stock" : "Out of Stock"}
                       </span>
 
                       <button
                         type="button"
                         className={
-                          isInCart
+                          itemInCart
                             ? "WishlistMain-cartBtn WishlistMain-cartBtnAdded"
                             : "WishlistMain-cartBtn"
                         }
                         onClick={() => addToCart(item)}
-                        disabled={!item.stock}
+                        disabled={item.stock === false}
                       >
-                        {isInCart ? (
+                        {itemInCart ? (
                           <Check size={16} />
                         ) : (
                           <ShoppingCart size={16} />
                         )}
-                        {isInCart ? "Added to Cart" : "Add to Cart"}
+                        {itemInCart ? "Added to Cart" : "Add to Cart"}
                       </button>
 
                       <button
@@ -408,7 +371,7 @@ const WishlistMain = ({
             </div>
           )}
 
-          {items.length > 0 && (
+          {wishlist.length > 0 && (
             <div className="WishlistMain-footer">
               <div className="WishlistMain-footerIcon">
                 <ShoppingBag size={25} strokeWidth={1.5} />
@@ -428,27 +391,6 @@ const WishlistMain = ({
               >
                 Explore Collection <ArrowRight size={17} />
               </button>
-            </div>
-          )}
-
-          {items.length > 0 && (
-            <div className="WishlistMain-bottomActions">
-              <label className="WishlistMain-selectAll">
-                <input
-                  type="checkbox"
-                  checked={
-                    items.length > 0 &&
-                    selectedItems.length === items.length
-                  }
-                  onChange={toggleSelectAll}
-                />
-                Select all artworks
-              </label>
-
-              <span>
-                {cartItems.length}{" "}
-                {cartItems.length === 1 ? "item" : "items"} added to cart
-              </span>
             </div>
           )}
         </div>

@@ -307,6 +307,7 @@
 }
 
 .ShopMain-optionCount {
+  display: none !important;
   min-width: 26px;
   padding: 2px 8px;
   border-radius: 999px;

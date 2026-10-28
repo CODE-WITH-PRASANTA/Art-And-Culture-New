@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import {
   FiPlus,
@@ -9,12 +8,26 @@ import {
   FiX,
   FiCheck,
   FiSearch,
-  FiFolder,
   FiAlertCircle,
   FiEye,
 } from "react-icons/fi";
 
 import "./Gallary.css";
+
+import { API_BASE_URL, GALLERY_API_URL as API_URL } from "../../config/api";
+
+const getPhotoUrl = (url) => {
+  if (!url) return "";
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  ) {
+    return url;
+  }
+  return `${API_BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+};
 
 const Gallary = () => {
   const [galleryItems, setGalleryItems] = useState([]);
@@ -27,11 +40,30 @@ const Gallary = () => {
   const [success, setSuccess] = useState("");
   const [deleteId, setDeleteId] = useState(null);
   const [viewPhoto, setViewPhoto] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef("");
 
+  const fetchGalleryItems = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setGalleryItems(data.data);
+      }
+    } catch (err) {
+      console.error("Failed to load gallery items from server:", err);
+      setError("Could not connect to backend server. Please verify it is running on port 5000.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
+    fetchGalleryItems();
+
     return () => {
       if (previewUrlRef.current) {
         URL.revokeObjectURL(previewUrlRef.current);
@@ -78,8 +110,8 @@ const Gallary = () => {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Photo size must be less than 5 MB.");
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Photo size must be less than 10 MB.");
       event.target.value = "";
       return;
     }
@@ -87,14 +119,13 @@ const Gallary = () => {
     clearPreviewUrl();
 
     const previewUrl = URL.createObjectURL(file);
-
     previewUrlRef.current = previewUrl;
 
     setPhoto(file);
     setPhotoPreview(previewUrl);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     clearMessages();
 
@@ -105,49 +136,79 @@ const Gallary = () => {
       return;
     }
 
-    if (!photoPreview) {
+    if (!photo && !photoPreview) {
       setError("Please upload a gallery photo.");
       return;
     }
 
-    if (editingId !== null) {
-      setGalleryItems((previous) =>
-        previous.map((item) =>
-          item.id === editingId
-            ? {
-                ...item,
-                title: trimmedTitle,
-                photo: photoPreview,
-                file: photo || item.file || null,
-              }
-            : item
-        )
-      );
+    try {
+      if (editingId !== null) {
+        let response;
+        if (photo) {
+          const formData = new FormData();
+          formData.append("title", trimmedTitle);
+          formData.append("photo", photo);
+          response = await fetch(`${API_URL}/${editingId}`, {
+            method: "PUT",
+            body: formData,
+          });
+        } else {
+          response = await fetch(`${API_URL}/${editingId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: trimmedTitle }),
+          });
+        }
 
-      setSuccess("Gallery item updated successfully.");
-    } else {
-      const newItem = {
-        id: Date.now(),
-        title: trimmedTitle,
-        photo: photoPreview,
-        file: photo,
-      };
+        const data = await response.json();
+        if (data.success) {
+          setSuccess("Gallery item updated successfully in database.");
+          fetchGalleryItems();
+          resetForm();
+        } else {
+          setError(data.message || "Failed to update gallery item.");
+        }
+      } else {
+        let response;
+        if (photo) {
+          const formData = new FormData();
+          formData.append("title", trimmedTitle);
+          formData.append("photo", photo);
+          response = await fetch(API_URL, {
+            method: "POST",
+            body: formData,
+          });
+        } else if (photoPreview) {
+          response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: trimmedTitle, photo: photoPreview }),
+          });
+        }
 
-      setGalleryItems((previous) => [...previous, newItem]);
-      setSuccess("Gallery photo added successfully.");
+        const data = await response.json();
+        if (data.success) {
+          setSuccess("Gallery photo saved successfully to database.");
+          fetchGalleryItems();
+          resetForm();
+        } else {
+          setError(data.message || "Failed to save gallery photo.");
+        }
+      }
+    } catch (err) {
+      console.error("Error saving gallery item:", err);
+      setError("Server error: Unable to connect to backend.");
     }
-
-    resetForm();
   };
 
   const handleEdit = (item) => {
     clearMessages();
     clearPreviewUrl();
 
-    setEditingId(item.id);
+    setEditingId(item._id || item.id);
     setTitle(item.title);
     setPhoto(null);
-    setPhotoPreview(item.photo);
+    setPhotoPreview(getPhotoUrl(item.photo));
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -159,44 +220,46 @@ const Gallary = () => {
     });
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId === null) return;
 
-    const deletedItem = galleryItems.find(
-      (item) => item.id === deleteId
-    );
+    try {
+      const response = await fetch(`${API_URL}/${deleteId}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
 
-    setGalleryItems((previous) =>
-      previous.filter((item) => item.id !== deleteId)
-    );
+      if (data.success) {
+        setGalleryItems((previous) =>
+          previous.filter((item) => (item._id || item.id) !== deleteId)
+        );
 
-    if (editingId === deleteId) {
-      resetForm();
+        if (editingId === deleteId) {
+          resetForm();
+        }
+
+        if ((viewPhoto?._id || viewPhoto?.id) === deleteId) {
+          setViewPhoto(null);
+        }
+
+        setDeleteId(null);
+        setError("");
+        setSuccess("Gallery item deleted successfully from database.");
+      } else {
+        setError(data.message || "Failed to delete gallery item.");
+      }
+    } catch (err) {
+      console.error("Error deleting gallery item:", err);
+      setError("Server error: Unable to delete gallery item.");
     }
-
-    if (viewPhoto?.id === deleteId) {
-      setViewPhoto(null);
-    }
-
-    if (
-      deletedItem?.photo &&
-      deletedItem.photo.startsWith("blob:") &&
-      deletedItem.photo !== previewUrlRef.current
-    ) {
-      URL.revokeObjectURL(deletedItem.photo);
-    }
-
-    setDeleteId(null);
-    setError("");
-    setSuccess("Gallery item deleted successfully.");
   };
 
   const filteredItems = galleryItems.filter((item) =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase().trim())
+    (item.title || "").toLowerCase().includes(searchTerm.toLowerCase().trim())
   );
 
   const deletingItem = galleryItems.find(
-    (item) => item.id === deleteId
+    (item) => (item._id || item.id) === deleteId
   );
 
   return (
@@ -214,7 +277,7 @@ const Gallary = () => {
 
           <p>
             Upload, organize, and manage the photos that showcase your
-            creative collection.
+            creative collection. Real-time synced with MongoDB.
           </p>
         </div>
 
@@ -374,7 +437,7 @@ const Gallary = () => {
                   </span>
 
                   <span className="Gallary-upload__formats">
-                    JPG, PNG, WEBP · Maximum 5 MB
+                    JPG, PNG, WEBP · Maximum 10 MB
                   </span>
                 </button>
               )}
@@ -434,20 +497,7 @@ const Gallary = () => {
             </div>
           </form>
 
-          {/* FORM INFORMATION */}
-          <div className="Gallary-info-card">
-            <div className="Gallary-info-card__icon">
-              <FiFolder size={20} />
-            </div>
 
-            <div>
-              <h3>Your Creative Collection</h3>
-              <p>
-                Keep your gallery updated with quality photos and
-                meaningful titles for easy identification.
-              </p>
-            </div>
-          </div>
         </aside>
 
         {/* ===================================
@@ -517,69 +567,74 @@ const Gallary = () => {
 
               <tbody>
                 {filteredItems.length > 0 ? (
-                  filteredItems.map((item, index) => (
-                    <tr key={item.id}>
-                      <td className="Gallary-table__serial">
-                        <span className="Gallary-serial-badge">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                      </td>
+                  filteredItems.map((item, index) => {
+                    const itemId = item._id || item.id;
+                    const photoSrc = getPhotoUrl(item.photo || item.image);
 
-                      <td className="Gallary-table__title">
-                        <strong>{item.title}</strong>
-                        <span>Gallery photo</span>
-                      </td>
-
-                      <td>
-                        <button
-                          type="button"
-                          className="Gallary-thumbnail-button"
-                          onClick={() => setViewPhoto(item)}
-                          aria-label={`View photo: ${item.title}`}
-                          title="View photo"
-                        >
-                          <img
-                            className="Gallary-thumbnail"
-                            src={item.photo}
-                            alt={item.title}
-                          />
-
-                          <span className="Gallary-thumbnail__overlay">
-                            <FiEye size={17} />
+                    return (
+                      <tr key={itemId}>
+                        <td className="Gallary-table__serial">
+                          <span className="Gallary-serial-badge">
+                            {String(index + 1).padStart(2, "0")}
                           </span>
-                        </button>
-                      </td>
+                        </td>
 
-                      <td className="Gallary-table__actions">
-                        <div className="Gallary-row-actions">
+                        <td className="Gallary-table__title">
+                          <strong>{item.title}</strong>
+                          <span>{item.category || "Gallery photo"}</span>
+                        </td>
+
+                        <td>
                           <button
                             type="button"
-                            className="Gallary-action-button Gallary-action-button--edit"
-                            onClick={() => handleEdit(item)}
-                            title="Edit gallery item"
-                            aria-label={`Edit ${item.title}`}
+                            className="Gallary-thumbnail-button"
+                            onClick={() => setViewPhoto(item)}
+                            aria-label={`View photo: ${item.title}`}
+                            title="View photo"
                           >
-                            <FiEdit2 size={15} />
-                            <span>Edit</span>
-                          </button>
+                            <img
+                              className="Gallary-thumbnail"
+                              src={photoSrc}
+                              alt={item.title}
+                            />
 
-                          <button
-                            type="button"
-                            className="Gallary-action-button Gallary-action-button--delete"
-                            onClick={() => {
-                              clearMessages();
-                              setDeleteId(item.id);
-                            }}
-                            title="Delete gallery item"
-                            aria-label={`Delete ${item.title}`}
-                          >
-                            <FiTrash2 size={15} />
-                            <span>Delete</span>
+                            <span className="Gallary-thumbnail__overlay">
+                              <FiEye size={17} />
+                            </span>
                           </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                        </td>
+
+                        <td className="Gallary-table__actions">
+                          <div className="Gallary-row-actions">
+                            <button
+                              type="button"
+                              className="Gallary-action-button Gallary-action-button--edit"
+                              onClick={() => handleEdit(item)}
+                              title="Edit gallery item"
+                              aria-label={`Edit ${item.title}`}
+                            >
+                              <FiEdit2 size={15} />
+                              <span>Edit</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              className="Gallary-action-button Gallary-action-button--delete"
+                              onClick={() => {
+                                clearMessages();
+                                setDeleteId(itemId);
+                              }}
+                              title="Delete gallery item"
+                              aria-label={`Delete ${item.title}`}
+                            >
+                              <FiTrash2 size={15} />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
                     <td colSpan={4}>
@@ -617,18 +672,7 @@ const Gallary = () => {
             </table>
           </div>
 
-          {/* TABLE FOOTER */}
-          <div className="Gallary-table-footer">
-            <span>
-              Showing <strong>{filteredItems.length}</strong> of{" "}
-              <strong>{galleryItems.length}</strong> gallery items
-            </span>
 
-            <span className="Gallary-table-footer__note">
-              <FiCheck size={14} />
-              Gallery overview
-            </span>
-          </div>
         </div>
       </div>
 
@@ -666,7 +710,10 @@ const Gallary = () => {
             </div>
 
             <div className="Gallary-photo-modal__body">
-              <img src={viewPhoto.photo} alt={viewPhoto.title} />
+              <img
+                src={getPhotoUrl(viewPhoto.photo || viewPhoto.image)}
+                alt={viewPhoto.title}
+              />
             </div>
 
             <div className="Gallary-photo-modal__footer">
@@ -723,7 +770,7 @@ const Gallary = () => {
             <p id="Gallary-delete-description">
               Are you sure you want to delete{" "}
               <strong>{deletingItem?.title}</strong>? This action
-              cannot be undone.
+              will remove it from the database permanently.
             </p>
 
             <div className="Gallary-delete-modal__actions">
