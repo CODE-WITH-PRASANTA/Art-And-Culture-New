@@ -81,6 +81,8 @@ const authRoutes = require("./src/routes/authRoutes");
 const paymentRoutes = require("./src/routes/paymentRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const orderRoutes = require("./src/routes/orderRoutes");
+const enquiryRoutes = require("./src/routes/enquiryRoutes");
+const blogCommentRoutes = require("./src/routes/blogCommentRoutes");
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -92,6 +94,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/enquiries", enquiryRoutes);
+app.use("/api/enquiry", enquiryRoutes);
+app.use("/api/blog-comments", blogCommentRoutes);
+app.use("/api/reviews", blogCommentRoutes);
 
 /* ==============================
    404 HANDLER

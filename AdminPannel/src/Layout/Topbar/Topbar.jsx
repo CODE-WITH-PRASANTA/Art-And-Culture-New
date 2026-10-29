@@ -146,8 +146,8 @@ const Topbar = ({ toggleSidebar }) => {
 
   const currentPage =
     pageDetails[location.pathname] || {
-      title: "Art & Culture",
-      subtitle: "Preserving heritage, inspiring creativity",
+      title: "",
+      subtitle: "",
       icon: Palette,
     };
 
@@ -332,9 +332,6 @@ const Topbar = ({ toggleSidebar }) => {
             </button>
 
             <div className="Topbar-page-label">
-              <span className="Topbar-page-icon">
-                <PageIcon size={19} strokeWidth={1.7} />
-              </span>
 
               <div className="Topbar-page-heading">
                 <span className="Topbar-page-title">

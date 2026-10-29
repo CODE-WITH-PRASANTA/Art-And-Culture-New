@@ -18,8 +18,10 @@ const {
   syncCart,
   syncWishlist,
   googleAuth,
+  uploadAvatar,
 } = require("../controllers/authController");
 const { protect } = require("../middleware/auth");
+const { upload, convertAvatarToWebp } = require("../middleware/multer");
 
 // Public auth routes
 router.post("/register", register);
@@ -34,6 +36,13 @@ router.post("/logout", logout);
 // Protected user routes
 router.get("/me", protect, getMe);
 router.put("/profile", protect, updateProfile);
+router.post(
+  "/avatar",
+  protect,
+  upload.single("avatar"),
+  convertAvatarToWebp,
+  uploadAvatar
+);
 router.put("/cart", protect, syncCart);
 router.put("/wishlist", protect, syncWishlist);
 

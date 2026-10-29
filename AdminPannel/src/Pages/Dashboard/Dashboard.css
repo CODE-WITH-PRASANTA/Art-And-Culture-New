@@ -1,0 +1,1198 @@
+/* ==========================================================================
+   Art & Culture - Executive Management Dashboard Stylesheet
+   ========================================================================== */
+
+.Dashboard-page {
+  padding: 24px 32px 60px;
+  background-color: #faf6f0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  color: #2b1f17;
+  font-family: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   1. HERO BANNER
+   -------------------------------------------------------------------------- */
+.Dashboard-hero-banner {
+  background: linear-gradient(135deg, #2b1c10 0%, #3e2715 50%, #5a381e 100%);
+  border-radius: 18px;
+  padding: 32px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  color: #ffffff;
+  box-shadow: 0 10px 30px -8px rgba(43, 28, 16, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.Dashboard-hero-banner::after {
+  content: "";
+  position: absolute;
+  right: -60px;
+  bottom: -60px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 163, 89, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.Dashboard-hero-left {
+  max-width: 680px;
+  position: relative;
+  z-index: 1;
+}
+
+.Dashboard-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 12px;
+  font-weight: 500;
+  color: #f7e7ce;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+
+.Dashboard-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.Dashboard-hero-title {
+  font-family: "Cinzel", "Playfair Display", Georgia, serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+}
+
+.Dashboard-hero-title span {
+  color: #dfb26b;
+  font-weight: 400;
+}
+
+.Dashboard-hero-desc {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.Dashboard-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.Dashboard-sync-timestamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.Dashboard-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.Dashboard-btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.Dashboard-btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.Dashboard-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #dfb26b 0%, #c49547 100%);
+  color: #24180d;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(223, 178, 107, 0.35);
+  transition: all 0.2s ease;
+}
+
+.Dashboard-btn-primary:hover {
+  background: linear-gradient(135deg, #ebd09c 0%, #d4a359 100%);
+  box-shadow: 0 6px 16px rgba(223, 178, 107, 0.45);
+  transform: translateY(-1px);
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. CORE KPI GRID
+   -------------------------------------------------------------------------- */
+.Dashboard-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.Dashboard-kpi-card {
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 14px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(36, 24, 13, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.Dashboard-kpi-card:hover {
+  transform: translateY(-3px);
+  border-color: #8c5b0c;
+  box-shadow: 0 8px 20px rgba(140, 91, 12, 0.12);
+}
+
+.Dashboard-kpi-card--gold {
+  border-color: rgba(223, 178, 107, 0.6);
+  background: linear-gradient(180deg, #ffffff 0%, #fdfbf7 100%);
+}
+
+.Dashboard-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.Dashboard-kpi-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #7d6b5c;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.Dashboard-kpi-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.Dashboard-kpi-icon-wrap.gold {
+  background-color: #fcf4e6;
+  color: #b47b19;
+}
+
+.Dashboard-kpi-icon-wrap.blue {
+  background-color: #eef4ff;
+  color: #2563eb;
+}
+
+.Dashboard-kpi-icon-wrap.purple {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+}
+
+.Dashboard-kpi-icon-wrap.green {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.Dashboard-kpi-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.Dashboard-kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #24180d;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.Dashboard-kpi-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+.Dashboard-kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.Dashboard-kpi-trend.positive {
+  background-color: #e6f9ed;
+  color: #0d8a43;
+}
+
+.Dashboard-kpi-subtext {
+  color: #8c7b6d;
+}
+
+.Dashboard-kpi-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.Dashboard-kpi-badge.delivered {
+  background-color: #e6f9ed;
+  color: #0d8a43;
+}
+
+.Dashboard-kpi-badge.featured {
+  background-color: #f4eeff;
+  color: #6d28d9;
+}
+
+.Dashboard-kpi-badge.active {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.Dashboard-kpi-footer-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px dashed #ede3d7;
+  padding-top: 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #8c5b0c;
+  transition: color 0.2s ease;
+}
+
+.Dashboard-kpi-card:hover .Dashboard-kpi-footer-link {
+  color: #5d3800;
+}
+
+/* --------------------------------------------------------------------------
+   3. ORDER LOGISTICS PIPELINE
+   -------------------------------------------------------------------------- */
+.Dashboard-logistics-pipeline {
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 14px;
+  padding: 22px 26px;
+  box-shadow: 0 2px 8px rgba(36, 24, 13, 0.04);
+}
+
+.Dashboard-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.Dashboard-section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #24180d;
+  margin: 0 0 4px 0;
+}
+
+.Dashboard-section-desc {
+  font-size: 12.5px;
+  color: #7d6b5c;
+  margin: 0;
+}
+
+.Dashboard-link-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #8c5b0c;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.Dashboard-link-text:hover {
+  color: #4b3003;
+}
+
+.Dashboard-pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.Dashboard-pipeline-step {
+  background: #faf6f0;
+  border: 1px solid #ebd9c8;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.Dashboard-pipeline-step:hover {
+  background: #f8f1e6;
+  border-color: #dfb26b;
+}
+
+.Dashboard-pipeline-step.active {
+  background: #fbf8f2;
+  border-color: #8c5b0c;
+}
+
+.Dashboard-step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.Dashboard-step-icon.pending {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.Dashboard-step-icon.shipped {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.Dashboard-step-icon.out-for-delivery {
+  background-color: #fdf4ff;
+  color: #c026d3;
+}
+
+.Dashboard-step-icon.delivered {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.Dashboard-step-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.Dashboard-step-count {
+  font-size: 22px;
+  font-weight: 700;
+  color: #24180d;
+}
+
+.Dashboard-step-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a382c;
+}
+
+.Dashboard-step-hint {
+  font-size: 11px;
+  color: #8c7b6d;
+}
+
+/* --------------------------------------------------------------------------
+   4. INTERACTIVE CHARTS ROW
+   -------------------------------------------------------------------------- */
+.Dashboard-charts-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.Dashboard-chart-card {
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 8px rgba(36, 24, 13, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.Dashboard-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.Dashboard-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #24180d;
+  margin: 0 0 4px 0;
+}
+
+.Dashboard-card-subtitle {
+  font-size: 12px;
+  color: #7d6b5c;
+}
+
+.Dashboard-chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.Dashboard-toggle-group {
+  display: inline-flex;
+  background-color: #f1e9dd;
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.Dashboard-toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #6e5c4e;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.Dashboard-toggle-btn:hover {
+  color: #24180d;
+}
+
+.Dashboard-toggle-btn.active {
+  background: #ffffff;
+  color: #8c5b0c;
+  box-shadow: 0 1px 3px rgba(36, 24, 13, 0.1);
+}
+
+.Dashboard-line-chart-container {
+  height: 270px;
+  width: 100%;
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.Dashboard-chart-summary-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  border-top: 1px dashed #ebd9c8;
+  padding-top: 16px;
+}
+
+.Dashboard-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.Dashboard-summary-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #7d6b5c;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.Dashboard-summary-item strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: #24180d;
+}
+
+.Dashboard-link-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #faf6f0;
+  border: 1px solid #ebd9c8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c5b0c;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.Dashboard-link-icon:hover {
+  background-color: #8c5b0c;
+  color: #ffffff;
+}
+
+.Dashboard-doughnut-container {
+  height: 210px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 16px 0;
+}
+
+.Dashboard-doughnut-center-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.Dashboard-doughnut-val {
+  font-size: 24px;
+  font-weight: 700;
+  color: #24180d;
+  line-height: 1;
+}
+
+.Dashboard-doughnut-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8c7b6d;
+  text-transform: uppercase;
+}
+
+.Dashboard-category-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px dashed #ebd9c8;
+  padding-top: 14px;
+}
+
+.Dashboard-cat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+}
+
+.Dashboard-cat-name {
+  color: #6e5c4e;
+}
+
+.Dashboard-cat-row strong {
+  font-weight: 600;
+  color: #24180d;
+}
+
+/* --------------------------------------------------------------------------
+   5. RECENT ORDERS TABLE
+   -------------------------------------------------------------------------- */
+.Dashboard-orders-section {
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 14px;
+  padding: 22px 26px;
+  box-shadow: 0 2px 8px rgba(36, 24, 13, 0.04);
+}
+
+.Dashboard-table-card {
+  margin-top: 14px;
+}
+
+.Dashboard-responsive-table {
+  overflow-x: auto;
+}
+
+.Dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.Dashboard-table th {
+  background-color: #faf6f0;
+  color: #6e5c4e;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #ebd9c8;
+}
+
+.Dashboard-table td {
+  padding: 14px 14px;
+  font-size: 13px;
+  color: #24180d;
+  border-bottom: 1px solid #f4eae0;
+  vertical-align: middle;
+}
+
+.Dashboard-table tbody tr:hover {
+  background-color: #fdfaf6;
+}
+
+.Dashboard-order-id-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.Dashboard-order-id-cell strong {
+  font-weight: 600;
+  color: #8c5b0c;
+}
+
+.Dashboard-order-id-cell span {
+  font-size: 11px;
+  color: #8c7b6d;
+}
+
+.Dashboard-customer-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Dashboard-customer-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #8c5b0c;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.Dashboard-customer-cell div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.Dashboard-customer-cell strong {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.Dashboard-customer-cell span {
+  font-size: 11px;
+  color: #8c7b6d;
+}
+
+.Dashboard-items-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 220px;
+}
+
+.Dashboard-items-count-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background-color: #f1e9dd;
+  color: #4a382c;
+  font-size: 10.5px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.Dashboard-item-sample-title {
+  font-size: 12px;
+  color: #6e5c4e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Dashboard-amount-cell {
+  font-weight: 700;
+  color: #24180d;
+}
+
+.Dashboard-payment-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background-color: #ecfdf5;
+  color: #059669;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.Dashboard-status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.Dashboard-status-badge.delivered {
+  background-color: #e6f9ed;
+  color: #0d8a43;
+}
+
+.Dashboard-status-badge.pending {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.Dashboard-status-badge.shipped {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.Dashboard-status-badge.out-for-delivery {
+  background-color: #fdf4ff;
+  color: #c026d3;
+}
+
+.Dashboard-btn-row-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #faf6f0;
+  border: 1px solid #ebd9c8;
+  color: #8c5b0c;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.Dashboard-btn-row-action:hover {
+  background: #8c5b0c;
+  color: #ffffff;
+}
+
+.Dashboard-empty-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  color: #8c7b6d;
+  text-align: center;
+}
+
+.Dashboard-empty-box h4 {
+  font-size: 16px;
+  color: #24180d;
+  margin: 12px 0 4px 0;
+}
+
+.Dashboard-empty-box p {
+  font-size: 12.5px;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   6. DUAL GRID SNAPSHOTS
+   -------------------------------------------------------------------------- */
+.Dashboard-dual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.Dashboard-snapshot-card {
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 8px rgba(36, 24, 13, 0.04);
+}
+
+.Dashboard-snapshot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.Dashboard-snapshot-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #24180d;
+  margin: 0 0 3px 0;
+}
+
+.Dashboard-snapshot-subtitle {
+  font-size: 12px;
+  color: #7d6b5c;
+}
+
+.Dashboard-snapshot-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.Dashboard-snapshot-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 16px;
+  color: #8c7b6d;
+  font-size: 12.5px;
+}
+
+.Dashboard-inquiry-item,
+.Dashboard-review-item {
+  background: #faf6f0;
+  border: 1px solid #ebd9c8;
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.Dashboard-inquiry-item:hover,
+.Dashboard-review-item:hover {
+  border-color: #8c5b0c;
+  background: #fbf8f2;
+  transform: translateY(-1px);
+}
+
+.Dashboard-inquiry-top,
+.Dashboard-review-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Dashboard-inquiry-user,
+.Dashboard-review-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Dashboard-user-badge,
+.Dashboard-review-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #4a382c;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.Dashboard-review-avatar {
+  background: #8c5b0c;
+}
+
+.Dashboard-inquiry-user div,
+.Dashboard-review-author div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.Dashboard-inquiry-user strong,
+.Dashboard-review-author strong {
+  font-size: 12.5px;
+  color: #24180d;
+}
+
+.Dashboard-inquiry-user span,
+.Dashboard-review-slug {
+  font-size: 11px;
+  color: #8c7b6d;
+}
+
+.Dashboard-enq-pill,
+.Dashboard-review-status-pill {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.Dashboard-enq-pill.status-new {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.Dashboard-enq-pill.status-replied,
+.Dashboard-enq-pill.status-resolved {
+  background-color: #e6f9ed;
+  color: #0d8a43;
+}
+
+.Dashboard-review-status-pill.status-draft {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.Dashboard-review-status-pill.status-approved {
+  background-color: #e6f9ed;
+  color: #0d8a43;
+}
+
+.Dashboard-inquiry-subject {
+  font-size: 13px;
+  font-weight: 600;
+  color: #24180d;
+  margin: 0;
+}
+
+.Dashboard-inquiry-msg,
+.Dashboard-review-comment {
+  font-size: 12px;
+  color: #6e5c4e;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.Dashboard-review-comment {
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   7. QUICK OPERATIONAL HUB
+   -------------------------------------------------------------------------- */
+.Dashboard-quick-hub {
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 14px;
+  padding: 22px 26px;
+  box-shadow: 0 2px 8px rgba(36, 24, 13, 0.04);
+}
+
+.Dashboard-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.Dashboard-hub-card {
+  background: #faf6f0;
+  border: 1px solid #ebd9c8;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.Dashboard-hub-card:hover {
+  background: #ffffff;
+  border-color: #8c5b0c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(140, 91, 12, 0.08);
+}
+
+.Dashboard-hub-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.Dashboard-hub-icon.gold {
+  background-color: #fcf4e6;
+  color: #b47b19;
+}
+
+.Dashboard-hub-icon.blue {
+  background-color: #eef4ff;
+  color: #2563eb;
+}
+
+.Dashboard-hub-icon.green {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.Dashboard-hub-icon.purple {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+}
+
+.Dashboard-hub-icon.amber {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.Dashboard-hub-icon.pink {
+  background-color: #fdf2f8;
+  color: #db2777;
+}
+
+.Dashboard-hub-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.Dashboard-hub-details strong {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #24180d;
+}
+
+.Dashboard-hub-details span {
+  font-size: 11.5px;
+  color: #8c7b6d;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE BREAKPOINTS
+   -------------------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .Dashboard-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .Dashboard-pipeline-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .Dashboard-charts-row {
+    grid-template-columns: 1fr;
+  }
+  .Dashboard-hub-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .Dashboard-page {
+    padding: 16px;
+    gap: 18px;
+  }
+  .Dashboard-hero-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 20px;
+  }
+  .Dashboard-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .Dashboard-pipeline-grid {
+    grid-template-columns: 1fr;
+  }
+  .Dashboard-dual-grid {
+    grid-template-columns: 1fr;
+  }
+  .Dashboard-hub-grid {
+    grid-template-columns: 1fr;
+  }
+  .Dashboard-chart-summary-bar {
+    grid-template-columns: 1fr;
+  }
+}
+

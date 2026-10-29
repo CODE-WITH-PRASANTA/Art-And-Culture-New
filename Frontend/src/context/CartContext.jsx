@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { formatImageUrl } from "../config/api";
+import { formatImageUrl, COUPONS_API_URL } from "../config/api";
 import { useAuth } from "./AuthContext";
 
 const getUserCartKey = (user) => {
@@ -31,6 +31,29 @@ export const CartProvider = ({ children }) => {
       return [];
     }
   });
+
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    try {
+      const stored = localStorage.getItem("art_culture_applied_coupon");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Persist coupon to localStorage
+  useEffect(() => {
+    try {
+      if (appliedCoupon) {
+        localStorage.setItem(
+          "art_culture_applied_coupon",
+          JSON.stringify(appliedCoupon)
+        );
+      } else {
+        localStorage.removeItem("art_culture_applied_coupon");
+      }
+    } catch (e) {}
+  }, [appliedCoupon]);
 
   // Track user login/logout & restore user cart
   useEffect(() => {
@@ -287,8 +310,10 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => {
     setCart([]);
+    setAppliedCoupon(null);
     try {
       localStorage.removeItem(storageKey);
+      localStorage.removeItem("art_culture_applied_coupon");
       if (user && user.email && typeof syncCartToBackend === "function") {
         syncCartToBackend([]);
       }
@@ -306,10 +331,62 @@ export const CartProvider = ({ children }) => {
     (sum, item) => sum + item.price * (item.quantity || 1),
     0
   );
+
+  // Calculate coupon discount based on active subtotal
+  let discount = 0;
+  let couponWarning = "";
+  if (appliedCoupon && subtotal > 0) {
+    if (appliedCoupon.minimum && subtotal < appliedCoupon.minimum) {
+      const shortfall = Number(appliedCoupon.minimum) - subtotal;
+      couponWarning = `Add ₹${shortfall.toLocaleString("en-IN")} more to activate coupon '${appliedCoupon.code}' (min. purchase ₹${Number(appliedCoupon.minimum).toLocaleString("en-IN")})`;
+      discount = 0;
+    } else {
+      if (appliedCoupon.type === "Percentage (%)") {
+        discount = Math.round((subtotal * Number(appliedCoupon.value)) / 100);
+      } else {
+        discount = Math.min(Number(appliedCoupon.value), subtotal);
+      }
+      discount = Math.max(0, Math.min(discount, subtotal));
+    }
+  }
+
   // Free shipping and inclusive tax policy
   const shipping = 0;
   const tax = 0;
-  const total = subtotal;
+  const total = Math.max(0, subtotal - discount + shipping + tax);
+
+  const applyCoupon = async (codeToApply, currentSubtotal = subtotal) => {
+    const code = (codeToApply || "").trim().toUpperCase();
+    if (!code) {
+      throw new Error("Please enter a coupon code.");
+    }
+
+    const calcSubtotal = Number(currentSubtotal) || subtotal;
+    if (calcSubtotal <= 0) {
+      throw new Error("Your cart is empty. Add artworks to apply coupon.");
+    }
+
+    const res = await fetch(`${COUPONS_API_URL}/validate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, cartTotal: calcSubtotal }),
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || "Failed to validate coupon code.");
+    }
+
+    setAppliedCoupon(data.coupon);
+    return data;
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    try {
+      localStorage.removeItem("art_culture_applied_coupon");
+    } catch (e) {}
+  };
 
   return (
     <CartContext.Provider
@@ -318,6 +395,11 @@ export const CartProvider = ({ children }) => {
         cartCount,
         selectedItems,
         subtotal,
+        discount,
+        couponWarning,
+        appliedCoupon,
+        applyCoupon,
+        removeCoupon,
         shipping,
         tax,
         total,

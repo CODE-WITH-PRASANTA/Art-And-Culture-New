@@ -24,6 +24,8 @@ export const createPaymentOrder = async ({
   customer,
   items,
   subtotal,
+  discount = 0,
+  couponCode = "",
   shipping = 0,
   tax = 0,
   totalAmount,
@@ -42,6 +44,8 @@ export const createPaymentOrder = async ({
       customer,
       items,
       subtotal,
+      discount,
+      couponCode,
       shipping,
       tax,
       totalAmount,
@@ -92,6 +96,54 @@ export const verifyPaymentSignature = async ({
 };
 
 /**
+ * Marks an order payment as failed/cancelled in the backend
+ */
+export const markPaymentFailed = async ({ orderId, orderNumber, razorpayOrderId, reason, token }) => {
+  try {
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch(`${PAYMENT_API_URL}/mark-failed`, {
+      method: "POST",
+      headers,
+      credentials: "include",
+      body: JSON.stringify({
+        orderId,
+        orderNumber,
+        razorpayOrderId,
+        reason: reason || "Payment cancelled or declined by gateway",
+      }),
+    });
+    return await res.json();
+  } catch (err) {
+    console.warn("Could not notify backend of payment failure:", err);
+    return null;
+  }
+};
+
+/**
+ * Retries payment for an existing unpaid or failed order
+ */
+export const retryPaymentOrder = async ({ orderId, orderNumber, token }) => {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${PAYMENT_API_URL}/retry-order`, {
+    method: "POST",
+    headers,
+    credentials: "include",
+    body: JSON.stringify({ orderId, orderNumber }),
+  });
+
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || "Failed to initialize retry payment");
+  }
+
+  return data;
+};
+
+/**
  * Fetches order history for current user
  */
 export const fetchMyOrders = async (token) => {
@@ -121,6 +173,8 @@ export const launchRazorpayCheckout = async ({
     throw new Error("Could not load Razorpay payment SDK. Check your internet connection.");
   }
 
+  let paymentCompleted = false;
+
   const options = {
     key: orderData.keyId || "rzp_test_TppGgVggUkbJv4",
     amount: orderData.amount,
@@ -142,6 +196,7 @@ export const launchRazorpayCheckout = async ({
       color: "#d08a24",
     },
     handler: async function (response) {
+      paymentCompleted = true;
       if (typeof onSuccess === "function") {
         onSuccess({
           orderId: orderData.orderId,
@@ -154,6 +209,14 @@ export const launchRazorpayCheckout = async ({
     },
     modal: {
       ondismiss: function () {
+        if (!paymentCompleted) {
+          markPaymentFailed({
+            orderId: orderData.orderId,
+            orderNumber: orderData.orderNumber,
+            razorpayOrderId: orderData.razorpayOrderId,
+            reason: "Checkout modal was closed before payment completed",
+          });
+        }
         if (typeof onDismiss === "function") {
           onDismiss();
         }
@@ -166,6 +229,14 @@ export const launchRazorpayCheckout = async ({
   const razorpay = new window.Razorpay(options);
 
   razorpay.on("payment.failed", function (response) {
+    if (!paymentCompleted) {
+      markPaymentFailed({
+        orderId: orderData.orderId,
+        orderNumber: orderData.orderNumber,
+        razorpayOrderId: orderData.razorpayOrderId,
+        reason: response.error?.description || "Payment failed on gateway",
+      });
+    }
     if (typeof onFailure === "function") {
       onFailure(response.error);
     }

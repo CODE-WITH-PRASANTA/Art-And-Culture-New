@@ -20,6 +20,7 @@ import Users from "./Components/Users/Users";
 import EnquiryManagement from "./Components/EnquiryManagement/EnquiryManagement";
 import BlogPosting from "./Components/BlogPosting/BlogPosting";
 import BlogManagement from "./Components/BlogManagement/BlogManagement";
+import ReviewManagement from "./Components/ReviewManagement/ReviewManagement";
 import Dashboard from "./Pages/Dashboard/Dashboard"
 
 const App = () => {
@@ -69,6 +70,11 @@ const App = () => {
           <Route
             path="/blog/blog-management"
             element={<BlogManagement />}
+          />
+
+          <Route
+            path="/review-management"
+            element={<ReviewManagement />}
           />
         </Route>
 

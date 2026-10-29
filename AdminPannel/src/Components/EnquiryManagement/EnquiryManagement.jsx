@@ -1,5 +1,6 @@
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { ENQUIRIES_API_URL } from "../../config/api";
 import {
   FiMessageSquare,
   FiUsers,
@@ -23,149 +24,6 @@ import {
 } from "react-icons/fi";
 
 import "./EnquiryManagement.css";
-
-/* ========================================
-   SAMPLE ENQUIRY DATA
-======================================== */
-
-const initialEnquiries = [
-  {
-    id: 1001,
-    name: "Aarav Sharma",
-    email: "aarav.sharma@example.com",
-    phone: "+91 98765 43210",
-    subject: "Custom Artwork Inquiry",
-    category: "Artwork",
-    message:
-      "I am interested in commissioning a custom painting for my living room. Please share the available options and pricing.",
-    status: "New",
-    priority: "High",
-    source: "Website",
-    date: "2026-10-25",
-    followUpDate: "2026-10-27",
-    assignedTo: "Admin",
-    notes: "",
-  },
-  {
-    id: 1002,
-    name: "Priya Patel",
-    email: "priya.patel@example.com",
-    phone: "+91 98765 12345",
-    subject: "Order Delivery Details",
-    category: "Order Support",
-    message:
-      "I would like to know the estimated delivery date for my recent artwork order.",
-    status: "In Progress",
-    priority: "Medium",
-    source: "Website",
-    date: "2026-10-24",
-    followUpDate: "2026-10-28",
-    assignedTo: "Support Team",
-    notes: "Check the order status before responding.",
-  },
-  {
-    id: 1003,
-    name: "Rahul Das",
-    email: "rahul.das@example.com",
-    phone: "+91 91234 56789",
-    subject: "Bulk Art Purchase",
-    category: "Bulk Order",
-    message:
-      "Our office is planning to purchase several artworks. Please contact us with bulk pricing details.",
-    status: "Follow Up",
-    priority: "High",
-    source: "Email",
-    date: "2026-10-22",
-    followUpDate: "2026-10-27",
-    assignedTo: "Admin",
-    notes: "Interested in purchasing 10 or more pieces.",
-  },
-  {
-    id: 1004,
-    name: "Ananya Mishra",
-    email: "ananya.mishra@example.com",
-    phone: "+91 99887 66554",
-    subject: "Artist Collaboration",
-    category: "Collaboration",
-    message:
-      "I am an independent artist and would love to discuss a possible collaboration.",
-    status: "Resolved",
-    priority: "Low",
-    source: "Social Media",
-    date: "2026-10-20",
-    followUpDate: "",
-    assignedTo: "Manager",
-    notes: "Initial discussion completed.",
-  },
-  {
-    id: 1005,
-    name: "Rohan Kumar",
-    email: "rohan.kumar@example.com",
-    phone: "+91 90909 80808",
-    subject: "Refund Request",
-    category: "Order Support",
-    message:
-      "I received a damaged frame and would like assistance with a replacement or refund.",
-    status: "New",
-    priority: "High",
-    source: "Website",
-    date: "2026-10-26",
-    followUpDate: "2026-10-26",
-    assignedTo: "Support Team",
-    notes: "",
-  },
-  {
-    id: 1006,
-    name: "Sneha Mohanty",
-    email: "sneha.mohanty@example.com",
-    phone: "+91 93333 44444",
-    subject: "Art Workshop Registration",
-    category: "Workshop",
-    message:
-      "Please share the upcoming workshop dates, registration process and fees.",
-    status: "In Progress",
-    priority: "Medium",
-    source: "Phone",
-    date: "2026-10-18",
-    followUpDate: "2026-10-29",
-    assignedTo: "Manager",
-    notes: "Send the upcoming workshop schedule.",
-  },
-  {
-    id: 1007,
-    name: "Aditya Singh",
-    email: "aditya.singh@example.com",
-    phone: "+91 97777 11111",
-    subject: "Product Availability",
-    category: "Product Inquiry",
-    message:
-      "Is the traditional artwork collection available for delivery outside Odisha?",
-    status: "Follow Up",
-    priority: "Medium",
-    source: "Website",
-    date: "2026-10-17",
-    followUpDate: "2026-10-30",
-    assignedTo: "Admin",
-    notes: "Confirm shipping availability.",
-  },
-  {
-    id: 1008,
-    name: "Ishita Roy",
-    email: "ishita.roy@example.com",
-    phone: "+91 96666 22222",
-    subject: "Partnership Opportunity",
-    category: "Collaboration",
-    message:
-      "We would like to discuss a partnership for showcasing local artists.",
-    status: "Resolved",
-    priority: "Low",
-    source: "Email",
-    date: "2026-10-15",
-    followUpDate: "",
-    assignedTo: "Manager",
-    notes: "Partnership proposal received.",
-  },
-];
 
 const emptyEnquiry = {
   name: "",
@@ -213,7 +71,11 @@ const statusClass = (status) =>
 ======================================== */
 
 const EnquiryManagement = () => {
-  const [enquiries, setEnquiries] = useState(initialEnquiries);
+  const [enquiries, setEnquiries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [fetchError, setFetchError] = useState("");
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -229,6 +91,31 @@ const EnquiryManagement = () => {
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [activeMenu, setActiveMenu] = useState(null);
+
+  // Fetch all real enquiries from database
+  const fetchEnquiries = async () => {
+    try {
+      setLoading(true);
+      setFetchError("");
+      const res = await fetch(ENQUIRIES_API_URL);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setEnquiries(data.data);
+      } else {
+        setEnquiries([]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch enquiries:", err);
+      setFetchError("Unable to connect to enquiries database server.");
+      setEnquiries([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEnquiries();
+  }, []);
 
   /* ========================================
      STATISTICS
@@ -345,7 +232,7 @@ const EnquiryManagement = () => {
       notes: item.notes || "",
     });
 
-    setEditingId(item.id);
+    setEditingId(item._id || item.id);
     setFormError("");
     setSelectedEnquiry(null);
     setShowForm(true);
@@ -361,7 +248,7 @@ const EnquiryManagement = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setFormError("");
 
@@ -388,85 +275,128 @@ const EnquiryManagement = () => {
       notes: form.notes.trim(),
     };
 
-    if (editingId !== null) {
-      setEnquiries((previous) =>
-        previous.map((item) =>
-          item.id === editingId ? { ...item, ...enquiryData } : item
-        )
-      );
-    } else {
-      setEnquiries((previous) => [
-        {
-          id: Date.now(),
-          ...enquiryData,
-        },
-        ...previous,
-      ]);
+    setSaving(true);
+    try {
+      if (editingId !== null) {
+        const res = await fetch(`${ENQUIRIES_API_URL}/${editingId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(enquiryData),
+        });
+        const data = await res.json();
+        if (data.success) {
+          await fetchEnquiries();
+          resetForm();
+        } else {
+          setFormError(data.message || "Failed to update enquiry.");
+        }
+      } else {
+        const res = await fetch(ENQUIRIES_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(enquiryData),
+        });
+        const data = await res.json();
+        if (data.success) {
+          await fetchEnquiries();
+          resetForm();
+        } else {
+          setFormError(data.message || "Failed to create enquiry.");
+        }
+      }
+    } catch (err) {
+      console.error("Submit error:", err);
+      setFormError("Server error occurred while saving enquiry.");
+    } finally {
+      setSaving(false);
     }
-
-    resetForm();
   };
 
   /* ========================================
      FOLLOW-UP ACTIONS
   ======================================== */
 
-  const updateEnquiryStatus = (id, status) => {
-    setEnquiries((previous) =>
-      previous.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status,
-              followUpDate:
-                status === "Resolved" ? "" : item.followUpDate,
-            }
-          : item
-      )
-    );
+  const updateEnquiryStatus = async (id, status) => {
+    const targetId = id;
+    try {
+      const payload = {
+        status,
+        followUpDate: status === "Resolved" ? "" : undefined,
+      };
+      const res = await fetch(`${ENQUIRIES_API_URL}/${targetId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEnquiries((previous) =>
+          previous.map((item) =>
+            (item.id === targetId || item._id === targetId)
+              ? {
+                  ...item,
+                  status,
+                  followUpDate: status === "Resolved" ? "" : item.followUpDate,
+                }
+              : item
+          )
+        );
 
-    setSelectedEnquiry((previous) =>
-      previous?.id === id
-        ? {
-            ...previous,
-            status,
-            followUpDate:
-              status === "Resolved" ? "" : previous.followUpDate,
-          }
-        : previous
-    );
-
+        setSelectedEnquiry((previous) =>
+          (previous?.id === targetId || previous?._id === targetId)
+            ? {
+                ...previous,
+                status,
+                followUpDate: status === "Resolved" ? "" : previous.followUpDate,
+              }
+            : previous
+        );
+      }
+    } catch (err) {
+      console.error("Status update error:", err);
+    }
     setActiveMenu(null);
   };
 
-  const scheduleFollowUp = (item) => {
+  const scheduleFollowUp = async (item) => {
     const suggestedDate = new Date();
     suggestedDate.setDate(suggestedDate.getDate() + 2);
-
     const dateValue = suggestedDate.toISOString().slice(0, 10);
+    const targetId = item.id || item._id;
 
-    setEnquiries((previous) =>
-      previous.map((entry) =>
-        entry.id === item.id
-          ? {
-              ...entry,
-              status: "Follow Up",
-              followUpDate: dateValue,
-            }
-          : entry
-      )
-    );
+    try {
+      const res = await fetch(`${ENQUIRIES_API_URL}/${targetId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Follow Up", followUpDate: dateValue }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEnquiries((previous) =>
+          previous.map((entry) =>
+            (entry.id === targetId || entry._id === targetId)
+              ? {
+                  ...entry,
+                  status: "Follow Up",
+                  followUpDate: dateValue,
+                }
+              : entry
+          )
+        );
 
-    setSelectedEnquiry((previous) =>
-      previous?.id === item.id
-        ? {
-            ...previous,
-            status: "Follow Up",
-            followUpDate: dateValue,
-          }
-        : previous
-    );
-
+        setSelectedEnquiry((previous) =>
+          (previous?.id === targetId || previous?._id === targetId)
+            ? {
+                ...previous,
+                status: "Follow Up",
+                followUpDate: dateValue,
+              }
+            : previous
+        );
+      }
+    } catch (err) {
+      console.error("Schedule follow-up error:", err);
+    }
     setActiveMenu(null);
   };
 
@@ -474,21 +404,34 @@ const EnquiryManagement = () => {
      DELETE ACTION
   ======================================== */
 
-  const confirmDelete = () => {
-    setEnquiries((previous) =>
-      previous.filter((item) => item.id !== deleteId)
-    );
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`${ENQUIRIES_API_URL}/${deleteId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEnquiries((previous) =>
+          previous.filter((item) => item.id !== deleteId && item._id !== deleteId)
+        );
 
-    if (selectedEnquiry?.id === deleteId) {
-      setSelectedEnquiry(null);
+        if (selectedEnquiry?.id === deleteId || selectedEnquiry?._id === deleteId) {
+          setSelectedEnquiry(null);
+        }
+
+        if (editingId === deleteId) {
+          resetForm();
+        }
+      }
+    } catch (err) {
+      console.error("Delete enquiry error:", err);
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+      setActiveMenu(null);
     }
-
-    if (editingId === deleteId) {
-      resetForm();
-    }
-
-    setDeleteId(null);
-    setActiveMenu(null);
   };
 
   /* ========================================
@@ -995,7 +938,17 @@ const EnquiryManagement = () => {
             </thead>
 
             <tbody>
-              {filteredEnquiries.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="7">
+                    <div className="EnquiryManagement-empty" style={{ padding: "40px" }}>
+                      <FiRefreshCw style={{ animation: "spin 1s linear infinite", fontSize: "28px", color: "#8c5b0c" }} />
+                      <h3>Loading enquiries...</h3>
+                      <p>Fetching real-time customer enquiries from database.</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredEnquiries.length > 0 ? (
                 filteredEnquiries.map((item) => (
                   <tr key={item.id}>
                     <td>
@@ -1007,7 +960,7 @@ const EnquiryManagement = () => {
                         <div className="EnquiryManagement-enquiry-info">
                           <strong>{item.subject}</strong>
                           <span>{item.name}</span>
-                          <small>ENQ-{item.id}</small>
+                          <small>ENQ-{item._id ? String(item._id).slice(-6).toUpperCase() : item.id}</small>
                           <span className="EnquiryManagement-enquiry-date">
                             <FiCalendar />
                             {formatDate(item.date)}
@@ -1097,7 +1050,7 @@ const EnquiryManagement = () => {
                           className="EnquiryManagement-action-button EnquiryManagement-delete-button"
                           title="Delete enquiry"
                           aria-label={`Delete enquiry ${item.id}`}
-                          onClick={() => setDeleteId(item.id)}
+                          onClick={() => setDeleteId(item._id || item.id)}
                         >
                           <FiTrash2 />
                         </button>
@@ -1162,7 +1115,7 @@ const EnquiryManagement = () => {
                 <h2 id="EnquiryManagement-details-title">
                   Enquiry Details
                 </h2>
-                <p>ENQ-{selectedEnquiry.id}</p>
+                <p>ENQ-{selectedEnquiry._id ? String(selectedEnquiry._id).slice(-6).toUpperCase() : selectedEnquiry.id}</p>
               </div>
 
               <button

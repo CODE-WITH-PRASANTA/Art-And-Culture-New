@@ -355,6 +355,117 @@
   border: 1px solid #fecaca;
 }
 
+.OrderDetails-badge--failed,
+.OrderDetails-badge--payment-failed {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  font-weight: 700;
+}
+
+/* ==================================================================
+   FAILED PAYMENT ALERT & RETRY ACTION BANNER
+================================================================== */
+.OrderDetails-failed-banner {
+  background: linear-gradient(135deg, #fff7f7 0%, #fef2f2 100%);
+  border: 1.5px solid #fca5a5;
+  border-radius: 18px;
+  padding: 22px 26px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.08);
+  margin-bottom: 24px;
+}
+
+.OrderDetails-failed-banner-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.OrderDetails-failed-banner-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.OrderDetails-failed-banner-text h4 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #991b1b;
+  margin: 0 0 6px 0;
+}
+
+.OrderDetails-failed-banner-text p {
+  font-size: 13.5px;
+  color: #7f1d1d;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.OrderDetails-failed-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.OrderDetails-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  transition: all 0.2s ease;
+}
+
+.OrderDetails-retry-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+}
+
+.OrderDetails-retry-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.OrderDetails-help-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1.5px solid #fca5a5;
+  color: #991b1b;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.OrderDetails-help-link-btn:hover {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
 /* ==================================================================
    ORDER PROGRESS STEPPER
 ================================================================== */
@@ -423,6 +534,27 @@
 .OrderDetails-step--cancelled .OrderDetails-step-icon {
   background: #fef2f2;
   color: #dc2626;
+}
+
+.OrderDetails-step--failed .OrderDetails-step-icon {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+}
+
+.OrderDetails-step--disabled {
+  opacity: 0.42;
+  filter: grayscale(85%);
+}
+
+.OrderDetails-step--disabled .OrderDetails-step-icon {
+  background: #f4ecdf;
+  color: #b5a695;
+}
+
+.OrderDetails-step-line--disabled {
+  background: #f0e6da;
+  opacity: 0.5;
 }
 
 .OrderDetails-step-content {
@@ -620,6 +752,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 20px;
   padding-bottom: 12px;
   border-bottom: 1px solid #ebd9c4;
@@ -895,10 +1029,12 @@
 /* Loading & Error States */
 .OrderDetails-container {
   max-width: 1140px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  box-sizing: border-box;
 }
 
 .OrderDetails-loading {
@@ -991,13 +1127,27 @@
   }
 }
 
+/* Tracking Chip in card header */
+.OrderDetails-tracking-chip {
+  font-size: 12px;
+  font-family: monospace;
+  color: #8c5b0c;
+  font-weight: 700;
+  background: #fdf6ec;
+  border: 1px solid #fed7aa;
+  padding: 4px 10px;
+  border-radius: 8px;
+  word-break: break-all;
+  display: inline-block;
+}
+
 /* ==================================================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN (TABLET, MOBILE & ALL DEVICE SIZES)
 ================================================================== */
 @media (max-width: 1024px) {
   .OrderDetails-shell {
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
   }
 
   .OrderDetails-sidebar {
@@ -1006,39 +1156,181 @@
     position: static;
   }
 
+  .OrderDetails-sidebar-card {
+    padding: 18px 20px;
+    border-radius: 16px;
+    gap: 14px;
+  }
+
+  .OrderDetails-sidebar-profile {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .OrderDetails-avatar-circle {
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .OrderDetails-sidebar-userinfo {
+    align-items: flex-start;
+  }
+
+  .OrderDetails-sidebar-name {
+    font-size: 17px;
+  }
+
   .OrderDetails-sidebar-nav {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
     gap: 8px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .OrderDetails-sidebar-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .OrderDetails-sidebar-btn {
+    flex-shrink: 0;
+    width: auto;
+    padding: 8px 14px;
+    font-size: 13px;
+    border: 1px solid #ebd9c4;
+    border-radius: 20px;
+  }
+
+  .OrderDetails-sidebar-logout {
+    width: auto;
+    display: inline-flex;
+    padding: 8px 14px;
+    border: 1px solid #fecaca;
+    border-radius: 20px;
+    margin-top: 2px;
   }
 
   .OrderDetails-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
 
 @media (max-width: 768px) {
   .OrderDetails-page {
-    padding: 24px 14px 60px;
+    padding: 20px 14px 60px;
   }
 
   .OrderDetails-hero-card {
-    padding: 20px;
+    padding: 20px 18px;
+    border-radius: 16px;
+    gap: 14px;
+  }
+
+  .OrderDetails-order-title {
+    font-size: 22px;
+    word-break: break-word;
+  }
+
+  .OrderDetails-hero-right {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .OrderDetails-badge {
+    font-size: 11px;
+    padding: 5px 11px;
+  }
+
+  /* Elegant Vertical Stepper Timeline */
+  .OrderDetails-stepper-card {
+    padding: 20px 18px;
+    border-radius: 16px;
   }
 
   .OrderDetails-stepper {
     flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    position: relative;
+  }
+
+  .OrderDetails-step {
+    position: relative;
+    display: flex;
     align-items: flex-start;
-    gap: 16px;
+    gap: 14px;
+    padding-bottom: 22px;
+    width: 100%;
+  }
+
+  .OrderDetails-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    bottom: 0;
+    width: 2px;
+    background: #ebd9c4;
+    z-index: 0;
+  }
+
+  .OrderDetails-step--completed:not(:last-child)::after {
+    background: #15803d;
+  }
+
+  .OrderDetails-step-icon {
+    width: 42px;
+    height: 42px;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .OrderDetails-step-content {
+    padding-top: 4px;
   }
 
   .OrderDetails-step-line {
     display: none;
   }
 
-  .OrderDetails-item-row {
+  /* Out for Delivery Agent Card */
+  .OrderDetails-agent-card {
+    padding: 16px 16px;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .OrderDetails-agent-call-btn {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  /* Item Row */
+  .OrderDetails-item-row {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .OrderDetails-item-image-wrap {
+    width: 64px;
+    height: 64px;
+  }
+
+  .OrderDetails-item-details {
+    flex: 1 1 180px;
   }
 
   .OrderDetails-item-total {
@@ -1047,7 +1339,164 @@
     border-top: 1px dashed #ebd9c4;
     padding-top: 8px;
     margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
+
+  /* Cards */
+  .OrderDetails-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .OrderDetails-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .OrderDetails-payment-row {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .OrderDetails-code {
+    max-width: 100%;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+  }
+
+  .OrderDetails-contact-pill {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .OrderDetails-page {
+    padding: 14px 10px 48px;
+  }
+
+  .OrderDetails-hero-card {
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+
+  .OrderDetails-order-title {
+    font-size: 19px;
+  }
+
+  .OrderDetails-eyebrow {
+    font-size: 10px;
+  }
+
+  .OrderDetails-sidebar-card {
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+
+  .OrderDetails-avatar-circle {
+    width: 46px;
+    height: 46px;
+    font-size: 17px;
+  }
+
+  .OrderDetails-sidebar-name {
+    font-size: 15px;
+  }
+
+  .OrderDetails-sidebar-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .OrderDetails-step-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .OrderDetails-step:not(:last-child)::after {
+    left: 17px;
+    top: 36px;
+  }
+
+  .OrderDetails-step-content strong {
+    font-size: 13px;
+  }
+
+  .OrderDetails-step-content span {
+    font-size: 11px;
+  }
+
+  .OrderDetails-card {
+    padding: 16px 12px;
+    border-radius: 14px;
+  }
+
+  .OrderDetails-card-title {
+    font-size: 16px;
+  }
+
+  .OrderDetails-checkpoint-content {
+    padding: 10px 12px;
+  }
+
+  .OrderDetails-summary-row--total strong {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 360px) {
+  .OrderDetails-page {
+    padding: 10px 6px 36px;
+  }
+
+  .OrderDetails-order-title {
+    font-size: 17px;
+  }
+
+  .OrderDetails-item-image-wrap {
+    width: 54px;
+    height: 54px;
+  }
+
+  .OrderDetails-code {
+    font-size: 10px;
+  }
+}
+
+/* Download Invoice Button */
+.OrderDetails-download-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #8a5524 0%, #b06f15 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(138, 85, 36, 0.28);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.OrderDetails-download-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #704218 0%, #94570d 100%);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(138, 85, 36, 0.38);
+}
+
+.OrderDetails-download-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Print Styles */

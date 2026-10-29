@@ -4,7 +4,11 @@ const {
   generateRefreshToken,
   verifyRefreshToken,
 } = require("../utils/tokenUtils");
-const { sendOtpEmail } = require("../utils/sendEmail");
+const {
+  sendOtpEmail,
+  sendWelcomeEmail,
+  sendPasswordResetSuccessEmail,
+} = require("../utils/sendEmail");
 
 /**
  * Format user payload for client
@@ -83,6 +87,12 @@ exports.register = async (req, res) => {
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
+
+    // Send welcome email with brand logo asynchronously
+    sendWelcomeEmail({
+      to: user.email,
+      name: `${user.firstName} ${user.lastName}`.trim() || user.firstName,
+    }).catch((err) => console.error("[SMTP] Error sending welcome email:", err.message));
 
     res.status(201).json({
       success: true,
@@ -197,8 +207,10 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    // Find user
-    const user = await User.findById(decoded.id).select("+refreshToken");
+    // Find user with active and previous refresh tokens
+    const user = await User.findById(decoded.id).select(
+      "+refreshToken +previousRefreshToken +refreshTokenRotatedAt"
+    );
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -206,11 +218,29 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    // Verify stored refresh token matches
-    if (user.refreshToken !== token) {
+    // Verify stored refresh token matches active token OR previous token within 60s grace window
+    const matchesCurrent = user.refreshToken && user.refreshToken === token;
+    const matchesGrace =
+      user.previousRefreshToken &&
+      user.previousRefreshToken === token &&
+      user.refreshTokenRotatedAt &&
+      Date.now() - new Date(user.refreshTokenRotatedAt).getTime() < 60000;
+
+    if (!matchesCurrent && !matchesGrace) {
       return res.status(401).json({
         success: false,
         message: "Refresh token has been revoked. Please sign in again.",
+      });
+    }
+
+    // If within grace window from a concurrent parallel request, issue a fresh access token without re-rotating
+    if (matchesGrace) {
+      const accessOnly = generateAccessToken(user);
+      return res.status(200).json({
+        success: true,
+        accessToken: accessOnly,
+        refreshToken: user.refreshToken,
+        user: formatUser(user),
       });
     }
 
@@ -218,6 +248,8 @@ exports.refreshToken = async (req, res) => {
     const newAccessToken = generateAccessToken(user);
     const newRefreshToken = generateRefreshToken(user);
 
+    user.previousRefreshToken = user.refreshToken;
+    user.refreshTokenRotatedAt = new Date();
     user.refreshToken = newRefreshToken;
     await user.save();
 
@@ -232,6 +264,7 @@ exports.refreshToken = async (req, res) => {
       success: true,
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
+      user: formatUser(user),
     });
   } catch (error) {
     console.error("RefreshToken Error:", error);
@@ -282,11 +315,12 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
-    const { firstName, lastName, location, phone, email } = req.body;
+    const { firstName, lastName, location, phone, email, avatar } = req.body;
     if (firstName) user.firstName = firstName.trim();
     if (lastName) user.lastName = lastName.trim();
     if (location !== undefined) user.location = location.trim();
     if (phone !== undefined) user.phone = phone.trim();
+    if (avatar !== undefined) user.avatar = avatar;
 
     if (email) {
       const normalizedEmail = email.trim().toLowerCase();
@@ -316,6 +350,46 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || "Failed to update profile",
+    });
+  }
+};
+
+/**
+ * @desc Upload and update user profile avatar
+ * @route POST /api/auth/avatar
+ */
+exports.uploadAvatar = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No image file provided. Please choose a valid image.",
+      });
+    }
+
+    const avatarUrl = req.file.relativeUrl || `/uploads/avatars/${req.file.filename}`;
+    user.avatar = avatarUrl;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile photo updated successfully",
+      avatar: avatarUrl,
+      user: formatUser(user),
+    });
+  } catch (error) {
+    console.error("Avatar Upload Error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to upload profile photo",
     });
   }
 };
@@ -483,6 +557,14 @@ exports.resetPassword = async (req, res) => {
     user.resetPasswordCode = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();
+
+    // Send password reset confirmation email with brand logo
+    sendPasswordResetSuccessEmail({
+      to: user.email,
+      name: user.firstName || "Art Collector",
+    }).catch((err) =>
+      console.error("[SMTP] Error sending password reset confirmation email:", err.message)
+    );
 
     res.status(200).json({
       success: true,
@@ -946,6 +1028,14 @@ exports.googleAuth = async (req, res) => {
         role: "user",
         status: "Active",
       });
+
+      // Send welcome email with brand logo for new Google user
+      sendWelcomeEmail({
+        to: user.email,
+        name: `${user.firstName} ${user.lastName}`.trim() || user.firstName,
+      }).catch((err) =>
+        console.error("[SMTP] Error sending Google welcome email:", err.message)
+      );
     }
 
     // Generate tokens

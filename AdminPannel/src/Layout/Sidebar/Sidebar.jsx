@@ -18,6 +18,7 @@ import {
 } from "react-icons/fi";
 
 import "./Sidebar.css";
+import brandLogo from "../../assets/logo.png";
 
 const menuItems = [
   {
@@ -132,12 +133,16 @@ const Sidebar = ({
       {/* Brand */}
       <div className="rp-brand">
         <div className="rp-brand__logo">
-          <FiFeather size={26} strokeWidth={1.6} />
+          <img
+            src={brandLogo}
+            alt="Art & Culture Logo"
+            className="rp-brand__img"
+          />
         </div>
 
         {(!isCollapsed || isMobileOpen) && (
           <div className="rp-brand__content">
-            <h2>Art Admin</h2>
+            <h2>Art &amp; Culture</h2>
             <span className="rp-brand__subtitle">
               MANAGEMENT PANEL
             </span>

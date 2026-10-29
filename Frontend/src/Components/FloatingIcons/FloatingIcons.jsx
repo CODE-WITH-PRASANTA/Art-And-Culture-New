@@ -5,10 +5,14 @@ import "./FloatingIcons.css";
    ART & CULTURE CONTACT DETAILS
 ========================================= */
 
+const envWa = import.meta.env.VITE_WHATSAPP_NUMBER || "8117048317";
+const cleanWa = String(envWa).replace(/\D/g, "");
+const fullWa = cleanWa.length === 10 ? `91${cleanWa}` : cleanWa;
+
 const CONTACT = {
-  display: "+91 7205303511",
-  tel: "+917205303511",
-  wa: "917205303511",
+  display: `+91 ${cleanWa.slice(-10)}`,
+  tel: `+${fullWa}`,
+  wa: fullWa,
 };
 
 const WHATSAPP_MESSAGE = encodeURIComponent(

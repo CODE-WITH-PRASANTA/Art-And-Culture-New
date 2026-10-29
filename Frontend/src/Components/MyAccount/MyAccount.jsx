@@ -35,6 +35,8 @@ import {
   ExternalLink,
   Check,
   X,
+  Camera,
+  Download,
 } from "lucide-react";
 
 import logo from "../../assets/Art and Culture logo.webp";
@@ -42,8 +44,9 @@ import heroImage from "../../assets/my-account.webp";
 import { useAuth } from "../../context/AuthContext";
 import { useWishlist } from "../../context/WishlistContext";
 import { useCart } from "../../context/CartContext";
+import { downloadInvoicePdf } from "../../utils/generateInvoice";
 import { fetchMyOrders } from "../../services/razorpay";
-import { formatImageUrl } from "../../config/api";
+import { formatImageUrl, WHATSAPP_NUMBER, getWhatsAppUrl } from "../../config/api";
 
 import "./MyAccount.css";
 
@@ -135,6 +138,7 @@ const MyAccount = ({ onAuthSuccess }) => {
     verifyOtp,
     resetPassword,
     updateProfile,
+    uploadAvatar,
     getAddresses,
     addAddress,
     updateAddress,
@@ -313,6 +317,70 @@ const MyAccount = ({ onAuthSuccess }) => {
   const [profileNotice, setProfileNotice] = useState("");
   const [profileBusy, setProfileBusy] = useState(false);
 
+  // Avatar upload state
+  const avatarInputRef = useRef(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+
+  const handleAvatarFileSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setProfileNotice("Please select a valid image file (JPG, PNG, or WebP).");
+      return;
+    }
+
+    if (file.size > 15 * 1024 * 1024) {
+      setProfileNotice("File size exceeds 15MB. Please choose a smaller image.");
+      return;
+    }
+
+    // Instant local preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      setAvatarPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    try {
+      setUploadingAvatar(true);
+      setProfileNotice("");
+      const res = await uploadAvatar(file);
+      setProfileNotice(res?.message || "Profile photo uploaded and saved successfully!");
+      setAvatarPreview(null);
+      setTimeout(() => setProfileNotice(""), 4000);
+    } catch (err) {
+      console.error("Avatar upload failed:", err);
+      setProfileNotice(err?.message || "Failed to upload profile photo.");
+      setAvatarPreview(null);
+    } finally {
+      setUploadingAvatar(false);
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!window.confirm("Are you sure you want to remove your profile photo?")) {
+      return;
+    }
+    try {
+      setUploadingAvatar(true);
+      setProfileNotice("");
+      await updateProfile({ avatar: "" });
+      setProfileNotice("Profile photo removed successfully.");
+      setAvatarPreview(null);
+      setTimeout(() => setProfileNotice(""), 4000);
+    } catch (err) {
+      console.error("Failed to remove avatar:", err);
+      setProfileNotice(err?.message || "Failed to remove profile photo.");
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   // Address management state
   const [addresses, setAddresses] = useState(user?.addresses || []);
   const [addressLoading, setAddressLoading] = useState(false);
@@ -335,17 +403,42 @@ const MyAccount = ({ onAuthSuccess }) => {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [selectedOrderModal, setSelectedOrderModal] = useState(null);
+  const [downloadingOrderId, setDownloadingOrderId] = useState(null);
+
+  const handleDownloadOrderInvoice = async (e, ord) => {
+    e.stopPropagation();
+    const ordId = ord.orderNumber || ord.id || ord._id;
+    if (downloadingOrderId) return;
+    if ((ord?.status || "").trim().toLowerCase() !== "delivered") {
+      alert("Tax invoice is available for download only after the order has been delivered.");
+      return;
+    }
+    try {
+      setDownloadingOrderId(ordId);
+      await downloadInvoicePdf(ord);
+    } catch (err) {
+      console.error("Failed to generate invoice PDF:", err);
+      alert(err.message || "Unable to generate invoice PDF right now. Please try again.");
+    } finally {
+      setDownloadingOrderId(null);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
     const loadOrders = async () => {
-      if (!isAuthenticated || !accessToken) {
+      const token =
+        accessToken ||
+        localStorage.getItem("art_culture_access_token") ||
+        sessionStorage.getItem("art_culture_access_token");
+      if (!isAuthenticated && !token) {
         setOrders([]);
         return;
       }
+      if (!token) return;
       try {
         setOrdersLoading(true);
-        const data = await fetchMyOrders(accessToken);
+        const data = await fetchMyOrders(token);
         if (isMounted) {
           setOrders(data);
         }
@@ -882,21 +975,20 @@ const MyAccount = ({ onAuthSuccess }) => {
     removeFromWishlist(item.id || item._id);
   };
 
-  // If auth is initializing, show a graceful loader
-  if (authLoading) {
+  // VIEW 1: AUTHENTICATED USER DASHBOARD & SUB-PAGES
+  // =========================================================================
+  const isUserValid = Boolean(
+    isAuthenticated && user && (user._id || user.id) && user.email
+  );
+
+  // If auth is initializing and no cached user in storage, show a graceful loader
+  if (authLoading && !isUserValid) {
     return (
       <div className="MyAccount" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Loader2 size={36} className="MyAccount-spin" style={{ color: "#d08a24" }} />
       </div>
     );
   }
-
-  // =========================================================================
-  // VIEW 1: AUTHENTICATED USER DASHBOARD & SUB-PAGES
-  // =========================================================================
-  const isUserValid = Boolean(
-    isAuthenticated && user && (user._id || user.id) && user.email
-  );
 
   if (isUserValid) {
     const initials = `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase();
@@ -927,7 +1019,29 @@ const MyAccount = ({ onAuthSuccess }) => {
             <div className="MyAccount-sidebar-card">
               {/* User Profile Summary */}
               <div className="MyAccount-sidebar-profile">
-                <div className="MyAccount-avatar-circle">{initials}</div>
+                <div className="MyAccount-avatar-circle">
+                  {user.avatar ? (
+                    <img
+                      src={formatImageUrl(user.avatar)}
+                      alt={`${user.firstName} ${user.lastName}`}
+                      className="MyAccount-avatar-img"
+                    />
+                  ) : (
+                    <span>{initials}</span>
+                  )}
+                  <button
+                    type="button"
+                    className="MyAccount-avatar-edit-badge"
+                    onClick={() => {
+                      setTab("profile");
+                      setTimeout(() => avatarInputRef.current?.click(), 120);
+                    }}
+                    title="Change Profile Photo"
+                    aria-label="Change Profile Photo"
+                  >
+                    <Camera size={13} />
+                  </button>
+                </div>
                 <div className="MyAccount-sidebar-userinfo">
                   <h3 className="MyAccount-sidebar-name">
                     {user.firstName} {user.lastName}
@@ -1177,6 +1291,71 @@ const MyAccount = ({ onAuthSuccess }) => {
                     <span>{profileNotice}</span>
                   </div>
                 )}
+
+                {/* Profile Photo Upload Section */}
+                <div className="MyAccount-avatar-upload-card">
+                  <div className="MyAccount-avatar-preview-wrap">
+                    {avatarPreview || user.avatar ? (
+                      <img
+                        src={avatarPreview || formatImageUrl(user.avatar)}
+                        alt={`${user.firstName} ${user.lastName}`}
+                        className="MyAccount-avatar-preview-img"
+                      />
+                    ) : (
+                      <div className="MyAccount-avatar-preview-fallback">
+                        {initials}
+                      </div>
+                    )}
+                    {uploadingAvatar && (
+                      <div className="MyAccount-avatar-uploading-overlay">
+                        <Loader2 size={24} className="MyAccount-spin" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="MyAccount-avatar-upload-info">
+                    <h4>Profile Photo</h4>
+                    <p>
+                      Upload a personalized profile image (JPG, PNG, or WebP up to 15MB). Your photo will appear across your orders, reviews, and header.
+                    </p>
+                    <div className="MyAccount-avatar-btn-group">
+                      <input
+                        type="file"
+                        ref={avatarInputRef}
+                        onChange={handleAvatarFileSelect}
+                        accept="image/png,image/jpeg,image/jpg,image/webp"
+                        style={{ display: "none" }}
+                      />
+                      <button
+                        type="button"
+                        className="MyAccount-avatar-upload-btn"
+                        onClick={() => avatarInputRef.current?.click()}
+                        disabled={uploadingAvatar}
+                      >
+                        <Camera size={16} />
+                        <span>
+                          {uploadingAvatar
+                            ? "Saving Photo..."
+                            : user.avatar
+                            ? "Change Photo"
+                            : "Upload Photo"}
+                        </span>
+                      </button>
+
+                      {user.avatar && (
+                        <button
+                          type="button"
+                          className="MyAccount-avatar-remove-btn"
+                          onClick={handleRemoveAvatar}
+                          disabled={uploadingAvatar}
+                        >
+                          <Trash2 size={15} />
+                          <span>Remove</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 <form onSubmit={handleSaveProfile} className="MyAccount-form">
                   <div className="MyAccount-name-row">
@@ -1653,7 +1832,7 @@ const MyAccount = ({ onAuthSuccess }) => {
                     {orders.map((ord, idx) => (
                       <div key={ord.id || ord._id || idx} className="MyAccount-order-card">
                         <div className="MyAccount-order-head">
-                          <div>
+                          <div className="MyAccount-order-head-info">
                             <span className="MyAccount-order-id">
                               Order #{ord.orderNumber || ord.id || `AC-${idx + 1001}`}
                             </span>
@@ -1661,19 +1840,35 @@ const MyAccount = ({ onAuthSuccess }) => {
                               Placed on {ord.createdAt ? new Date(ord.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : ord.date ? new Date(ord.date).toLocaleDateString("en-IN") : "Recent"}
                             </span>
                           </div>
-                          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
-                            {ord.payment?.status === "captured" && (
-                              <span
-                                className="MyAccount-order-status"
-                                style={{ background: "#e8f5e9", color: "#2e7d32", border: "1px solid #c8e6c9" }}
-                              >
-                                Paid via Razorpay
-                              </span>
-                            )}
-                            <span className={`MyAccount-order-status MyAccount-order-status--${(ord.status || "processing").toLowerCase()}`}>
-                              {ord.status || "Processing"}
-                            </span>
-                          </div>
+                          {(() => {
+                            const isPaid =
+                              (ord.payment?.status === "captured" || ord.payment?.status === "success") &&
+                              Boolean(ord.payment?.razorpayPaymentId && ord.payment?.razorpayPaymentId !== "-");
+                            const isFailed =
+                              ord.status === "Payment Failed" ||
+                              ord.status === "Cancelled" ||
+                              ord.payment?.status === "failed" ||
+                              (!isPaid && ord.payment?.status === "created");
+
+                            return (
+                              <div className="MyAccount-order-badges">
+                                {isPaid ? (
+                                  <span className="MyAccount-order-status MyAccount-order-status--paid">
+                                    Paid
+                                  </span>
+                                ) : isFailed ? (
+                                  <span className="MyAccount-order-status MyAccount-order-status--cancelled">
+                                    Payment Failed
+                                  </span>
+                                ) : null}
+                                <span
+                                  className={`MyAccount-order-status MyAccount-order-status--${(ord.status || (isFailed ? "cancelled" : "processing")).toLowerCase().replace(/\s+/g, "-")}`}
+                                >
+                                  {ord.status || (isFailed ? "Payment Failed" : "Processing")}
+                                </span>
+                              </div>
+                            );
+                          })()}
                         </div>
 
                         {/* Compact Items Row: Show 1st item + badge if more items, clicking opens details page */}
@@ -1701,7 +1896,7 @@ const MyAccount = ({ onAuthSuccess }) => {
                                 )}
                               </div>
                               <div className="MyAccount-order-item-details">
-                                <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0, overflow: "hidden" }}>
+                                <div className="MyAccount-order-item-title-group">
                                   <h5 title={ord.items[0].title || "Artwork"}>{ord.items[0].title || "Original Artwork"}</h5>
                                   {ord.items.length > 1 && (
                                     <span className="MyAccount-order-more-tag">
@@ -1709,7 +1904,7 @@ const MyAccount = ({ onAuthSuccess }) => {
                                     </span>
                                   )}
                                 </div>
-                                <p>Qty: {ord.items[0].quantity || 1} · ₹{(ord.items[0].price || 0).toLocaleString("en-IN")}</p>
+                                <p className="MyAccount-order-item-price">Qty: {ord.items[0].quantity || 1} · ₹{(ord.items[0].price || 0).toLocaleString("en-IN")}</p>
                               </div>
                             </div>
                           ) : (
@@ -1720,11 +1915,34 @@ const MyAccount = ({ onAuthSuccess }) => {
                         </div>
 
                         <div className="MyAccount-order-footer">
-                          <span>
-                            Total Amount: <strong>₹{(ord.totalAmount || ord.total || 0).toLocaleString("en-IN")}</strong>{" "}
-                            <span style={{ fontSize: "12px", color: "#8c5b0c", marginLeft: "6px" }}>(Free Shipping &amp; Taxes Included)</span>
-                          </span>
-                          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <div className="MyAccount-order-total-info">
+                            <span className="MyAccount-order-total-label">
+                              Total: <strong>₹{(ord.totalAmount || ord.total || 0).toLocaleString("en-IN")}</strong>
+                            </span>
+                            <span className="MyAccount-order-shipping-note">(Free Shipping &amp; Taxes Included)</span>
+                          </div>
+                          <div className="MyAccount-order-actions">
+                            {(ord.status || "").trim().toLowerCase() === "delivered" && (
+                              <button
+                                type="button"
+                                onClick={(e) => handleDownloadOrderInvoice(e, ord)}
+                                disabled={downloadingOrderId === (ord.orderNumber || ord.id || ord._id)}
+                                className="MyAccount-download-invoice-btn"
+                                title="Download official Tax Invoice PDF"
+                              >
+                                {downloadingOrderId === (ord.orderNumber || ord.id || ord._id) ? (
+                                  <>
+                                    <Loader2 size={13} className="MyAccount-spin" />
+                                    <span>Downloading...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Download size={13} />
+                                    <span>Invoice</span>
+                                  </>
+                                )}
+                              </button>
+                            )}
                             <button
                               type="button"
                               onClick={() => {
@@ -1737,9 +1955,19 @@ const MyAccount = ({ onAuthSuccess }) => {
                               <span>View Details</span>
                               <ArrowRight size={13} />
                             </button>
-                            <Link to="/contact" className="MyAccount-secondary-btn" style={{ padding: "5px 12px", fontSize: "12px" }}>
+                            <a
+                              href={getWhatsAppUrl(
+                                WHATSAPP_NUMBER,
+                                `Hello Art & Culture! I need help with my Order #${ord.orderNumber || ord.id || ord._id}.`
+                              )}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="MyAccount-secondary-btn MyAccount-help-btn"
+                              style={{ textDecoration: "none" }}
+                              title="Chat with support on WhatsApp"
+                            >
                               Need Help?
-                            </Link>
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -1967,17 +2195,40 @@ const MyAccount = ({ onAuthSuccess }) => {
                   <div className="MyAccount-order-modal-title-group">
                     <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", marginBottom: "4px" }}>
                       <span className="MyAccount-modal-eyebrow">ORDER DETAILS</span>
-                      <span className={`MyAccount-order-status MyAccount-order-status--${(selectedOrderModal.status || "processing").toLowerCase()}`}>
-                        {selectedOrderModal.status || "Confirmed"}
-                      </span>
-                      {selectedOrderModal.payment?.status === "captured" && (
-                        <span
-                          className="MyAccount-order-status"
-                          style={{ background: "#e8f5e9", color: "#2e7d32", border: "1px solid #c8e6c9" }}
-                        >
-                          Paid via Razorpay
-                        </span>
-                      )}
+                      {(() => {
+                        const isModalPaid =
+                          (selectedOrderModal.payment?.status === "captured" || selectedOrderModal.payment?.status === "success") &&
+                          Boolean(selectedOrderModal.payment?.razorpayPaymentId && selectedOrderModal.payment?.razorpayPaymentId !== "-");
+                        const isModalFailed =
+                          selectedOrderModal.status === "Payment Failed" ||
+                          selectedOrderModal.status === "Cancelled" ||
+                          selectedOrderModal.payment?.status === "failed" ||
+                          (!isModalPaid && selectedOrderModal.payment?.status === "created");
+
+                        return (
+                          <>
+                            {isModalPaid ? (
+                              <span
+                                className="MyAccount-order-status"
+                                style={{ background: "#e8f5e9", color: "#2e7d32", border: "1px solid #c8e6c9" }}
+                              >
+                                Paid
+                              </span>
+                            ) : isModalFailed ? (
+                              <span
+                                className="MyAccount-order-status MyAccount-order-status--cancelled"
+                              >
+                                Payment Failed
+                              </span>
+                            ) : null}
+                            <span
+                              className={`MyAccount-order-status MyAccount-order-status--${(selectedOrderModal.status || (isModalFailed ? "cancelled" : "processing")).toLowerCase().replace(/\s+/g, "-")}`}
+                            >
+                              {selectedOrderModal.status || (isModalFailed ? "Payment Failed" : "Processing")}
+                            </span>
+                          </>
+                        );
+                      })()}
                     </div>
                     <h2>Order #{selectedOrderModal.orderNumber || selectedOrderModal.id || selectedOrderModal._id}</h2>
                     <p className="MyAccount-order-modal-date">
@@ -2028,12 +2279,24 @@ const MyAccount = ({ onAuthSuccess }) => {
                       <div className="MyAccount-order-info-card-body">
                         <div className="MyAccount-order-info-row">
                           <span>Gateway:</span>
-                          <strong>{selectedOrderModal.payment?.gateway || "Razorpay Secure"}</strong>
+                          <strong>Prepaid Online</strong>
                         </div>
                         <div className="MyAccount-order-info-row">
                           <span>Payment Status:</span>
-                          <strong style={{ color: selectedOrderModal.payment?.status === "captured" ? "#2e7d32" : "#b06f15", textTransform: "capitalize" }}>
-                            {selectedOrderModal.payment?.status || "Captured"}
+                          <strong
+                            style={{
+                              color:
+                                selectedOrderModal.payment?.status === "captured"
+                                  ? "#2e7d32"
+                                  : selectedOrderModal.payment?.status === "failed" || selectedOrderModal.status === "Payment Failed"
+                                  ? "#dc2626"
+                                  : "#b06f15",
+                              textTransform: "capitalize",
+                            }}
+                          >
+                            {selectedOrderModal.payment?.status === "failed" || selectedOrderModal.status === "Payment Failed"
+                              ? "Failed / Unpaid"
+                              : selectedOrderModal.payment?.status || "Pending"}
                           </strong>
                         </div>
                         {selectedOrderModal.payment?.razorpayPaymentId && (
@@ -2106,13 +2369,19 @@ const MyAccount = ({ onAuthSuccess }) => {
 
                 {/* Modal Footer */}
                 <div className="MyAccount-order-modal-footer">
-                  <Link
-                    to="/contact"
+                  <a
+                    href={getWhatsAppUrl(
+                      WHATSAPP_NUMBER,
+                      `Hello Art & Culture! I need help with my Order #${selectedOrderModal?.orderNumber || selectedOrderModal?.id || selectedOrderModal?._id}.`
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="MyAccount-secondary-btn"
-                    style={{ padding: "8px 18px", fontSize: "13px" }}
+                    style={{ padding: "8px 18px", fontSize: "13px", textDecoration: "none" }}
+                    title="Chat with support on WhatsApp"
                   >
                     Need Help with this Order?
-                  </Link>
+                  </a>
                   <button
                     type="button"
                     className="MyAccount-primary-btn"

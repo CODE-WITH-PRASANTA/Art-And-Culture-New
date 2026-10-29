@@ -1,9 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { MapPin, Home, Briefcase, Sparkles, Check, Plus } from "lucide-react";
+import {
+  MapPin,
+  Home,
+  Briefcase,
+  Sparkles,
+  Check,
+  Plus,
+  Tag,
+  X,
+  ChevronDown,
+  ChevronUp,
+  AlertCircle,
+  CheckCircle2,
+  Loader2,
+  Gift,
+} from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
-import { ARTS_API_URL, formatImageUrl } from "../../config/api";
+import { ARTS_API_URL, COUPONS_API_URL, formatImageUrl } from "../../config/api";
 import {
   createPaymentOrder,
   launchRazorpayCheckout,
@@ -134,6 +149,11 @@ const CartMain = () => {
     cartCount,
     selectedItems,
     subtotal,
+    discount,
+    couponWarning,
+    appliedCoupon,
+    applyCoupon,
+    removeCoupon,
     shipping,
     tax,
     total,
@@ -151,6 +171,14 @@ const CartMain = () => {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
+
+  // Coupon promo code state
+  const [couponCodeInput, setCouponCodeInput] = useState("");
+  const [couponError, setCouponError] = useState("");
+  const [couponSuccessNotice, setCouponSuccessNotice] = useState("");
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [showAvailableCoupons, setShowAvailableCoupons] = useState(false);
+  const [availableCoupons, setAvailableCoupons] = useState([]);
   const [customer, setCustomer] = useState({
     name: "",
     email: "",
@@ -261,6 +289,69 @@ const CartMain = () => {
     };
   }, []);
 
+  // Fetch active promotional coupons from database for one-click application
+  useEffect(() => {
+    let isMounted = true;
+    fetch(`${COUPONS_API_URL}?status=active`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isMounted) return;
+        if (data.success && Array.isArray(data.data)) {
+          const today = new Date().toISOString().slice(0, 10);
+          const active = data.data.filter((c) => {
+            if (c.disabled) return false;
+            if (c.end && c.end < today) return false;
+            if (Number(c.limit) > 0 && Number(c.used) >= Number(c.limit)) return false;
+            return true;
+          });
+          setAvailableCoupons(active);
+        }
+      })
+      .catch((err) => console.error("Error fetching available coupons:", err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleApplyCoupon = async (e, directCode = null) => {
+    if (e && typeof e.preventDefault === "function") e.preventDefault();
+    const codeToValidate = (directCode || couponCodeInput).trim().toUpperCase();
+    if (!codeToValidate) {
+      setCouponError("Please enter a valid coupon code.");
+      return;
+    }
+
+    if (items.length === 0 || subtotal <= 0) {
+      setCouponError("Your cart is empty. Please add artworks first.");
+      return;
+    }
+
+    setIsApplyingCoupon(true);
+    setCouponError("");
+    setCouponSuccessNotice("");
+
+    try {
+      const res = await applyCoupon(codeToValidate, subtotal);
+      setCouponSuccessNotice(res.message || `Coupon '${codeToValidate}' applied!`);
+      setCouponCodeInput("");
+      setNotice(`Coupon "${codeToValidate}" applied! You saved ${formatINR(res.discount)}.`);
+      setTimeout(() => setCouponSuccessNotice(""), 4500);
+    } catch (err) {
+      setCouponError(err.message || "Failed to apply coupon.");
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    const code = appliedCoupon?.code;
+    removeCoupon();
+    setCouponSuccessNotice("");
+    setCouponError("");
+    setNotice(code ? `Coupon "${code}" removed.` : "Coupon removed.");
+  };
+
   const availableRecommendations = useMemo(() => {
     const cartIds = new Set(items.map((i) => String(i.id)));
     return recommendations.filter((rec) => !cartIds.has(String(rec.id)));
@@ -345,6 +436,8 @@ const CartMain = () => {
         },
         items: selectedItems,
         subtotal,
+        discount,
+        couponCode: appliedCoupon?.code || "",
         shipping,
         tax,
         totalAmount: total,
@@ -660,11 +753,56 @@ const CartMain = () => {
               <h2 className="CartMain-summaryTitle">Order Summary</h2>
             </div>
 
+            {/* ============ ITEMISED ACQUISITIONS LIST ============ */}
+            {selectedItems.length > 0 && (
+              <div className="CartMain-summaryItemsList">
+                {selectedItems.map((item) => {
+                  const itemTotal = (item.price || 0) * (item.quantity || 1);
+                  return (
+                    <div key={item.id || item._id} className="CartMain-summaryItem">
+                      <div className="CartMain-summaryItemLeft">
+                        {item.image && (
+                          <img
+                            src={formatImageUrl(item.image)}
+                            alt={item.name || item.title}
+                            className="CartMain-summaryItemThumb"
+                          />
+                        )}
+                        <div className="CartMain-summaryItemMeta">
+                          <span
+                            className="CartMain-summaryItemTitle"
+                            title={item.name || item.title}
+                          >
+                            {item.name || item.title}
+                          </span>
+                          <span className="CartMain-summaryItemQty">
+                            Qty: {item.quantity || 1} × {formatINR(item.price || 0)}
+                          </span>
+                        </div>
+                      </div>
+                      <strong className="CartMain-summaryItemPrice">
+                        {formatINR(itemTotal)}
+                      </strong>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             <div className="CartMain-summaryRows">
               <div className="CartMain-summaryRow">
-                <span>Items ({selectedItems.length})</span>
+                <span>Subtotal</span>
                 <span>{formatINR(subtotal)}</span>
               </div>
+              {discount > 0 && (
+                <div className="CartMain-summaryRow CartMain-summaryRow--discount">
+                  <span className="CartMain-discountLabel">
+                    <Tag size={13} />
+                    <span>Coupon Discount ({appliedCoupon?.code})</span>
+                  </span>
+                  <span className="CartMain-discountAmount">- {formatINR(discount)}</span>
+                </div>
+              )}
               <div className="CartMain-summaryRow">
                 <span>Shipping</span>
                 <span className="CartMain-freeTag">FREE</span>
@@ -682,8 +820,22 @@ const CartMain = () => {
 
             <div className="CartMain-summaryTotal">
               <span>Total Amount</span>
-              <strong>{formatINR(total)}</strong>
+              <div className="CartMain-totalValuesWrap">
+                {discount > 0 && (
+                  <span className="CartMain-originalTotalStrikethrough">
+                    {formatINR(subtotal)}
+                  </span>
+                )}
+                <strong>{formatINR(total)}</strong>
+              </div>
             </div>
+
+            {discount > 0 && (
+              <div className="CartMain-totalSavingsBadge">
+                <Sparkles size={14} />
+                <span>You saved {formatINR(discount)} with coupon {appliedCoupon?.code}!</span>
+              </div>
+            )}
 
             <button
               type="button"
@@ -695,15 +847,173 @@ const CartMain = () => {
               Proceed to Checkout
             </button>
 
-            <div className="CartMain-orDivider">
-              <span />
-              <small>OR</small>
-              <span />
-            </div>
+            {/* ============ PROMOTIONS & COUPONS SECTION (BELOW PROCEED TO CHECKOUT) ============ */}
+            <div className="CartMain-couponCard">
+              <div className="CartMain-couponCardHead">
+                <div className="CartMain-couponTitleWrap">
+                  <Tag size={15} className="CartMain-couponIcon" />
+                  <span className="CartMain-couponTitle">Have a Coupon?</span>
+                </div>
+                {availableCoupons.length > 0 && (
+                  <button
+                    type="button"
+                    className="CartMain-viewCouponsToggle"
+                    onClick={() => setShowAvailableCoupons((prev) => !prev)}
+                  >
+                    <span>{showAvailableCoupons ? "Hide Offers" : "View Offers"}</span>
+                    {showAvailableCoupons ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                  </button>
+                )}
+              </div>
 
-            <Link to="/shop" className="CartMain-continueButton">
-              Continue Shopping
-            </Link>
+              {/* If a coupon is currently applied */}
+              {appliedCoupon ? (
+                <div className="CartMain-appliedCouponBanner">
+                  <div className="CartMain-appliedCouponLeft">
+                    <div className="CartMain-appliedCouponBadge">
+                      <CheckCircle2 size={15} />
+                      <strong>{appliedCoupon.code}</strong>
+                    </div>
+                    <p className="CartMain-appliedCouponText">
+                      {appliedCoupon.type === "Percentage (%)"
+                        ? `${appliedCoupon.value}% discount applied`
+                        : `₹${Number(appliedCoupon.value).toLocaleString("en-IN")} discount applied`}
+                      {discount > 0 ? (
+                        <span className="CartMain-appliedSavings"> • Saved {formatINR(discount)}</span>
+                      ) : null}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="CartMain-removeCouponBtn"
+                    onClick={handleRemoveCoupon}
+                    title="Remove Coupon"
+                  >
+                    <X size={14} />
+                    <span>Remove</span>
+                  </button>
+                </div>
+              ) : (
+                /* Form to enter coupon code */
+                <form onSubmit={(e) => handleApplyCoupon(e)} className="CartMain-couponForm">
+                  <div className="CartMain-couponInputWrap">
+                    <input
+                      type="text"
+                      className="CartMain-couponInput"
+                      placeholder="ENTER COUPON CODE"
+                      value={couponCodeInput}
+                      onChange={(e) => {
+                        setCouponCodeInput(e.target.value.toUpperCase());
+                        setCouponError("");
+                      }}
+                      disabled={isApplyingCoupon || items.length === 0}
+                    />
+                    <button
+                      type="submit"
+                      className="CartMain-couponApplyBtn"
+                      disabled={
+                        !couponCodeInput.trim() ||
+                        isApplyingCoupon ||
+                        items.length === 0 ||
+                        subtotal <= 0
+                      }
+                    >
+                      {isApplyingCoupon ? (
+                        <Loader2 size={14} className="CartMain-spin" />
+                      ) : (
+                        "Apply"
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* Inline Coupon Status Alerts */}
+              {couponError && (
+                <div className="CartMain-couponMessage CartMain-couponMessage--error">
+                  <AlertCircle size={14} />
+                  <span>{couponError}</span>
+                </div>
+              )}
+
+              {couponSuccessNotice && (
+                <div className="CartMain-couponMessage CartMain-couponMessage--success">
+                  <CheckCircle2 size={14} />
+                  <span>{couponSuccessNotice}</span>
+                </div>
+              )}
+
+              {couponWarning && !couponError && (
+                <div className="CartMain-couponMessage CartMain-couponMessage--warning">
+                  <AlertCircle size={14} />
+                  <span>{couponWarning}</span>
+                </div>
+              )}
+
+              {/* Available Offers Collapsible Drawer */}
+              {showAvailableCoupons && availableCoupons.length > 0 && (
+                <div className="CartMain-availableCouponsList">
+                  <p className="CartMain-availableCouponsTitle">Available for your cart:</p>
+                  {availableCoupons.map((coupon) => {
+                    const isCurrent = appliedCoupon?.code === coupon.code;
+                    const isEligible = !coupon.minimum || subtotal >= coupon.minimum;
+                    const discountLabel =
+                      coupon.type === "Fixed Amount (₹)"
+                        ? `₹${coupon.value} OFF`
+                        : `${coupon.value}% OFF`;
+
+                    return (
+                      <div
+                        key={coupon._id || coupon.code}
+                        className={`CartMain-availableCouponItem ${
+                          isCurrent ? "CartMain-availableCouponItem--active" : ""
+                        }`}
+                      >
+                        <div className="CartMain-availableCouponContent">
+                          <div className="CartMain-availableCouponHeader">
+                            <span className="CartMain-couponPill">{coupon.code}</span>
+                            <span className="CartMain-couponTagDiscount">{discountLabel}</span>
+                          </div>
+                          <p className="CartMain-couponDesc">
+                            {coupon.description || `Get ${discountLabel} on your collection`}
+                          </p>
+                          {coupon.minimum > 0 && (
+                            <span className="CartMain-couponMin">
+                              Min. order: {formatINR(coupon.minimum)}
+                              {!isEligible && (
+                                <span className="CartMain-couponShortfall">
+                                  {" "}• Add {formatINR(coupon.minimum - subtotal)} more
+                                </span>
+                              )}
+                            </span>
+                          )}
+                        </div>
+
+                        {isCurrent ? (
+                          <span className="CartMain-couponAppliedLabel">
+                            <Check size={13} /> Applied
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            className="CartMain-couponQuickApplyBtn"
+                            onClick={() => handleApplyCoupon(null, coupon.code)}
+                            disabled={isApplyingCoupon || !isEligible}
+                            title={
+                              !isEligible
+                                ? `Cart must be at least ₹${coupon.minimum}`
+                                : "Apply coupon"
+                            }
+                          >
+                            Apply
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             <div className="CartMain-benefits">
               <div className="CartMain-benefit">
@@ -950,6 +1260,15 @@ const CartMain = () => {
                       <span>Items Subtotal</span>
                       <strong>{formatINR(subtotal)}</strong>
                     </div>
+                    {discount > 0 && (
+                      <div className="CartMain-breakdownRow CartMain-breakdownRow--discount">
+                        <span className="CartMain-discountLabel">
+                          <Tag size={13} />
+                          <span>Coupon Discount ({appliedCoupon?.code})</span>
+                        </span>
+                        <span className="CartMain-modalDiscountValue">- {formatINR(discount)}</span>
+                      </div>
+                    )}
                     <div className="CartMain-breakdownRow">
                       <span>Shipping</span>
                       <span className="CartMain-freeTag">Free Express Delivery</span>
