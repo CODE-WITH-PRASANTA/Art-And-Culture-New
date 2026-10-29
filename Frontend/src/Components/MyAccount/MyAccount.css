@@ -1,0 +1,1400 @@
+/* =========================================
+   MY ACCOUNT - ART & CULTURE
+   Split-panel premium authentication
+========================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap");
+
+.MyAccount {
+  --MA-brown: #7a4a1d;
+  --MA-brown-dark: #3b2310;
+  --MA-gold: #d08a24;
+  --MA-gold-light: #e8b155;
+  --MA-gold-soft: #fdf3e1;
+  --MA-cream: #fbf6ee;
+  --MA-border: #eadfce;
+  --MA-text: #231a12;
+  --MA-muted: #7b6f63;
+  --MA-error: #a43a2a;
+  --MA-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  width: 100%;
+  min-height: 100vh;
+  color: var(--MA-text);
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  background: var(--MA-cream);
+}
+
+.MyAccount *,
+.MyAccount *::before,
+.MyAccount *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Page background ---------- */
+
+.MyAccount .MyAccount-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 48px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(208, 138, 36, 0.16), transparent 34%),
+    radial-gradient(circle at 88% 84%, rgba(122, 74, 29, 0.14), transparent 36%),
+    linear-gradient(135deg, #fffaf2 0%, #f8eedd 55%, #fffdf8 100%);
+}
+
+.MyAccount .MyAccount-bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.MyAccount .MyAccount-bg-blob--one {
+  top: -120px;
+  left: -90px;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(232, 177, 85, 0.35), transparent 70%);
+  animation: MA-drift 14s ease-in-out infinite;
+}
+
+.MyAccount .MyAccount-bg-blob--two {
+  right: -110px;
+  bottom: -130px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(122, 74, 29, 0.28), transparent 70%);
+  animation: MA-drift 18s ease-in-out infinite reverse;
+}
+
+@keyframes MA-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, 24px) scale(1.08);
+  }
+}
+
+/* ---------- Card ---------- */
+
+.MyAccount .MyAccount-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  width: 100%;
+  max-width: 1020px;
+  min-height: 660px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(234, 223, 206, 0.9);
+  border-radius: 26px;
+  box-shadow:
+    0 40px 90px -30px rgba(59, 35, 16, 0.35),
+    0 4px 14px rgba(59, 35, 16, 0.06);
+  animation: MA-card-in 0.8s var(--MA-ease) both;
+}
+
+@keyframes MA-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes MA-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================
+   LEFT PANEL
+========================================= */
+
+.MyAccount .MyAccount-aside {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 34px 34px 32px;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% -5%, rgba(232, 177, 85, 0.55), transparent 52%),
+    radial-gradient(circle at 100% 100%, rgba(208, 138, 36, 0.25), transparent 50%),
+    linear-gradient(165deg, #8a5524 0%, #5a3516 45%, #2b1708 100%);
+}
+
+.MyAccount .MyAccount-aside::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(255, 236, 200, 0.12) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  animation: MA-sheen 7s ease-in-out 1.2s infinite;
+  pointer-events: none;
+}
+
+@keyframes MA-sheen {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* floating orbs */
+
+.MyAccount .MyAccount-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 28%,
+    rgba(255, 244, 220, 0.95),
+    rgba(232, 177, 85, 0.55) 45%,
+    rgba(208, 138, 36, 0.12) 100%
+  );
+  box-shadow: inset -4px -4px 10px rgba(122, 74, 29, 0.25);
+  pointer-events: none;
+  animation: MA-float 7s ease-in-out infinite;
+}
+
+.MyAccount .MyAccount-orb--1 {
+  top: 86px;
+  right: 34px;
+  width: 44px;
+  height: 44px;
+}
+
+.MyAccount .MyAccount-orb--2 {
+  top: 188px;
+  left: 28px;
+  width: 26px;
+  height: 26px;
+  animation-delay: -2s;
+}
+
+.MyAccount .MyAccount-orb--3 {
+  top: 300px;
+  right: 40px;
+  width: 16px;
+  height: 16px;
+  animation-delay: -4s;
+}
+
+.MyAccount .MyAccount-orb--4 {
+  top: 140px;
+  left: 112px;
+  width: 12px;
+  height: 12px;
+  animation-delay: -1s;
+}
+
+@keyframes MA-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+/* brand row */
+
+.MyAccount .MyAccount-brand {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 12px;
+  animation: MA-rise 0.7s var(--MA-ease) 0.15s both;
+}
+
+.MyAccount .MyAccount-brand img {
+  display: block;
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border: 1px solid rgba(232, 177, 85, 0.65);
+  border-radius: 11px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.MyAccount .MyAccount-brand-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.MyAccount .MyAccount-brand-text strong {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.MyAccount .MyAccount-brand-text small {
+  margin-top: 3px;
+  color: var(--MA-gold-light);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+}
+
+/* aside text */
+
+.MyAccount .MyAccount-aside-content {
+  position: relative;
+  z-index: 2;
+  margin-top: 30px;
+  animation: MA-rise 0.7s var(--MA-ease) both;
+}
+
+.MyAccount .MyAccount-badge {
+  display: inline-block;
+  padding: 7px 16px;
+  color: #fbe6bd;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(232, 177, 85, 0.55);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  backdrop-filter: blur(4px);
+}
+
+.MyAccount .MyAccount-aside-content h2 {
+  margin: 16px 0 10px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.5px;
+}
+
+.MyAccount .MyAccount-aside-content p {
+  max-width: 330px;
+  margin: 0 auto;
+  color: rgba(255, 244, 226, 0.86);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ---------- Hero image frame ---------- */
+
+.MyAccount .MyAccount-art {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  padding: 18px 0 16px;
+  animation: MA-rise 0.8s var(--MA-ease) 0.3s both;
+}
+
+/* soft glow */
+.MyAccount .MyAccount-art::before {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(232, 177, 85, 0.38), transparent 68%);
+  animation: MA-pulse 5s ease-in-out infinite;
+}
+
+@keyframes MA-pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+/* slowly rotating dashed ring */
+.MyAccount .MyAccount-art-ring {
+  position: absolute;
+  width: 290px;
+  height: 290px;
+  border: 1px dashed rgba(232, 177, 85, 0.5);
+  border-radius: 50%;
+  animation: MA-spin 40s linear infinite;
+}
+
+.MyAccount .MyAccount-art-ring::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: var(--MA-gold-light);
+  border-radius: 50%;
+  box-shadow: 0 0 12px 3px rgba(232, 177, 85, 0.7);
+}
+
+@keyframes MA-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* arched gold frame */
+.MyAccount .MyAccount-art-frame {
+  position: relative;
+  width: 100%;
+  max-width: 230px;
+  height: 250px;
+  margin: 0;
+  padding: 5px;
+  background: linear-gradient(160deg, #f4d79b 0%, #c28b3c 48%, #7a4a1d 100%);
+  border-radius: 115px 115px 20px 20px;
+  box-shadow:
+    0 26px 40px -14px rgba(0, 0, 0, 0.55),
+    0 0 0 6px rgba(255, 255, 255, 0.07);
+  animation: MA-bob 6s ease-in-out infinite;
+}
+
+@keyframes MA-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+.MyAccount .MyAccount-art-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #2b1708;
+  border-radius: 110px 110px 15px 15px;
+}
+
+.MyAccount .MyAccount-art-inner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: MA-kenburns 16s ease-in-out infinite alternate;
+}
+
+@keyframes MA-kenburns {
+  from {
+    transform: scale(1) translate(0, 0);
+  }
+  to {
+    transform: scale(1.12) translate(-2%, -2%);
+  }
+}
+
+.MyAccount .MyAccount-art-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 50%, rgba(30, 15, 4, 0.78) 100%),
+    linear-gradient(120deg, rgba(232, 177, 85, 0.18), transparent 45%);
+  pointer-events: none;
+}
+
+.MyAccount .MyAccount-art-chip {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  color: #fff4dc;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.MyAccount .MyAccount-art-chip svg {
+  color: var(--MA-gold-light);
+}
+
+/* aside switch button */
+
+.MyAccount .MyAccount-aside-button {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 190px;
+  padding: 13px 26px;
+  color: var(--MA-brown);
+  background: #fff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.45);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--MA-ease),
+    box-shadow 0.3s var(--MA-ease),
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.MyAccount .MyAccount-aside-button:hover {
+  color: #fff;
+  background: var(--MA-gold);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 28px -10px rgba(0, 0, 0, 0.5);
+}
+
+.MyAccount .MyAccount-aside-button:active {
+  transform: translateY(0);
+}
+
+/* =========================================
+   RIGHT PANEL
+========================================= */
+
+.MyAccount .MyAccount-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 54px;
+  background: #fff;
+}
+
+.MyAccount .MyAccount-panel {
+  width: 100%;
+  max-width: 420px;
+  animation: MA-panel-in 0.65s var(--MA-ease) both;
+}
+
+@keyframes MA-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.MyAccount .MyAccount-heading {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.MyAccount .MyAccount-heading-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 16px;
+  color: var(--MA-brown);
+  background: var(--MA-gold-soft);
+  border: 1px solid #f0d9ae;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(208, 138, 36, 0.08);
+  animation: MA-pop 0.6s var(--MA-ease) 0.1s both;
+}
+
+@keyframes MA-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6) rotate(-20deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.MyAccount .MyAccount-heading h1 {
+  position: relative;
+  display: inline-block;
+  margin: 0 0 12px;
+  padding-bottom: 12px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
+.MyAccount .MyAccount-heading h1::after,
+.MyAccount .MyAccount-sent h1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 52px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--MA-gold), var(--MA-gold-light));
+  border-radius: 3px;
+  transform: translateX(-50%);
+  animation: MA-line 0.8s var(--MA-ease) 0.35s both;
+}
+
+@keyframes MA-line {
+  from {
+    transform: translateX(-50%) scaleX(0);
+  }
+  to {
+    transform: translateX(-50%) scaleX(1);
+  }
+}
+
+.MyAccount .MyAccount-heading p {
+  max-width: 340px;
+  margin: 0 auto;
+  color: var(--MA-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ---------- Form ---------- */
+
+.MyAccount .MyAccount-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.MyAccount .MyAccount-form > * {
+  animation: MA-rise 0.6s var(--MA-ease) both;
+}
+.MyAccount .MyAccount-form > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.MyAccount .MyAccount-form > *:nth-child(2) {
+  animation-delay: 0.17s;
+}
+.MyAccount .MyAccount-form > *:nth-child(3) {
+  animation-delay: 0.24s;
+}
+.MyAccount .MyAccount-form > *:nth-child(4) {
+  animation-delay: 0.31s;
+}
+.MyAccount .MyAccount-form > *:nth-child(5) {
+  animation-delay: 0.38s;
+}
+.MyAccount .MyAccount-form > *:nth-child(6) {
+  animation-delay: 0.45s;
+}
+.MyAccount .MyAccount-form > *:nth-child(7) {
+  animation-delay: 0.5s;
+}
+.MyAccount .MyAccount-form > *:nth-child(8) {
+  animation-delay: 0.55s;
+}
+
+.MyAccount .MyAccount-name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.MyAccount .MyAccount-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.MyAccount .MyAccount-field label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.MyAccount .MyAccount-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-width: 0;
+  height: 50px;
+  padding: 0 14px;
+  color: var(--MA-gold);
+  background: #fcf9f4;
+  border: 1px solid var(--MA-border);
+  border-radius: 12px;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s var(--MA-ease);
+}
+
+.MyAccount .MyAccount-input-wrapper:hover {
+  border-color: #dccbb2;
+}
+
+.MyAccount .MyAccount-input-wrapper:focus-within {
+  color: var(--MA-brown);
+  background: #fff;
+  border-color: var(--MA-gold);
+  box-shadow: 0 0 0 4px rgba(208, 138, 36, 0.14);
+  transform: translateY(-1px);
+}
+
+.MyAccount .MyAccount-input-wrapper > svg {
+  flex-shrink: 0;
+  transition: transform 0.3s var(--MA-ease);
+}
+
+.MyAccount .MyAccount-input-wrapper:focus-within > svg:first-child {
+  transform: scale(1.12);
+}
+
+.MyAccount .MyAccount-input-wrapper input,
+.MyAccount .MyAccount-input-wrapper select {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  color: var(--MA-text);
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.MyAccount .MyAccount-input-wrapper input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.MyAccount .MyAccount-input-wrapper input::placeholder {
+  color: #a99d90;
+  opacity: 1;
+}
+
+.MyAccount .MyAccount-input-wrapper select {
+  cursor: pointer;
+}
+
+.MyAccount .MyAccount-input-wrapper select:invalid {
+  color: #a99d90;
+}
+
+.MyAccount .MyAccount-select-arrow {
+  color: var(--MA-muted);
+  pointer-events: none;
+}
+
+.MyAccount .MyAccount-password-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--MA-muted);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.MyAccount .MyAccount-password-toggle:hover {
+  color: var(--MA-brown);
+  background: var(--MA-gold-soft);
+}
+
+/* remember / forgot */
+
+.MyAccount .MyAccount-form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.MyAccount .MyAccount-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--MA-muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.MyAccount .MyAccount-remember input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--MA-brown);
+  cursor: pointer;
+}
+
+.MyAccount .MyAccount-forgot {
+  padding: 4px 0;
+  color: var(--MA-brown);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.MyAccount .MyAccount-forgot:hover {
+  color: var(--MA-gold);
+  text-decoration: underline;
+}
+
+/* message */
+
+.MyAccount .MyAccount-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 11px 13px;
+  color: var(--MA-brown-dark);
+  background: #fbf1df;
+  border: 1px solid #ecd6ae;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  animation: MA-rise 0.35s var(--MA-ease) both;
+}
+
+.MyAccount .MyAccount-message svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.MyAccount .MyAccount-message.error {
+  color: var(--MA-error);
+  background: #fbeeea;
+  border-color: #f0cfc7;
+  animation: MA-shake 0.45s ease both;
+}
+
+@keyframes MA-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-5px);
+  }
+  40%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+/* submit */
+
+.MyAccount .MyAccount-submit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 20px;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(120deg, var(--MA-gold) 0%, var(--MA-brown) 100%);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 14px 26px -10px rgba(122, 74, 29, 0.6);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--MA-ease),
+    box-shadow 0.3s var(--MA-ease),
+    opacity 0.2s ease;
+}
+
+.MyAccount .MyAccount-submit::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 40%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.7s var(--MA-ease);
+}
+
+.MyAccount .MyAccount-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 30px -12px rgba(122, 74, 29, 0.7);
+}
+
+.MyAccount .MyAccount-submit:hover:not(:disabled)::before {
+  left: 120%;
+}
+
+.MyAccount .MyAccount-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.MyAccount .MyAccount-submit:disabled {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+/* spinner */
+
+.MyAccount .MyAccount-spin {
+  animation: MA-rotate 0.8s linear infinite;
+}
+
+@keyframes MA-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* footer */
+
+.MyAccount .MyAccount-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 22px 0 0;
+  color: var(--MA-muted);
+  font-size: 13.5px;
+  animation: MA-rise 0.6s var(--MA-ease) 0.5s both;
+}
+
+.MyAccount .MyAccount-footer button {
+  padding: 2px 0;
+  color: var(--MA-brown);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.MyAccount .MyAccount-footer button:hover {
+  color: var(--MA-gold);
+  text-decoration: underline;
+}
+
+/* ---------- Forgot password: email sent ---------- */
+
+.MyAccount .MyAccount-sent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.MyAccount .MyAccount-sent-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 78px;
+  margin-bottom: 20px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--MA-gold), var(--MA-brown));
+  border-radius: 50%;
+  box-shadow: 0 16px 28px -10px rgba(122, 74, 29, 0.6);
+  animation: MA-pop 0.7s var(--MA-ease) both;
+}
+
+.MyAccount .MyAccount-sent-icon::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border: 2px solid rgba(208, 138, 36, 0.35);
+  border-radius: 50%;
+  animation: MA-ripple 2.4s ease-out infinite;
+}
+
+@keyframes MA-ripple {
+  from {
+    opacity: 1;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+.MyAccount .MyAccount-sent h1 {
+  position: relative;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.MyAccount .MyAccount-sent-text {
+  margin: 0 0 8px;
+  color: var(--MA-text);
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.MyAccount .MyAccount-sent-text strong {
+  color: var(--MA-brown);
+}
+
+.MyAccount .MyAccount-sent-hint {
+  margin: 0 0 22px;
+  color: var(--MA-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.MyAccount .MyAccount-sent .MyAccount-message {
+  width: 100%;
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.MyAccount .MyAccount-sent .MyAccount-submit {
+  margin-top: 14px;
+}
+
+.MyAccount .MyAccount-outline-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 20px;
+  color: var(--MA-brown);
+  background: var(--MA-gold-soft);
+  border: 1px solid #f0d9ae;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s var(--MA-ease);
+}
+
+.MyAccount .MyAccount-outline-button:hover:not(:disabled) {
+  background: #fbe8c6;
+  border-color: var(--MA-gold-light);
+  transform: translateY(-1px);
+}
+
+.MyAccount .MyAccount-outline-button:disabled {
+  color: var(--MA-muted);
+  background: #f7f2ea;
+  border-color: var(--MA-border);
+  cursor: not-allowed;
+}
+
+/* keyboard focus */
+
+.MyAccount button:focus-visible,
+.MyAccount .MyAccount-remember input:focus-visible {
+  outline: 2px solid var(--MA-gold);
+  outline-offset: 2px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .MyAccount .MyAccount-card {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    min-height: 0;
+  }
+
+  .MyAccount .MyAccount-aside {
+    padding: 26px 24px 28px;
+  }
+
+  .MyAccount .MyAccount-art,
+  .MyAccount .MyAccount-aside-button,
+  .MyAccount .MyAccount-orb--3,
+  .MyAccount .MyAccount-orb--4 {
+    display: none;
+  }
+
+  .MyAccount .MyAccount-brand {
+    align-self: center;
+  }
+
+  .MyAccount .MyAccount-aside-content {
+    margin-top: 22px;
+  }
+
+  .MyAccount .MyAccount-aside-content h2 {
+    font-size: 30px;
+  }
+
+  .MyAccount .MyAccount-orb--1 {
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .MyAccount .MyAccount-orb--2 {
+    top: auto;
+    bottom: 24px;
+    left: 20px;
+  }
+
+  .MyAccount .MyAccount-main {
+    padding: 32px 26px 34px;
+  }
+}
+
+@media (max-width: 480px) {
+  .MyAccount .MyAccount-container {
+    align-items: flex-start;
+    padding: 16px 10px;
+  }
+
+  .MyAccount .MyAccount-card {
+    border-radius: 20px;
+  }
+
+  .MyAccount .MyAccount-aside-content h2 {
+    font-size: 26px;
+  }
+
+  .MyAccount .MyAccount-aside-content p {
+    font-size: 13px;
+  }
+
+  .MyAccount .MyAccount-heading h1 {
+    font-size: 30px;
+  }
+
+  .MyAccount .MyAccount-main {
+    padding: 26px 18px 28px;
+  }
+
+  .MyAccount .MyAccount-form-options {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 360px) {
+  .MyAccount .MyAccount-name-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .MyAccount *,
+  .MyAccount *::before,
+  .MyAccount *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================
+   RESET PASSWORD: CODE, DEMO INBOX, STRENGTH
+========================================= */
+
+/* demo inbox (shown because no backend sends real email) */
+
+.MyAccount .MyAccount-demo {
+  padding: 13px 14px;
+  color: var(--MA-brown-dark);
+  background: linear-gradient(135deg, #fdf3e1, #fbe9c9);
+  border: 1px dashed #e2b970;
+  border-radius: 12px;
+}
+
+.MyAccount .MyAccount-demo-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.MyAccount .MyAccount-demo-head svg {
+  color: var(--MA-gold);
+}
+
+.MyAccount .MyAccount-demo p {
+  margin: 6px 0 10px;
+  color: var(--MA-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.MyAccount .MyAccount-demo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.MyAccount .MyAccount-demo-code {
+  font-family: "Inter", monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: var(--MA-brown);
+}
+
+.MyAccount .MyAccount-demo-use {
+  padding: 8px 14px;
+  color: #fff;
+  background: var(--MA-brown);
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s var(--MA-ease);
+}
+
+.MyAccount .MyAccount-demo-use:hover {
+  background: var(--MA-gold);
+  transform: translateY(-1px);
+}
+
+/* 6-digit code boxes */
+
+.MyAccount .MyAccount-otp {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.MyAccount .MyAccount-otp input {
+  width: 100%;
+  min-width: 0;
+  height: 54px;
+  padding: 0;
+  color: var(--MA-text);
+  background: #fcf9f4;
+  border: 1px solid var(--MA-border);
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  caret-color: var(--MA-gold);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s var(--MA-ease);
+}
+
+.MyAccount .MyAccount-otp input:hover {
+  border-color: #dccbb2;
+}
+
+.MyAccount .MyAccount-otp input:focus {
+  background: #fff;
+  border-color: var(--MA-gold);
+  box-shadow: 0 0 0 4px rgba(208, 138, 36, 0.14);
+  transform: translateY(-2px);
+}
+
+.MyAccount .MyAccount-otp input.filled {
+  color: var(--MA-brown);
+  background: var(--MA-gold-soft);
+  border-color: #e7c88f;
+}
+
+/* password strength */
+
+.MyAccount .MyAccount-strength {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.MyAccount .MyAccount-strength-bars {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.MyAccount .MyAccount-strength-bars span {
+  height: 5px;
+  background: #eee4d5;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.MyAccount .MyAccount-strength[data-level="1"] .MyAccount-strength-bars span:nth-child(-n + 1) {
+  background: #d9553f;
+}
+.MyAccount .MyAccount-strength[data-level="2"] .MyAccount-strength-bars span:nth-child(-n + 2) {
+  background: #e59a2f;
+}
+.MyAccount .MyAccount-strength[data-level="3"] .MyAccount-strength-bars span:nth-child(-n + 3) {
+  background: #b9a331;
+}
+.MyAccount .MyAccount-strength[data-level="4"] .MyAccount-strength-bars span:nth-child(-n + 4) {
+  background: #4a9a5b;
+}
+
+.MyAccount .MyAccount-strength small {
+  min-width: 52px;
+  color: var(--MA-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* password match hint */
+
+.MyAccount .MyAccount-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.MyAccount .MyAccount-hint.ok {
+  color: #3f8a52;
+}
+
+.MyAccount .MyAccount-hint.bad {
+  color: var(--MA-error);
+}
+
+/* resend / change email row */
+
+.MyAccount .MyAccount-reset-links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 2px;
+}
+
+.MyAccount .MyAccount-link-button {
+  padding: 3px 0;
+  color: var(--MA-brown);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.MyAccount .MyAccount-link-button:hover:not(:disabled) {
+  color: var(--MA-gold);
+  text-decoration: underline;
+}
+
+.MyAccount .MyAccount-link-button:disabled {
+  color: var(--MA-muted);
+  cursor: not-allowed;
+}
+
+@media (max-width: 400px) {
+  .MyAccount .MyAccount-otp {
+    gap: 6px;
+  }
+
+  .MyAccount .MyAccount-otp input {
+    height: 48px;
+    font-size: 19px;
+  }
+
+  .MyAccount .MyAccount-demo-code {
+    font-size: 19px;
+    letter-spacing: 4px;
+  }
+}

@@ -1,0 +1,591 @@
+
+/* =========================================
+   DASHBOARD TWO
+========================================= */
+
+.DashboardTwo {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  margin-top: 25px;
+  padding: 0;
+  color: #25221f;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.DashboardTwo *,
+.DashboardTwo *::before,
+.DashboardTwo *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   MAIN GRID
+========================================= */
+
+.DashboardTwo .DashboardTwo-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.12fr) minmax(0, 1.2fr);
+  gap: 13px;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* =========================================
+   SHARED PANEL DESIGN
+========================================= */
+
+.DashboardTwo .DashboardTwo-panel {
+  min-width: 0;
+  min-height: 265px;
+  padding: 17px 16px 15px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #eee5dc;
+  border-radius: 17px;
+  box-shadow: 0 3px 12px rgba(91, 61, 36, 0.025);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.DashboardTwo .DashboardTwo-panel:hover {
+  border-color: #e7d7c7;
+  box-shadow: 0 7px 22px rgba(91, 61, 36, 0.045);
+}
+
+/* =========================================
+   PANEL HEADINGS
+========================================= */
+
+.DashboardTwo .DashboardTwo-panelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.DashboardTwo .DashboardTwo-panelHeading {
+  min-width: 0;
+}
+
+.DashboardTwo .DashboardTwo-panelHeading h2 {
+  margin: 0;
+  color: #25221f;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.25px;
+}
+
+.DashboardTwo .DashboardTwo-panelHeading p {
+  margin: 4px 0 0;
+  color: #817a73;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* =========================================
+   TIME RANGE SELECTOR
+========================================= */
+
+.DashboardTwo .DashboardTwo-rangeSelect {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 31px;
+  padding: 0 9px;
+  background: #ffffff;
+  border: 1px solid #eadfd4;
+  border-radius: 9px;
+  color: #4c3b2c;
+}
+
+.DashboardTwo .DashboardTwo-rangeSelect select {
+  width: auto;
+  max-width: 112px;
+  padding: 5px 0;
+  color: #43382d;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  appearance: none;
+}
+
+.DashboardTwo .DashboardTwo-rangeSelect svg {
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  pointer-events: none;
+}
+
+/* =========================================
+   BLOG VIEWS LINE CHART
+========================================= */
+
+.DashboardTwo .DashboardTwo-lineChart {
+  position: relative;
+  width: 100%;
+  height: 185px;
+  min-width: 0;
+}
+
+.DashboardTwo .DashboardTwo-lineChart canvas {
+  max-width: 100%;
+}
+
+/* =========================================
+   BLOG STATUS DISTRIBUTION
+========================================= */
+
+.DashboardTwo .DashboardTwo-statusPanel {
+  display: flex;
+  flex-direction: column;
+}
+
+.DashboardTwo .DashboardTwo-statusContent {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  min-width: 0;
+  padding: 5px 0 0;
+}
+
+.DashboardTwo .DashboardTwo-doughnutWrap {
+  position: relative;
+  flex: 0 0 145px;
+  width: 145px;
+  max-width: 48%;
+  aspect-ratio: 1;
+  min-width: 0;
+}
+
+.DashboardTwo .DashboardTwo-doughnutWrap canvas {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+}
+
+.DashboardTwo .DashboardTwo-doughnutCenter {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.DashboardTwo .DashboardTwo-doughnutCenter strong {
+  color: #25221f;
+  font-size: 25px;
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: -0.7px;
+}
+
+.DashboardTwo .DashboardTwo-doughnutCenter span {
+  margin-top: 3px;
+  color: #716b64;
+  font-size: 12px;
+}
+
+/* =========================================
+   DOUGHNUT LEGEND
+========================================= */
+
+.DashboardTwo .DashboardTwo-statusLegend {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.DashboardTwo .DashboardTwo-legendItem {
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 7px;
+  row-gap: 3px;
+  min-width: 0;
+}
+
+.DashboardTwo .DashboardTwo-legendDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.DashboardTwo .DashboardTwo-legendLabel {
+  overflow: hidden;
+  color: #514b45;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DashboardTwo .DashboardTwo-legendValue {
+  color: #2e2924;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.DashboardTwo .DashboardTwo-legendPercentage {
+  grid-column: 2 / 4;
+  color: #8b8279;
+  font-size: 10px;
+}
+
+/* =========================================
+   QUICK ACTIONS
+========================================= */
+
+.DashboardTwo .DashboardTwo-actionsPanel {
+  display: flex;
+  flex-direction: column;
+}
+
+.DashboardTwo .DashboardTwo-actionsPanel .DashboardTwo-panelHeader {
+  margin-bottom: 10px;
+}
+
+.DashboardTwo .DashboardTwo-actionsList {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.DashboardTwo .DashboardTwo-actionItem {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 9px;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.DashboardTwo .DashboardTwo-actionItem:hover {
+  background: #faf4ec;
+  border-color: #f0e4d6;
+  transform: translateX(2px);
+}
+
+.DashboardTwo .DashboardTwo-actionItem:first-child {
+  background: #faf3e9;
+}
+
+.DashboardTwo .DashboardTwo-actionItem:first-child:hover {
+  background: #f4e8d8;
+}
+
+.DashboardTwo .DashboardTwo-actionIcon {
+  display: flex;
+  flex: 0 0 39px;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 12px;
+  font-size: 20px;
+}
+
+.DashboardTwo .DashboardTwo-actionIcon--bronze {
+  color: #87501f;
+  background: #ead5bc;
+}
+
+.DashboardTwo .DashboardTwo-actionIcon--green {
+  color: #168c55;
+  background: #e0f2e5;
+}
+
+.DashboardTwo .DashboardTwo-actionIcon--blue {
+  color: #2174d7;
+  background: #e3edff;
+}
+
+.DashboardTwo .DashboardTwo-actionIcon--purple {
+  color: #7650c9;
+  background: #eee5ff;
+}
+
+/* =========================================
+   QUICK ACTION TEXT
+========================================= */
+
+.DashboardTwo .DashboardTwo-actionText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.DashboardTwo .DashboardTwo-actionText strong {
+  overflow: hidden;
+  color: #302a25;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DashboardTwo .DashboardTwo-actionText small {
+  overflow: hidden;
+  color: #837b73;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DashboardTwo .DashboardTwo-actionArrow {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: #83776b;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.DashboardTwo .DashboardTwo-actionItem:hover .DashboardTwo-actionArrow {
+  color: #925a29;
+  transform: translateX(3px);
+}
+
+/* =========================================
+   LAPTOP AND SMALL DESKTOP
+========================================= */
+
+@media (max-width: 1250px) {
+  .DashboardTwo .DashboardTwo-grid {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .DashboardTwo .DashboardTwo-viewsPanel {
+    grid-column: 1 / -1;
+  }
+
+  .DashboardTwo .DashboardTwo-lineChart {
+    height: 210px;
+  }
+
+  .DashboardTwo .DashboardTwo-statusPanel,
+  .DashboardTwo .DashboardTwo-actionsPanel {
+    min-height: 260px;
+  }
+
+  .DashboardTwo .DashboardTwo-statusContent {
+    justify-content: flex-start;
+  }
+}
+
+/* =========================================
+   TABLETS
+========================================= */
+
+@media (max-width: 768px) {
+  .DashboardTwo .DashboardTwo-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .DashboardTwo .DashboardTwo-viewsPanel {
+    grid-column: auto;
+  }
+
+  .DashboardTwo .DashboardTwo-panel {
+    min-height: auto;
+    padding: 16px;
+    border-radius: 15px;
+  }
+
+  .DashboardTwo .DashboardTwo-panelHeading h2 {
+    font-size: 15px;
+  }
+
+  .DashboardTwo .DashboardTwo-lineChart {
+    height: 220px;
+  }
+
+  .DashboardTwo .DashboardTwo-statusContent {
+    justify-content: center;
+    gap: 24px;
+    padding: 8px 0;
+  }
+
+  .DashboardTwo .DashboardTwo-doughnutWrap {
+    flex-basis: 160px;
+    width: 160px;
+  }
+
+  .DashboardTwo .DashboardTwo-statusLegend {
+    max-width: 230px;
+    gap: 16px;
+  }
+
+  .DashboardTwo .DashboardTwo-legendLabel,
+  .DashboardTwo .DashboardTwo-legendValue {
+    font-size: 12px;
+  }
+
+  .DashboardTwo .DashboardTwo-legendPercentage {
+    font-size: 11px;
+  }
+
+  .DashboardTwo .DashboardTwo-actionsList {
+    gap: 6px;
+  }
+
+  .DashboardTwo .DashboardTwo-actionItem {
+    padding: 10px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+  .DashboardTwo .DashboardTwo-grid {
+    gap: 10px;
+  }
+
+  .DashboardTwo .DashboardTwo-panel {
+    padding: 13px 12px;
+    border-radius: 13px;
+  }
+
+  .DashboardTwo .DashboardTwo-panelHeader {
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+
+  .DashboardTwo .DashboardTwo-panelHeading h2 {
+    font-size: 14px;
+  }
+
+  .DashboardTwo .DashboardTwo-panelHeading p {
+    font-size: 11px;
+  }
+
+  .DashboardTwo .DashboardTwo-rangeSelect {
+    min-height: 29px;
+    padding: 0 6px;
+  }
+
+  .DashboardTwo .DashboardTwo-rangeSelect select {
+    max-width: 90px;
+    font-size: 10px;
+  }
+
+  .DashboardTwo .DashboardTwo-lineChart {
+    height: 195px;
+  }
+
+  .DashboardTwo .DashboardTwo-statusContent {
+    flex-direction: column;
+    gap: 22px;
+    padding: 6px 0 8px;
+  }
+
+  .DashboardTwo .DashboardTwo-doughnutWrap {
+    flex-basis: auto;
+    width: 170px;
+    max-width: 100%;
+  }
+
+  .DashboardTwo .DashboardTwo-doughnutCenter strong {
+    font-size: 25px;
+  }
+
+  .DashboardTwo .DashboardTwo-statusLegend {
+    width: 100%;
+    max-width: 280px;
+    gap: 13px;
+  }
+
+  .DashboardTwo .DashboardTwo-legendItem {
+    grid-template-columns: 9px minmax(0, 1fr) auto auto;
+  }
+
+  .DashboardTwo .DashboardTwo-legendPercentage {
+    grid-column: auto;
+  }
+
+  .DashboardTwo .DashboardTwo-actionIcon {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .DashboardTwo .DashboardTwo-actionText strong {
+    font-size: 12px;
+  }
+
+  .DashboardTwo .DashboardTwo-actionText small {
+    font-size: 10px;
+  }
+}
+
+/* =========================================
+   EXTRA SMALL DEVICES
+========================================= */
+
+@media (max-width: 340px) {
+  .DashboardTwo .DashboardTwo-panelHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .DashboardTwo .DashboardTwo-lineChart {
+    height: 175px;
+  }
+
+  .DashboardTwo .DashboardTwo-actionItem {
+    gap: 8px;
+    padding: 8px 6px;
+  }
+
+  .DashboardTwo .DashboardTwo-actionIcon {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+    font-size: 17px;
+  }
+
+  .DashboardTwo .DashboardTwo-actionArrow {
+    width: 14px;
+    height: 14px;
+  }
+}
