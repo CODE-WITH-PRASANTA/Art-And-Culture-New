@@ -1,0 +1,52 @@
+.Coupons {
+  padding: 2rem;
+  background: linear-gradient(135deg, hsl(210, 30%, 95%), hsl(210, 20%, 85%));
+}
+
+.Coupons-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.Coupons-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.5rem;
+  color: hsl(210, 40%, 20%);
+}
+
+.Coupons-subtitle {
+  font-size: 1.1rem;
+  color: hsl(210, 30%, 30%);
+}
+
+.Coupons-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.Coupons-table th,
+.Coupons-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid hsl(210, 20%, 80%);
+}
+
+.Coupons-table th {
+  background: hsl(210, 30%, 70%);
+  color: #fff;
+  font-weight: 600;
+}
+
+.Coupons-table tr:nth-child(even) {
+  background: hsl(210, 10%, 95%);
+}
+
+.Coupons-loading,
+.Coupons-error,
+.Coupons-empty {
+  text-align: center;
+  font-size: 1.2rem;
+  color: hsl(210, 30%, 40%);
+  margin-top: 2rem;
+}

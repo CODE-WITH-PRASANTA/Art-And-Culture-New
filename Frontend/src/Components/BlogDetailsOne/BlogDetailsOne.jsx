@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import {
@@ -8,11 +7,24 @@ import {
   FaLinkedinIn,
   FaInstagram,
 } from "react-icons/fa";
-
+import { formatImageUrl } from "../../config/api";
 import "./BlogDetailsOne.css";
 
-const BlogDetailsOne = () => {
-  const articleTitle = "How to Achieve Financial Freedom by 30";
+const BlogDetailsOne = ({ blog }) => {
+  const articleTitle = blog?.title || "How to Achieve Financial Freedom by 30";
+  const authorName = blog?.authorName || "Shafiqul";
+
+  const formattedDate = blog?.publishDate
+    ? new Date(blog.publishDate).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }).toUpperCase()
+    : "30 DEC, 2024";
+
+  const featuredImage =
+    formatImageUrl(blog?.mainImage) ||
+    "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=1800&q=90";
 
   const shareUrl =
     typeof window !== "undefined" ? window.location.href : "";
@@ -68,7 +80,7 @@ const BlogDetailsOne = () => {
             to="/blog"
             className="BlogDetailsOne-breadcrumb-link"
           >
-            Blog Standard
+            Blog
           </Link>
 
           <span className="BlogDetailsOne-breadcrumb-separator">/</span>
@@ -101,7 +113,7 @@ const BlogDetailsOne = () => {
 
             <div className="BlogDetailsOne-author-details">
               <span className="BlogDetailsOne-label">Author</span>
-              <h3 className="BlogDetailsOne-author-name">Shafiqul</h3>
+              <h3 className="BlogDetailsOne-author-name">{authorName}</h3>
             </div>
           </div>
 
@@ -109,9 +121,9 @@ const BlogDetailsOne = () => {
             <span className="BlogDetailsOne-label">Published Date</span>
             <time
               className="BlogDetailsOne-published-date"
-              dateTime="2024-12-30"
+              dateTime={blog?.publishDate || "2024-12-30"}
             >
-              30 DEC, 2024
+              {formattedDate}
             </time>
           </div>
 
@@ -140,8 +152,8 @@ const BlogDetailsOne = () => {
         <div className="BlogDetailsOne-featured">
           <img
             className="BlogDetailsOne-featured-image"
-            src="https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=1800&q=90"
-            alt="Art exhibition featuring colorful paintings in a gallery"
+            src={featuredImage}
+            alt={articleTitle}
           />
         </div>
       </div>

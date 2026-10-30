@@ -1,5 +1,5 @@
-
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaChevronLeft,
   FaChevronRight,
@@ -9,90 +9,122 @@ import {
 } from "react-icons/fa";
 
 import "./Collection.css";
+import { useCart } from "../../context/CartContext";
+import { API_BASE_URL, ARTS_API_URL } from "../../config/api";
+import { toArtSlug } from "../../utils/slug";
+import { useWishlist } from "../../context/WishlistContext";
 
-const collectionItems = [
-  {
-    id: 1,
-    title: "Where Imagination Meets the Canvas",
-    artist: "Frida Kahlo",
-    category: "Contemporary Art",
-    price: 450,
-    discountPrice: 344,
-    discount: 24,
-    image:
-      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 2,
-    title: "Textures Unveil the Secrets of Eternity",
-    artist: "Claude Monet",
-    category: "Impressionism",
-    price: 480,
-    discountPrice: 350,
-    discount: 27,
-    image:
-      "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 3,
-    title: "Infinity Explored in Every Tiny Detail",
-    artist: "Vincent van Gogh",
-    category: "Oil Painting",
-    price: 520,
-    discountPrice: 370,
-    discount: 29,
-    image:
-      "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 4,
-    title: "Layers of Meaning Found in Simplicity",
-    artist: "Pablo Picasso",
-    category: "Modern Art",
-    price: 560,
-    discountPrice: 390,
-    discount: 30,
-    image:
-      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 5,
-    title: "A Quiet Garden of Endless Colors",
-    artist: "Georgia O'Keeffe",
-    category: "Floral Art",
-    price: 420,
-    discountPrice: 315,
-    discount: 25,
-    image:
-      "https://images.unsplash.com/photo-1577083288073-40892c0860a4?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: 6,
-    title: "The Beauty of a Different Perspective",
-    artist: "Salvador Dalí",
-    category: "Surrealism",
-    price: 600,
-    discountPrice: 420,
-    discount: 30,
-    image:
-      "https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=900&q=85",
-  },
-];
+const getImageUrl = (photo) => {
+  if (!photo) return "";
+  if (typeof photo === "string") {
+    if (photo.startsWith("data:") || photo.startsWith("http")) return photo;
+    return `${API_BASE_URL}${photo}`;
+  }
+  if (photo.url) {
+    if (photo.url.startsWith("http")) return photo.url;
+    return `${API_BASE_URL}${photo.url}`;
+  }
+  if (photo.dataUrl) {
+    if (photo.dataUrl.startsWith("http") || photo.dataUrl.startsWith("data:")) return photo.dataUrl;
+    return `${API_BASE_URL}${photo.dataUrl}`;
+  }
+  return "";
+};
+
+const getArtImage = (art) => {
+  if (art.photos && art.photos.length > 0) {
+    const img = getImageUrl(art.photos[0]);
+    if (img) return img;
+  }
+  if (art.image) {
+    return getImageUrl(art.image);
+  }
+  return "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=900&q=85";
+};
 
 const Collection = () => {
+  const navigate = useNavigate();
   const sliderRef = useRef(null);
   const autoScrollRef = useRef(null);
 
-  const [wishlist, setWishlist] = useState([]);
-  const [cart, setCart] = useState([]);
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
- const formatPrice = (price) =>
-  new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(price);
+  const [collectionItems, setCollectionItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { isInCart, addToCart: addItemToCart } = useCart();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchStreamingArts = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${ARTS_API_URL}?isStreamingCollection=true`);
+        const json = await res.json();
+
+        if (!isMounted) return;
+
+        if (json.success && Array.isArray(json.data)) {
+          // Filter to only products whose streaming is active and published
+          const activeStreaming = json.data.filter((art) => {
+            const isStreaming = Boolean(art.isStreamingCollection);
+            const isPublished =
+              art.isPublished !== false && art.status !== "Unpublished";
+            return isStreaming && isPublished;
+          });
+
+          const mapped = activeStreaming.map((art, idx) => {
+            const price = Number(art.price) || 0;
+            const discount = Number(art.discount) || 0;
+            const discountPrice =
+              discount > 0
+                ? Math.round(price * (1 - discount / 100))
+                : price;
+
+            return {
+              id: art._id || art.id || `stream-${idx}`,
+              artNo: art.artNo,
+              title: art.title || "Untitled Artwork",
+              artist: art.artistName || art.artist || "Unknown Artist",
+              category: art.category || "Streaming Collection",
+              price: price,
+              discountPrice: discountPrice,
+              discount: discount,
+              image: getArtImage(art),
+              description: art.description || "",
+              stock:
+                art.stockQuantity !== undefined
+                  ? Number(art.stockQuantity) > 0
+                  : true,
+            };
+          });
+
+          setCollectionItems(mapped);
+        } else {
+          setCollectionItems([]);
+        }
+      } catch (err) {
+        console.error("Failed to load streaming collection artworks:", err);
+        setCollectionItems([]);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchStreamingArts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const formatPrice = (price) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(price);
 
   const scrollCollection = (direction) => {
     const slider = sliderRef.current;
@@ -103,16 +135,14 @@ const Collection = () => {
 
     if (!firstCard) return;
 
-    const cardWidth =
-      firstCard.getBoundingClientRect().width;
+    const cardWidth = firstCard.getBoundingClientRect().width;
 
     const styles = window.getComputedStyle(slider);
     const gap = parseFloat(styles.columnGap || styles.gap) || 0;
 
     const distance = cardWidth + gap;
 
-    const maxScroll =
-      slider.scrollWidth - slider.clientWidth;
+    const maxScroll = slider.scrollWidth - slider.clientWidth;
 
     // Loop smoothly when the end or beginning is reached.
     if (direction === "next" && slider.scrollLeft >= maxScroll - 5) {
@@ -133,6 +163,8 @@ const Collection = () => {
 
   // Automatically scroll every five seconds.
   useEffect(() => {
+    if (collectionItems.length <= 1) return;
+
     const startAutoScroll = () => {
       window.clearInterval(autoScrollRef.current);
 
@@ -143,8 +175,7 @@ const Collection = () => {
 
         if (slider.scrollWidth <= slider.clientWidth) return;
 
-        const maxScroll =
-          slider.scrollWidth - slider.clientWidth;
+        const maxScroll = slider.scrollWidth - slider.clientWidth;
 
         if (slider.scrollLeft >= maxScroll - 5) {
           slider.scrollTo({
@@ -162,21 +193,11 @@ const Collection = () => {
     return () => {
       window.clearInterval(autoScrollRef.current);
     };
-  }, []);
-
-  const toggleWishlist = (id) => {
-    setWishlist((previous) =>
-      previous.includes(id)
-        ? previous.filter((itemId) => itemId !== id)
-        : [...previous, id]
-    );
-  };
+  }, [collectionItems]);
 
   const addToCart = (id) => {
     setCart((previous) =>
-      previous.includes(id)
-        ? previous
-        : [...previous, id]
+      previous.includes(id) ? previous : [...previous, id]
     );
   };
 
@@ -186,13 +207,9 @@ const Collection = () => {
         {/* Section heading */}
         <div className="Collection-heading">
           <div className="Collection-heading-main">
-            <h2 className="Collection-title">
-              Streaming Collection
-            </h2>
+            <h2 className="Collection-title">Streaming Collection</h2>
 
-            <p className="Collection-subtitle">
-              Where art meets excitement.
-            </p>
+            <p className="Collection-subtitle">Where art meets excitement.</p>
           </div>
 
           <a href="/shop" className="Collection-view-all">
@@ -219,13 +236,15 @@ const Collection = () => {
             aria-label="Artwork collection"
           >
             {collectionItems.map((item) => {
-              const isWishlisted = wishlist.includes(item.id);
-              const isInCart = cart.includes(item.id);
+              const isWishlisted = isInWishlist(item.id);
+              const inCart = isInCart(item.id);
 
               return (
                 <article
                   className="Collection-card"
                   key={item.id}
+                  onClick={() => navigate(`/shop/${toArtSlug(item.title, item.id)}`)}
+                  style={{ cursor: "pointer" }}
                 >
                   {/* Artwork image */}
                   <div className="Collection-image-wrapper">
@@ -234,22 +253,30 @@ const Collection = () => {
                       src={item.image}
                       alt={`${item.title} by ${item.artist}`}
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src =
+                          "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=900&q=85";
+                      }}
                     />
 
                     {/* Discount label */}
-                    <span className="Collection-discount">
-                      -{item.discount}%
-                    </span>
+                    {item.discount > 0 && (
+                      <span className="Collection-discount">
+                        -{item.discount}%
+                      </span>
+                    )}
 
                     {/* Wishlist button */}
                     <button
                       type="button"
                       className={`Collection-wishlist ${
-                        isWishlisted
-                          ? "Collection-wishlist-active"
-                          : ""
+                        isWishlisted ? "Collection-wishlist-active" : ""
                       }`}
-                      onClick={() => toggleWishlist(item.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(item);
+                      }}
                       aria-label={
                         isWishlisted
                           ? "Remove from wishlist"
@@ -257,11 +284,7 @@ const Collection = () => {
                       }
                       aria-pressed={isWishlisted}
                     >
-                      {isWishlisted ? (
-                        <FaHeart />
-                      ) : (
-                        <FaRegHeart />
-                      )}
+                      {isWishlisted ? <FaHeart /> : <FaRegHeart />}
                     </button>
 
                     {/* Category panel replaces the countdown */}
@@ -278,9 +301,7 @@ const Collection = () => {
 
                   {/* Artwork details */}
                   <div className="Collection-details">
-                    <h3 className="Collection-card-title">
-                      {item.title}
-                    </h3>
+                    <h3 className="Collection-card-title">{item.title}</h3>
 
                     <p className="Collection-artist">
                       <span>Artist:</span> {item.artist}
@@ -288,9 +309,11 @@ const Collection = () => {
 
                     {/* Prices */}
                     <div className="Collection-pricing">
-                      <span className="Collection-original-price">
-                        {formatPrice(item.price)}
-                      </span>
+                      {item.discount > 0 && (
+                        <span className="Collection-original-price">
+                          {formatPrice(item.price)}
+                        </span>
+                      )}
 
                       <span className="Collection-discount-price">
                         {formatPrice(item.discountPrice)}
@@ -301,17 +324,18 @@ const Collection = () => {
                     <button
                       type="button"
                       className={`Collection-cart-button ${
-                        isInCart
-                          ? "Collection-cart-button-added"
-                          : ""
+                        inCart ? "Collection-cart-button-added" : ""
                       }`}
-                      onClick={() => addToCart(item.id)}
-                      disabled={isInCart}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addItemToCart(item, 1);
+                      }}
+                      disabled={inCart}
                     >
                       <FaShoppingCart />
 
                       <span>
-                        {isInCart ? "Added to Cart" : "Add to Cart"}
+                        {inCart ? "Added to Cart" : "Add to Cart"}
                       </span>
                     </button>
                   </div>

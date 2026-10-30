@@ -235,6 +235,12 @@
   border-color: #ebe1d4;
 }
 
+.ArtManage-stat__icon--purple {
+  color: #633fb9;
+  background: #f3effc;
+  border-color: #d8c7f8;
+}
+
 .ArtManage-stat > div:last-child {
   flex: 1;
   min-width: 0;
@@ -364,7 +370,7 @@
 
 .ArtManage-toolbar {
   display: grid;
-  grid-template-columns: auto minmax(180px, 1fr) minmax(155px, 205px) minmax(120px, 155px);
+  grid-template-columns: auto minmax(170px, 1.2fr) minmax(130px, 175px) minmax(145px, 190px) minmax(115px, 145px);
   align-items: center;
   gap: 12px;
 
@@ -842,6 +848,300 @@
   color: #64758a;
   background: #eef3f8;
   border-color: #dce6ef;
+}
+
+/* =========================================
+   LIVE SWITCH BUTTON & TYPE BADGES
+========================================= */
+
+.ArtManage-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px 4px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 750;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.22s ease;
+  user-select: none;
+  box-shadow: 0 2px 7px rgba(41, 37, 31, 0.08);
+}
+
+.ArtManage-switch-btn__knob {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #fff;
+  transition: all 0.22s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+}
+
+.ArtManage-switch-btn--published {
+  background: #edf7ee;
+  border-color: #c0e6c5;
+  color: #216d3f;
+}
+
+.ArtManage-switch-btn--published:hover {
+  background: #def0e0;
+  border-color: #9cd4a3;
+  transform: translateY(-1px);
+}
+
+.ArtManage-switch-btn--published .ArtManage-switch-btn__knob {
+  background: #28784e;
+}
+
+.ArtManage-switch-btn--unpublished {
+  background: #faf1e3;
+  border-color: #ebdcc2;
+  color: #926934;
+}
+
+.ArtManage-switch-btn--unpublished:hover {
+  background: #f5e7cf;
+  border-color: #dfc89f;
+  transform: translateY(-1px);
+}
+
+.ArtManage-switch-btn--unpublished .ArtManage-switch-btn__knob {
+  background: #b58137;
+}
+
+.ArtManage-switch-btn--gold {
+  background: #fdf8f0;
+  border-color: #ebd9c4;
+  color: #8f683e;
+}
+
+.ArtManage-switch-btn--gold:hover {
+  background: #f6ebd8;
+  border-color: #dfc4a2;
+}
+
+.ArtManage-switch-btn--gold .ArtManage-switch-btn__knob {
+  background: #9d713f;
+}
+
+.ArtManage-switch-btn--purple {
+  background: #f6f1fd;
+  border-color: #ddd0f8;
+  color: #6d28d9;
+}
+
+.ArtManage-switch-btn--purple:hover {
+  background: #ece2fb;
+  border-color: #bf9ff5;
+}
+
+.ArtManage-switch-btn--purple .ArtManage-switch-btn__knob {
+  background: #7339d6;
+}
+
+.ArtManage-switch-btn--off {
+  background: #f5f2ed;
+  border-color: #e5ded4;
+  color: #9c9081;
+}
+
+.ArtManage-switch-btn--off:hover {
+  background: #ebe5dc;
+  border-color: #d8cec0;
+}
+
+.ArtManage-switch-btn--off .ArtManage-switch-btn__knob {
+  background: #a89e91;
+}
+
+/* =========================================
+   THREE DEDICATED TOGGLES IN CARD
+========================================= */
+
+.ArtManage-card__toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0 10px;
+  padding: 10px;
+  background: #faf8f5;
+  border: 1px solid #ede7dd;
+  border-radius: 9px;
+}
+
+.ArtManage-card__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ArtManage-card__toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #5c5245;
+}
+
+.ArtManage-toggle-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.ArtManage-toggle-badge--1 {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.ArtManage-toggle-badge--2 {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+}
+
+.ArtManage-toggle-badge--3 {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+/* Table toggle columns */
+.ArtManage-table__th-toggle {
+  min-width: 145px;
+  text-align: center !important;
+}
+
+.ArtManage-table__td-toggle {
+  text-align: center !important;
+}
+
+/* Preview modal toggles */
+.ArtManage-preview__category-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 11px;
+  color: #79552f;
+  background: #f8f0e5;
+  border: 1px solid #efe0ca;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.ArtManage-preview__toggles-panel {
+  margin: 12px 0 16px;
+  padding: 14px;
+  background: #faf8f5;
+  border: 1px solid #ede7dd;
+  border-radius: 11px;
+}
+
+.ArtManage-preview__toggles-title {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--ArtManage-gold-dark);
+  font-size: 9.5px;
+  font-weight: 850;
+  letter-spacing: 1.2px;
+}
+
+.ArtManage-preview__toggles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.ArtManage-preview__toggle-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ece5da;
+  border-radius: 9px;
+}
+
+.ArtManage-preview__toggle-label {
+  font-size: 10.5px;
+  font-weight: 750;
+  color: #635749;
+}
+
+@media (max-width: 768px) {
+  .ArtManage-preview__toggles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ArtManage-card__meta-badges {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.ArtManage-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-size: 9.5px;
+  font-weight: 750;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  user-select: none;
+}
+
+.ArtManage-type-badge:hover {
+  transform: translateY(-1px);
+}
+
+.ArtManage-type-badge--general {
+  background: #faf4eb;
+  border-color: #eedcc6;
+  color: #8b683e;
+}
+
+.ArtManage-type-badge--general:hover {
+  background: #f4e8d6;
+  border-color: #dfc4a2;
+}
+
+.ArtManage-type-badge--streaming {
+  background: #f3effc;
+  border-color: #d8c7f8;
+  color: #633fb9;
+}
+
+.ArtManage-type-badge--streaming:hover {
+  background: #e9e0f9;
+  border-color: #bf9ff5;
+}
+
+.ArtManage-preview__badges-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
 }
 
 /* =========================================
@@ -1476,13 +1776,25 @@
   min-width: 0;
 }
 
-.ArtManage-preview__description p {
+.ArtManage-preview__description p,
+.ArtManage-preview__richtext {
   margin: 7px 0 0;
 
   color: #766b5f;
   font-size: 11px;
   line-height: 1.8;
   overflow-wrap: anywhere;
+}
+
+.ArtManage-preview__richtext p {
+  margin: 0 0 6px 0;
+  color: #766b5f;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.ArtManage-preview__richtext p:last-child {
+  margin-bottom: 0;
 }
 
 .ArtManage-preview__tags {
@@ -1755,8 +2067,8 @@
   }
 
   .ArtManage-toolbar {
-    grid-template-columns: auto minmax(150px, 1fr) minmax(135px, 180px) minmax(110px, 140px);
-    gap: 9px;
+    grid-template-columns: auto minmax(130px, 1fr) minmax(120px, 150px) minmax(130px, 160px) minmax(100px, 125px);
+    gap: 8px;
   }
 
   .ArtManage-grid {
@@ -1800,14 +2112,19 @@
     grid-row: 1;
   }
 
-  .ArtManage-filter:not(.ArtManage-filter--status) {
-    grid-column: 1;
+  .ArtManage-filter:not(.ArtManage-filter--type):not(.ArtManage-filter--status) {
+    grid-column: 1 / -1;
     grid-row: 2;
+  }
+
+  .ArtManage-filter--type {
+    grid-column: 1;
+    grid-row: 3;
   }
 
   .ArtManage-filter--status {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 3;
   }
 
   .ArtManage-grid {

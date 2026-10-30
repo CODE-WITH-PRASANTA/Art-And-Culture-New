@@ -1,15 +1,20 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import shop1 from "../../assets/shop-1.webp";
 import shop2 from "../../assets/shop-2.webp";
 import shop3 from "../../assets/shop-3.webp";
 import shop4 from "../../assets/shop-4.webp";
 import "./ShopDetailsMain.css";
 
+import { API_BASE_URL, ARTS_API_URL } from "../../config/api";
+import { useWishlist } from "../../context/WishlistContext";
+import { useCart } from "../../context/CartContext";
+
 /* =====================================================================
-   PRODUCT DATA  (edit freely, or connect to your API)
+   PRODUCT DATA TEMPLATE & DEFAULT FALLBACK
 ===================================================================== */
-const product = {
+const defaultProduct = {
   title: "Whispers of Colors in Silent Shadows",
   artist: "Henri Matisse",
   price: 34000, // in rupees
@@ -360,7 +365,16 @@ const ShopDetailsMainLightbox = ({ images, index, onChange, onClose }) => {
      onAddToCart(product, quantity)  -> may return a Promise
      onBuyNow(product, quantity)
 ===================================================================== */
-const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
+const ShopDetailsMain = ({
+ onAddToCart, onBuyNow }) => {
+  const navigate = useNavigate();
+  const { artName } = useParams();
+  const [searchParams] = useSearchParams();
+  const artId = artName || searchParams.get("id");
+
+  const [product, setProduct] = useState(defaultProduct);
+  const [loading, setLoading] = useState(true);
+
   const rootRef = useRef(null);
   const detailsRef = useRef(null);
   const stageRef = useRef(null);
@@ -371,13 +385,180 @@ const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
   const [inView, setInView] = useState(false);
   const [detailsInView, setDetailsInView] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [explored, setExplored] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
   const [cartState, setCartState] = useState("idle"); // idle | adding | added
   const [message, setMessage] = useState("");
-  const [liked, setLiked] = useState(false);
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { addToCart: addItemToCart } = useCart();
+
+  /* ---------- Fetch live artwork details from database ---------- */
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchArtworkDetails = async () => {
+      try {
+        setLoading(true);
+        let url = ARTS_API_URL;
+        if (artId) {
+          url = `${ARTS_API_URL}/${encodeURIComponent(artId)}`;
+        }
+
+        const res = await fetch(url);
+        const json = await res.json();
+
+        if (!isMounted) return;
+
+        let art = null;
+        if (json.success && json.data) {
+          if (Array.isArray(json.data) && json.data.length > 0) {
+            art = json.data[0];
+          } else if (!Array.isArray(json.data)) {
+            art = json.data;
+          }
+        }
+
+        // Fallback: search client-side in full list by slug or title if not found directly
+        if (!art && artId) {
+          const allRes = await fetch(ARTS_API_URL);
+          const allJson = await allRes.json();
+          if (allJson.success && Array.isArray(allJson.data)) {
+            const cleanTarget = decodeURIComponent(artId).toLowerCase().replace(/-/g, " ").trim();
+            art = allJson.data.find(
+              (a) =>
+                (a.title && a.title.toLowerCase().trim() === cleanTarget) ||
+                (a.artNo && a.artNo.toLowerCase() === cleanTarget) ||
+                String(a._id) === artId
+            ) || allJson.data[0];
+          }
+        }
+
+        if (art) {
+          const numPrice = Number(art.price) || 0;
+          const numDiscount = Number(art.discount) || 0;
+          const finalPrice =
+            numDiscount > 0 ? numPrice * (1 - numDiscount / 100) : numPrice;
+
+          // Format images
+          let imgs = [];
+          if (Array.isArray(art.photos) && art.photos.length > 0) {
+            imgs = art.photos.map((p, i) => {
+              let src = "";
+              if (p.url) {
+                src = p.url.startsWith("http")
+                  ? p.url
+                  : `${API_BASE_URL}${p.url}`;
+              } else if (p.dataUrl) {
+                src =
+                  p.dataUrl.startsWith("http") || p.dataUrl.startsWith("data:")
+                    ? p.dataUrl
+                    : `${API_BASE_URL}${p.dataUrl}`;
+              } else {
+                src = [shop1, shop2, shop3, shop4][i % 4];
+              }
+              return {
+                src,
+                alt: `${art.title || "Artwork"} - view ${i + 1}`,
+              };
+            });
+          }
+
+          if (imgs.length === 0) {
+            imgs = defaultProduct.images;
+          }
+
+          const loadedProduct = {
+            ...defaultProduct,
+            id: art._id || art.id,
+            artNo: art.artNo || "ART-EXCLUSIVE",
+            title: art.title || defaultProduct.title,
+            artist: art.artistName || art.artist || defaultProduct.artist,
+            price: finalPrice,
+            originalPrice: numPrice,
+            discount: numDiscount,
+            condition: "Original Heritage Artwork",
+            stock:
+              art.stockQuantity !== undefined
+                ? Math.max(1, Number(art.stockQuantity))
+                : defaultProduct.stock,
+            categories: [art.category, ...(art.tags || [])].filter(Boolean),
+            deliveryCharge: 1200,
+            images: imgs,
+
+            artistInfo: [
+              {
+                label: "Artist Name",
+                value: art.artistName || defaultProduct.artist,
+              },
+              {
+                label: "Artwork Code",
+                value: art.artNo || "ART-EXCLUSIVE",
+              },
+              {
+                label: "Artist Overview",
+                value: art.artistAbout
+                  ? art.artistAbout.replace(/<[^>]*>/g, "")
+                  : defaultProduct.artistInfo[2].value,
+              },
+              {
+                label: "Category",
+                value: art.category || "Traditional & Fine Art",
+              },
+            ],
+
+            artworkInfo: [
+              { label: "Category", value: art.category || "Fine Art Painting" },
+              {
+                label: "Size",
+                value: art.sizeOverview || "24 x 36 inch (Height x Width)",
+              },
+              {
+                label: "Framing",
+                value:
+                  art.framing === "Yes"
+                    ? "Premium Wooden Frame included"
+                    : "Not framed (Canvas Roll / Panel)",
+              },
+              {
+                label: "Theme",
+                value:
+                  art.themeDetails || "Indian Heritage & Cultural Expression",
+              },
+              {
+                label: "Signature",
+                value: art.signature
+                  ? "Signed by Artist"
+                  : "Authentic Verified",
+              },
+              {
+                label: "Authenticity",
+                value:
+                  art.certificate === "Yes"
+                    ? "Includes Certificate of Authenticity."
+                    : "Verified Genuine Artwork",
+              },
+            ],
+
+            narrative: art.description || defaultProduct.narrative,
+            guidelines: defaultProduct.guidelines,
+          };
+
+          setProduct(loadedProduct);
+          setActiveIndex(0);
+        }
+      } catch (err) {
+        console.error("Failed to load artwork details:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchArtworkDetails();
+    return () => {
+      isMounted = false;
+    };
+  }, [artId]);
 
   /* ---------- enter animations ---------- */
   useEffect(() => {
@@ -491,11 +672,11 @@ const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
     setCartState("adding");
     setMessage("");
     try {
+      addItemToCart(product, quantity);
       if (onAddToCart) await onAddToCart(product, quantity);
-      else await new Promise((resolve) => setTimeout(resolve, 800)); // demo only
       setCartState("added");
       setMessage(
-        `${quantity} × ${product.title} added to your cart.`
+        `${quantity} × "${product.title}" added to your cart.`
       );
     } catch (error) {
       setCartState("idle");
@@ -504,7 +685,9 @@ const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
   };
 
   const buyNow = () => {
+    addItemToCart(product, quantity);
     if (onBuyNow) onBuyNow(product, quantity);
+    navigate("/cart");
   };
 
   const activeImage = product.images[activeIndex];
@@ -518,6 +701,21 @@ const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
       aria-labelledby="ShopDetailsMain-title"
     >
       <div className="ShopDetailsMain-container">
+        {/* ================= Breadcrumbs ================= */}
+        <nav className="ShopDetailsMain-breadcrumb" aria-label="Breadcrumb">
+          <Link to="/" className="ShopDetailsMain-breadcrumbLink">Home</Link>
+          <span className="ShopDetailsMain-breadcrumbSep">/</span>
+          <Link to="/shop" className="ShopDetailsMain-breadcrumbLink">Shop</Link>
+          {product.categories?.[0] && (
+            <>
+              <span className="ShopDetailsMain-breadcrumbSep">/</span>
+              <span className="ShopDetailsMain-breadcrumbCat">{product.categories[0]}</span>
+            </>
+          )}
+          <span className="ShopDetailsMain-breadcrumbSep">/</span>
+          <span className="ShopDetailsMain-breadcrumbCurrent">{product.title}</span>
+        </nav>
+
         {/* ================= Gallery ================= */}
         <div className="ShopDetailsMain-gallery">
           <div className="ShopDetailsMain-mainWrap">
@@ -545,15 +743,6 @@ const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
               <span className="ShopDetailsMain-corner ShopDetailsMain-cornerBottom" aria-hidden="true" />
 
               <span className="ShopDetailsMain-badge">Original Artwork</span>
-
-              <button
-                type="button"
-                className="ShopDetailsMain-zoom"
-                onClick={() => setLightboxOpen(true)}
-                aria-label="View image full screen"
-              >
-                <ZoomIcon />
-              </button>
 
               <span
                 className={`ShopDetailsMain-hint ${explored ? "ShopDetailsMain-hintHidden" : ""}`}
@@ -602,6 +791,16 @@ const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
           <div className="ShopDetailsMain-row ShopDetailsMain-rowPrice" style={{ "--delay": "0.38s" }}>
             <span className="ShopDetailsMain-rowLabel">Price:</span>
             <strong className="ShopDetailsMain-price">{formatINR(product.price)}</strong>
+            {product.discount > 0 && (
+              <>
+                <del style={{ color: "#9a8f82", fontSize: "16px", textDecoration: "line-through", marginLeft: "10px" }}>
+                  {formatINR(product.originalPrice)}
+                </del>
+                <span style={{ color: "#9c3b2f", fontWeight: 700, fontSize: "12px", marginLeft: "8px", background: "#f9edea", padding: "2px 8px", borderRadius: "5px" }}>
+                  {product.discount}% OFF
+                </span>
+              </>
+            )}
             <span className="ShopDetailsMain-tax">Inclusive of all taxes</span>
           </div>
 
@@ -698,16 +897,37 @@ const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
             </p>
           </div>
 
-          <button
-            type="button"
-            className={`ShopDetailsMain-wish ${liked ? "ShopDetailsMain-wishActive" : ""}`}
-            onClick={() => setLiked((prev) => !prev)}
-            aria-pressed={liked}
-            style={{ "--delay": "0.66s" }}
-          >
-            <HeartIcon filled={liked} />
-            <span>{liked ? "Added to wishlist" : "Add to wishlist"}</span>
-          </button>
+          {(() => {
+            const currentId = artId || product.id || product._id;
+            const isWishlisted = isInWishlist(currentId);
+            return (
+              <button
+                type="button"
+                className={`ShopDetailsMain-wish ${isWishlisted ? "ShopDetailsMain-wishActive" : ""}`}
+                onClick={() => {
+                  const fullArt = {
+                    id: currentId,
+                    _id: product._id || currentId,
+                    title: product.title,
+                    artist: product.artist,
+                    price: product.price,
+                    discount: product.discount || 0,
+                    originalPrice: product.originalPrice || product.price,
+                    category: product.categories || [product.category || "Artwork"],
+                    image: product.images?.[0]?.src || product.image || "",
+                    stock: product.stock > 0,
+                    description: product.narrative || product.description || "",
+                  };
+                  toggleWishlist(fullArt);
+                }}
+                aria-pressed={isWishlisted}
+                style={{ "--delay": "0.66s" }}
+              >
+                <HeartIcon filled={isWishlisted} />
+                <span>{isWishlisted ? "Added to wishlist" : "Add to wishlist"}</span>
+              </button>
+            );
+          })()}
 
           <div className="ShopDetailsMain-meta" style={{ "--delay": "0.74s" }}>
             <span className="ShopDetailsMain-metaLabel">Categories:</span>
@@ -815,7 +1035,14 @@ const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
             </header>
 
             <h4 className="ShopDetailsMain-subTitle">Inner Narrative of This Artwork</h4>
-            <p className="ShopDetailsMain-narrative">{product.narrative}</p>
+            {typeof product.narrative === "string" && product.narrative.includes("<") ? (
+              <div
+                className="ShopDetailsMain-narrative"
+                dangerouslySetInnerHTML={{ __html: product.narrative }}
+              />
+            ) : (
+              <p className="ShopDetailsMain-narrative">{product.narrative}</p>
+            )}
 
             <div className="ShopDetailsMain-rule" aria-hidden="true" />
 
@@ -831,15 +1058,6 @@ const ShopDetailsMain = ({ onAddToCart, onBuyNow }) => {
           </article>
         </div>
       </div>
-
-      {lightboxOpen && (
-        <ShopDetailsMainLightbox
-          images={product.images}
-          index={activeIndex}
-          onChange={setActiveIndex}
-          onClose={() => setLightboxOpen(false)}
-        />
-      )}
     </section>
   );
 };

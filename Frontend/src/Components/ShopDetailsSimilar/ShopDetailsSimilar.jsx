@@ -1,5 +1,5 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   Heart,
   ChevronLeft,
@@ -12,63 +12,6 @@ import {
 import "./ShopDetailsSimilar.css";
 
 import shopMain1 from "../../assets/shop-details-1.webp";
-import shopMain2 from "../../assets/shop-details-2.webp";
-import shopMain3 from "../../assets/shop-details-3.webp";
-import shopMain4 from "../../assets/shop-details-4.webp";
-import shopMain5 from "../../assets/shop-details-2.webp";
-import shopMain6 from "../../assets/shop-details-1.webp";
-
-const products = [
-  {
-    id: 1,
-    image: shopMain1,
-    name: "Desert Mirage: Watercolor Cactus Art Print",
-    artist: "Edward Munch",
-    price: 21999,
-    category: "Watercolor",
-  },
-  {
-    id: 2,
-    image: shopMain2,
-    name: "Abstract Art to Spark Creative Inspiration",
-    artist: "Mark Jon",
-    price: 18500,
-    oldPrice: 22000,
-    category: "Abstract Art",
-  },
-  {
-    id: 3,
-    image: shopMain3,
-    name: "Cosmic Beauty: Galaxy-Inspired Resin Coasters",
-    artist: "Leonardo da Vinci",
-    price: 24500,
-    category: "Fine Art",
-  },
-  {
-    id: 4,
-    image: shopMain4,
-    name: "Ocean Waves: Textured Acrylic Art Panel",
-    artist: "Frida Kahlo",
-    price: 16999,
-    category: "Canvas Art",
-  },
-  {
-    id: 5,
-    image: shopMain5,
-    name: "Golden Horizon: Contemporary Art Collection",
-    artist: "Vincent van Gogh",
-    price: 15999,
-    category: "Contemporary Art",
-  },
-  {
-    id: 6,
-    image: shopMain6,
-    name: "Ethereal Dreams: Timeless Artistic Expression",
-    artist: "Claude Monet",
-    price: 19999,
-    category: "Landscape Art",
-  },
-];
 
 const formatPrice = (price) =>
   new Intl.NumberFormat("en-IN", {
@@ -77,21 +20,128 @@ const formatPrice = (price) =>
     maximumFractionDigits: 0,
   }).format(price);
 
+import { API_BASE_URL, ARTS_API_URL } from "../../config/api";
+import { useWishlist } from "../../context/WishlistContext";
+
+const toArtSlug = (title, id) => {
+  if (!title) return id || "";
+  return encodeURIComponent(
+    title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+  );
+};
+
 const ShopDetailsSimilar = ({ onAddToCart, onQuickView }) => {
-  const [wishlist, setWishlist] = useState([]);
+  const navigate = useNavigate();
+  const { artName } = useParams();
+  const [searchParams] = useSearchParams();
+  const currentIdentifier = artName || searchParams.get("id");
+
+  const [productsList, setProductsList] = useState([]);
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [cart, setCart] = useState([]);
   const [activeProduct, setActiveProduct] = useState(null);
   const [paused, setPaused] = useState(false);
   const [reverse, setReverse] = useState(false);
 
-  const toggleWishlist = (id) => {
-    setWishlist((previous) =>
-      previous.includes(id)
-        ? previous.filter((item) => item !== id)
-        : [...previous, id]
-    );
+  /* Fetch live artworks from database */
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchSimilarArtworks = async () => {
+      try {
+        const res = await fetch(ARTS_API_URL);
+        const json = await res.json();
+
+        if (!isMounted || !json.success || !Array.isArray(json.data)) return;
+
+        const filtered = json.data.filter((item) => {
+          if (!currentIdentifier) return true;
+          const target = decodeURIComponent(currentIdentifier)
+            .toLowerCase()
+            .replace(/-/g, " ")
+            .trim();
+          const itemId = String(item._id || item.id || "");
+          const itemNo = String(item.artNo || "").toLowerCase();
+          const itemTitle = String(item.title || "").toLowerCase().trim();
+          const itemSlug = toArtSlug(item.title, item._id).toLowerCase();
+
+          if (itemId === currentIdentifier) return false;
+          if (itemNo === target) return false;
+          if (itemTitle === target) return false;
+          if (itemSlug === String(currentIdentifier).toLowerCase()) return false;
+          return true;
+        });
+
+        if (filtered.length > 0) {
+          const dbProducts = filtered.map((art) => {
+            const numPrice = Number(art.price) || 0;
+            const numDiscount = Number(art.discount) || 0;
+            const finalPrice =
+              numDiscount > 0 ? numPrice * (1 - numDiscount / 100) : numPrice;
+
+            let img = shopMain1;
+            if (Array.isArray(art.photos) && art.photos.length > 0) {
+              const p = art.photos[0];
+              if (p.url) {
+                img = p.url.startsWith("http")
+                  ? p.url
+                  : `${API_BASE_URL}${p.url}`;
+              } else if (p.dataUrl) {
+                img =
+                  p.dataUrl.startsWith("http") || p.dataUrl.startsWith("data:")
+                    ? p.dataUrl
+                    : `${API_BASE_URL}${p.dataUrl}`;
+              }
+            }
+
+            return {
+              id: art._id || art.id,
+              image: img,
+              name: art.title || "Traditional Heritage Artwork",
+              artist: art.artistName || "Master Artist",
+              price: finalPrice,
+              oldPrice: numDiscount > 0 ? numPrice : null,
+              category: art.category || "Fine Art",
+            };
+          });
+
+          // Loop real database artworks only to ensure smooth marquee loop
+          let fullList = [...dbProducts];
+          while (fullList.length < 5 && dbProducts.length > 0) {
+            fullList = [...fullList, ...dbProducts];
+          }
+
+          setProductsList(fullList);
+        } else {
+          setProductsList([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch similar artworks:", err);
+      }
+    };
+
+    fetchSimilarArtworks();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentIdentifier]);
+
+  const handleOpenProduct = (product) => {
+    if (!product) return;
+    const id = typeof product === "object" ? product.id : product;
+    if (!id || String(id).startsWith("default-")) return;
+    const name = typeof product === "object" ? product.name : "";
+    const slug = toArtSlug(name, id);
+    navigate(`/shop/${slug}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  
   const addToCart = (product) => {
     setCart((previous) =>
       previous.includes(product.id)
@@ -111,7 +161,7 @@ const ShopDetailsSimilar = ({ onAddToCart, onQuickView }) => {
   };
 
   const renderCard = (product, index) => {
-    const isWishlisted = wishlist.includes(product.id);
+    const isWishlisted = isInWishlist(product.id);
     const isAdded = cart.includes(product.id);
 
     return (
@@ -119,7 +169,14 @@ const ShopDetailsSimilar = ({ onAddToCart, onQuickView }) => {
         className="ShopDetailsSimilar__card"
         key={`${product.id}-${index}`}
       >
-        <div className="ShopDetailsSimilar__imageWrap">
+        <div
+          className="ShopDetailsSimilar__imageWrap"
+          style={{ cursor: "pointer" }}
+          onClick={(e) => {
+            if (e.target.closest("button")) return;
+            handleOpenProduct(product);
+          }}
+        >
           <img
             className="ShopDetailsSimilar__image"
             src={product.image}
@@ -137,7 +194,18 @@ const ShopDetailsSimilar = ({ onAddToCart, onQuickView }) => {
             className={`ShopDetailsSimilar__wishlist ${
               isWishlisted ? "is-active" : ""
             }`}
-            onClick={() => toggleWishlist(product.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleWishlist({
+                id: product.id,
+                _id: product.id,
+                title: product.name,
+                artist: product.artist,
+                price: product.price,
+                image: product.image,
+                stock: true,
+              });
+            }}
             aria-label={
               isWishlisted ? "Remove from wishlist" : "Add to wishlist"
             }
@@ -153,7 +221,10 @@ const ShopDetailsSimilar = ({ onAddToCart, onQuickView }) => {
           <button
             type="button"
             className="ShopDetailsSimilar__quickAction"
-            onClick={() => handleQuickView(product)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleQuickView(product);
+            }}
             aria-label={`Quick view ${product.name}`}
           >
             <Eye size={17} />
@@ -162,7 +233,11 @@ const ShopDetailsSimilar = ({ onAddToCart, onQuickView }) => {
         </div>
 
         <div className="ShopDetailsSimilar__content">
-          <h3 className="ShopDetailsSimilar__productName">
+          <h3
+            className="ShopDetailsSimilar__productName"
+            style={{ cursor: "pointer" }}
+            onClick={() => handleOpenProduct(product)}
+          >
             {product.name}
           </h3>
 
@@ -211,11 +286,15 @@ const ShopDetailsSimilar = ({ onAddToCart, onQuickView }) => {
       key={copy}
       aria-hidden={copy === "duplicate" ? "true" : undefined}
     >
-      {products.map((product, index) =>
+      {productsList.map((product, index) =>
         renderCard(product, `${copy}-${index}`)
       )}
     </div>
   );
+
+  if (!productsList || productsList.length === 0) {
+    return null;
+  }
 
   return (
     <section
@@ -334,17 +413,33 @@ const ShopDetailsSimilar = ({ onAddToCart, onQuickView }) => {
               <p>Artist: {activeProduct.artist}</p>
               <strong>{formatPrice(activeProduct.price)}</strong>
 
-              <button
-                type="button"
-                className="ShopDetailsSimilar__addButton"
-                onClick={() => {
-                  addToCart(activeProduct);
-                  setActiveProduct(null);
-                }}
-              >
-                <ShoppingCart size={17} />
-                Add to Cart
-              </button>
+              <div style={{ display: "flex", gap: "10px", marginTop: "16px", width: "100%", flexWrap: "wrap" }}>
+                {!String(activeProduct.id).startsWith("default-") && (
+                  <button
+                    type="button"
+                    className="ShopDetailsSimilar__addButton"
+                    style={{ background: "#211b17", color: "#fff", borderColor: "#211b17" }}
+                    onClick={() => {
+                      setActiveProduct(null);
+                      handleOpenProduct(activeProduct);
+                    }}
+                  >
+                    View Details
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  className="ShopDetailsSimilar__addButton"
+                  onClick={() => {
+                    addToCart(activeProduct);
+                    setActiveProduct(null);
+                  }}
+                >
+                  <ShoppingCart size={17} />
+                  Add to Cart
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,0 +1,2002 @@
+
+/* =========================================================
+   CLASS DETAILS — GLOBAL STYLES
+========================================================= */
+
+.ClassDetails {
+  --ClassDetails-navy: #122d47;
+  --ClassDetails-text: #344d68;
+  --ClassDetails-muted: #72849d;
+  --ClassDetails-teal: #087f89;
+  --ClassDetails-teal-dark: #066d76;
+  --ClassDetails-gold: #f5a514;
+  --ClassDetails-border: #d9e5ed;
+  --ClassDetails-soft: #f5f9fa;
+  --ClassDetails-white: #ffffff;
+
+  width: 100%;
+  min-width: 0;
+  overflow: clip;
+  background: var(--ClassDetails-white);
+  color: var(--ClassDetails-navy);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ClassDetails *,
+.ClassDetails *::before,
+.ClassDetails *::after {
+  box-sizing: border-box;
+}
+
+.ClassDetails button,
+.ClassDetails input,
+.ClassDetails select,
+.ClassDetails textarea {
+  font: inherit;
+}
+
+.ClassDetails button,
+.ClassDetails a,
+.ClassDetails input,
+.ClassDetails select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ClassDetails a {
+  color: inherit;
+}
+
+.ClassDetails button {
+  cursor: pointer;
+}
+
+.ClassDetails button:focus-visible,
+.ClassDetails a:focus-visible,
+.ClassDetails input:focus-visible,
+.ClassDetails select:focus-visible,
+.ClassDetails textarea:focus-visible {
+  outline: 3px solid rgba(8, 127, 137, 0.28);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.ClassDetails-header {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 25px 0 34px;
+  border-bottom: 1px solid var(--ClassDetails-border);
+  background:
+    radial-gradient(
+      ellipse at 12% 0%,
+      rgba(219, 241, 242, 0.45),
+      transparent 50%
+    ),
+    linear-gradient(180deg, #eff8f8 0%, #ffffff 100%);
+}
+
+.ClassDetails-headerContainer {
+  width: calc(100% - 64px);
+  max-width: 1470px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   BREADCRUMBS
+========================================================= */
+
+.ClassDetails-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 22px;
+  color: #71849a;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ClassDetails-breadcrumb a {
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.ClassDetails-breadcrumb a:hover {
+  color: var(--ClassDetails-teal);
+}
+
+.ClassDetails-breadcrumb > span {
+  color: #bac7d2;
+}
+
+.ClassDetails-breadcrumb strong {
+  color: var(--ClassDetails-navy);
+  font-weight: 700;
+}
+
+/* =========================================================
+   HEADING LAYOUT
+========================================================= */
+
+.ClassDetails-headingLayout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.ClassDetails-headingMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.ClassDetails-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ClassDetails-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 4px 11px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.ClassDetails-badge--featured {
+  background: #fff5df;
+  color: #9c6500;
+}
+
+.ClassDetails-badge--verified {
+  background: #e8f6f6;
+  color: var(--ClassDetails-teal);
+}
+
+.ClassDetails-badge--category {
+  border-color: var(--ClassDetails-border);
+  background: #f6f9fa;
+  color: #52667d;
+}
+
+.ClassDetails-badge--trial {
+  background: #e8f6ed;
+  color: #288255;
+}
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.ClassDetails-title {
+  margin: 0;
+  color: var(--ClassDetails-navy);
+  font-size: clamp(34px, 3.2vw, 58px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.ClassDetails-providerLine {
+  margin: 14px 0 15px;
+  color: var(--ClassDetails-muted);
+  font-size: 19px;
+  line-height: 1.5;
+}
+
+.ClassDetails-providerLine a {
+  color: var(--ClassDetails-teal);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.ClassDetails-providerLine a:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   QUICK INFORMATION
+========================================================= */
+
+.ClassDetails-quickInfo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 26px;
+  color: var(--ClassDetails-navy);
+  font-size: 15px;
+}
+
+.ClassDetails-quickInfo > a {
+  color: #72849d;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ClassDetails-quickInfo > a:hover {
+  color: var(--ClassDetails-teal);
+}
+
+.ClassDetails-locationInfo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ClassDetails-onlinePill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 29px;
+  padding: 3px 12px;
+  border-radius: 8px;
+  background: #eceeff;
+  color: #4653c8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   HEADER ACTIONS
+========================================================= */
+
+.ClassDetails-headerActions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.ClassDetails-headerButton,
+.ClassDetails-compareButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 0 17px;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 13px;
+  background: #ffffff;
+  color: var(--ClassDetails-navy);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.ClassDetails-headerButton:hover,
+.ClassDetails-compareButton:hover {
+  transform: translateY(-1px);
+  border-color: #b2d4db;
+  background: #f9fcfc;
+}
+
+.ClassDetails-headerButton--saved {
+  border-color: #f0ccd2;
+  background: #fff1f3;
+  color: #d44e69;
+}
+
+.ClassDetails-compareButton {
+  cursor: pointer;
+}
+
+.ClassDetails-compareButton input {
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  accent-color: var(--ClassDetails-teal);
+}
+
+.ClassDetails-headerEnquire {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 21px;
+  border: 1px solid var(--ClassDetails-gold);
+  border-radius: 13px;
+  background: var(--ClassDetails-gold);
+  color: #142b40;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.ClassDetails-headerEnquire:hover {
+  transform: translateY(-1px);
+  background: #ffb51e;
+}
+
+/* =========================================================
+   COMPARE NOTICE
+========================================================= */
+
+.ClassDetails-compareNotice {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 20px;
+  padding: 12px 15px;
+  border: 1px solid #cce8df;
+  border-radius: 12px;
+  background: #f0faf6;
+  color: #287957;
+  font-size: 13px;
+}
+
+.ClassDetails-compareNotice button {
+  padding: 3px 7px;
+  border: 0;
+  background: transparent;
+  color: var(--ClassDetails-teal);
+  font-weight: 750;
+  text-decoration: underline;
+}
+
+/* =========================================================
+   MAIN PAGE GRID
+========================================================= */
+
+.ClassDetails-pageContainer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 425px;
+  align-items: start;
+  gap: 48px;
+  width: calc(100% - 64px);
+  max-width: 1470px;
+  margin: 0 auto;
+  padding: 48px 0 65px;
+}
+
+.ClassDetails-mainColumn {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ClassDetails-section {
+  min-width: 0;
+  margin-top: 43px;
+  scroll-margin-top: 30px;
+}
+
+.ClassDetails-section:first-child {
+  margin-top: 0;
+}
+
+.ClassDetails-sectionTitle {
+  margin: 0 0 20px;
+  color: var(--ClassDetails-navy);
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.75px;
+  line-height: 1.35;
+}
+
+.ClassDetails-bodyText,
+.ClassDetails-lead {
+  margin: 0;
+  color: var(--ClassDetails-text);
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+.ClassDetails-lead {
+  margin-bottom: 13px;
+}
+
+.ClassDetails-bodyText + .ClassDetails-bodyText {
+  margin-top: 12px;
+}
+
+.ClassDetails-note {
+  margin: 14px 0 0;
+  color: var(--ClassDetails-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   HERO IMAGE
+========================================================= */
+
+.ClassDetails-gallery {
+  position: relative;
+  width: 100%;
+  height: 465px;
+  overflow: hidden;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 27px;
+  background: #edf4f2;
+  box-shadow: 0 8px 26px rgba(18, 45, 71, 0.055);
+}
+
+.ClassDetails-heroImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.45s ease;
+}
+
+.ClassDetails-gallery:hover .ClassDetails-heroImage {
+  transform: scale(1.015);
+}
+
+.ClassDetails-imageCaption {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+.ClassDetails-imageCaption span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.93);
+  color: var(--ClassDetails-navy);
+  font-size: 12px;
+  font-weight: 750;
+  box-shadow: 0 3px 12px rgba(18, 45, 71, 0.08);
+}
+
+/* =========================================================
+   LEARNING GRID
+========================================================= */
+
+.ClassDetails-learningGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.ClassDetails-learningItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  min-width: 0;
+  min-height: 70px;
+  padding: 19px 18px;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 15px;
+  background: #f5f9fa;
+  color: var(--ClassDetails-navy);
+  font-size: 15px;
+  line-height: 1.6;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.ClassDetails-learningItem:hover {
+  border-color: #badce0;
+  background: #eff8f8;
+}
+
+.ClassDetails-learningItem > svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--ClassDetails-teal);
+  stroke-width: 2.5;
+}
+
+/* =========================================================
+   CLASS DETAILS TABLE
+========================================================= */
+
+.ClassDetails-detailsTable {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 19px;
+  background: #ffffff;
+}
+
+.ClassDetails-detailsRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ClassDetails-detailsRow + .ClassDetails-detailsRow {
+  border-top: 1px solid var(--ClassDetails-border);
+}
+
+.ClassDetails-detailCell {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  min-width: 0;
+  min-height: 61px;
+  padding: 16px 21px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ClassDetails-detailCell + .ClassDetails-detailCell {
+  border-left: 1px solid var(--ClassDetails-border);
+}
+
+.ClassDetails-detailCell > span {
+  flex: 0 0 auto;
+  color: var(--ClassDetails-muted);
+}
+
+.ClassDetails-detailCell > strong {
+  color: var(--ClassDetails-navy);
+  font-weight: 700;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   SCHEDULE TABLE
+========================================================= */
+
+.ClassDetails-scheduleTable {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 19px;
+  background: #ffffff;
+}
+
+.ClassDetails-scheduleRow {
+  display: grid;
+  grid-template-columns: 1fr 1.45fr 0.65fr;
+  align-items: center;
+  gap: 15px;
+  min-height: 55px;
+  padding: 13px 17px;
+  color: var(--ClassDetails-text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ClassDetails-scheduleRow + .ClassDetails-scheduleRow {
+  border-top: 1px solid var(--ClassDetails-border);
+}
+
+.ClassDetails-scheduleRow--head {
+  background: #f5f9fa;
+  color: var(--ClassDetails-navy);
+  font-weight: 750;
+}
+
+.ClassDetails-scheduleRow strong {
+  color: var(--ClassDetails-navy);
+  font-weight: 700;
+}
+
+/* =========================================================
+   TEACHER CARD
+========================================================= */
+
+.ClassDetails-teacherCard {
+  display: grid;
+  grid-template-columns: 137px minmax(0, 1fr);
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #8bcbd0;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(18, 45, 71, 0.055);
+}
+
+.ClassDetails-teacherAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 190px;
+  background: #dff0e9;
+  color: #299c75;
+}
+
+.ClassDetails-teacherAvatar span {
+  font-size: 39px;
+  font-weight: 850;
+  letter-spacing: -1.5px;
+}
+
+.ClassDetails-teacherContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 23px 25px;
+}
+
+.ClassDetails-teacherNameLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.ClassDetails-teacherNameLine h3 {
+  margin: 0;
+  color: var(--ClassDetails-navy);
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.ClassDetails-teacherVerified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: #e8f6f6;
+  color: var(--ClassDetails-teal);
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.ClassDetails-teacherContent > p {
+  margin: 0 0 7px;
+  color: var(--ClassDetails-text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.ClassDetails-teacherMeta {
+  color: var(--ClassDetails-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ClassDetails-teacherFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 15px;
+  color: var(--ClassDetails-muted);
+  font-size: 13px;
+}
+
+.ClassDetails-teacherFooter a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ClassDetails-teal);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.ClassDetails-teacherFooter a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* =========================================================
+   LOCATION CARD
+========================================================= */
+
+.ClassDetails-locationCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 16px;
+  background: #f7fafb;
+}
+
+.ClassDetails-locationIcon {
+  display: flex;
+  flex: 0 0 45px;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: #e3f3f2;
+  color: var(--ClassDetails-teal);
+}
+
+.ClassDetails-locationCard strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ClassDetails-navy);
+  font-size: 15px;
+}
+
+.ClassDetails-locationCard p {
+  margin: 0;
+  color: var(--ClassDetails-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   SECTION HEADING ACTION
+========================================================= */
+
+.ClassDetails-sectionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 13px;
+}
+
+.ClassDetails-sectionHeading .ClassDetails-sectionTitle {
+  margin-bottom: 0;
+}
+
+.ClassDetails-outlineButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 45px;
+  padding: 0 18px;
+  border: 1px solid var(--ClassDetails-teal);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--ClassDetails-teal);
+  font-size: 14px;
+  font-weight: 750;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.ClassDetails-outlineButton:hover {
+  background: var(--ClassDetails-teal);
+  color: #ffffff;
+}
+
+/* =========================================================
+   REVIEW FORM
+========================================================= */
+
+.ClassDetails-reviewForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+  padding: 23px;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 17px;
+  background: #f8fbfc;
+}
+
+.ClassDetails-reviewForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--ClassDetails-navy);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ClassDetails-reviewForm input,
+.ClassDetails-reviewForm select,
+.ClassDetails-reviewForm textarea {
+  width: 100%;
+  min-height: 47px;
+  padding: 12px 14px;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 11px;
+  outline: none;
+  background: #ffffff;
+  color: var(--ClassDetails-navy);
+  font-size: 14px;
+}
+
+.ClassDetails-reviewForm textarea {
+  resize: vertical;
+}
+
+.ClassDetails-reviewForm input:focus,
+.ClassDetails-reviewForm select:focus,
+.ClassDetails-reviewForm textarea:focus {
+  border-color: var(--ClassDetails-teal);
+}
+
+.ClassDetails-reviewForm .ClassDetails-submitButton {
+  align-self: flex-start;
+}
+
+.ClassDetails-feedbackMessage {
+  margin: 13px 0 0;
+  padding: 12px 14px;
+  border: 1px solid #cce8df;
+  border-radius: 11px;
+  background: #f0faf6;
+  color: #287957;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   FAQ
+========================================================= */
+
+.ClassDetails-faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ClassDetails-faqItem {
+  overflow: hidden;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 17px;
+  background: #ffffff;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ClassDetails-faqItem:hover {
+  border-color: #c3dce2;
+}
+
+.ClassDetails-faqItem--open {
+  border-color: #b9dadd;
+  box-shadow: 0 5px 15px rgba(18, 45, 71, 0.04);
+}
+
+.ClassDetails-faqQuestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  min-height: 68px;
+  padding: 19px 22px;
+  border: 0;
+  background: #ffffff;
+  color: var(--ClassDetails-navy);
+  font-size: 15px;
+  font-weight: 750;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.ClassDetails-faqQuestion > svg {
+  flex: 0 0 auto;
+  color: var(--ClassDetails-teal);
+  stroke-width: 2.5;
+}
+
+.ClassDetails-faqAnswer {
+  padding: 0 22px 20px;
+  color: var(--ClassDetails-text);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+/* =========================================================
+   SIMILAR CLASSES
+========================================================= */
+
+.ClassDetails-similarGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.ClassDetails-similarCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 20px;
+  background: #ffffff;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.ClassDetails-similarCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(18, 45, 71, 0.08);
+}
+
+.ClassDetails-similarImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 140px;
+  overflow: hidden;
+}
+
+.ClassDetails-similarImage--purple {
+  background: #ededfa;
+  color: #6261d8;
+}
+
+.ClassDetails-similarImage--green {
+  background: #e4f3ed;
+  color: #269f75;
+}
+
+.ClassDetails-similarImage--orange {
+  background: #faeee3;
+  color: #e58b48;
+}
+
+.ClassDetails-similarImage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.ClassDetails-similarCard:hover .ClassDetails-similarImage img {
+  transform: scale(1.04);
+}
+
+.ClassDetails-similarContent {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 17px 17px 16px;
+}
+
+.ClassDetails-similarContent h3 {
+  margin: 0 0 8px;
+  color: var(--ClassDetails-navy);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.ClassDetails-similarContent p {
+  margin: 0 0 10px;
+  color: var(--ClassDetails-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ClassDetails-similarContent > strong {
+  margin-top: auto;
+  color: var(--ClassDetails-navy);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.ClassDetails-similarContent > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 11px;
+  color: var(--ClassDetails-teal);
+  font-size: 12px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.ClassDetails-similarContent > a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* =========================================================
+   DISCLAIMER
+========================================================= */
+
+.ClassDetails-disclaimer {
+  margin: 30px 0 0;
+  color: #91a0b2;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* =========================================================
+   STICKY ENQUIRY SIDEBAR
+========================================================= */
+
+.ClassDetails-sidebar {
+  position: sticky;
+  top: 20px;
+  min-width: 0;
+  align-self: start;
+  scroll-margin-top: 20px;
+}
+
+.ClassDetails-enquiryCard {
+  width: 100%;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding: 25px 25px 26px;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgba(18, 45, 71, 0.075);
+  scrollbar-width: thin;
+  scrollbar-color: #c1d0da transparent;
+}
+
+.ClassDetails-enquiryCard::-webkit-scrollbar {
+  width: 5px;
+}
+
+.ClassDetails-enquiryCard::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #c1d0da;
+}
+
+/* =========================================================
+   ENQUIRY PRICE
+========================================================= */
+
+.ClassDetails-priceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--ClassDetails-border);
+}
+
+.ClassDetails-priceHeader > strong {
+  color: var(--ClassDetails-navy);
+  font-size: 35px;
+  font-weight: 850;
+  letter-spacing: -1.2px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.ClassDetails-priceHeader > span {
+  color: var(--ClassDetails-muted);
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   ENQUIRY INTRO
+========================================================= */
+
+.ClassDetails-enquiryIntro {
+  margin: 22px 0 20px;
+}
+
+.ClassDetails-enquiryIntro h2 {
+  margin: 0 0 5px;
+  color: var(--ClassDetails-navy);
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.45;
+}
+
+.ClassDetails-enquiryIntro p {
+  margin: 0;
+  color: var(--ClassDetails-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   ENQUIRY FORM
+========================================================= */
+
+.ClassDetails-enquiryForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.ClassDetails-formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ClassDetails-formGroup label,
+.ClassDetails-dayFieldset legend {
+  color: var(--ClassDetails-navy);
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.ClassDetails-formGroup input,
+.ClassDetails-formGroup select,
+.ClassDetails-formGroup textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 51px;
+  padding: 12px 14px;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 14px;
+  outline: none;
+  background: #ffffff;
+  color: var(--ClassDetails-navy);
+  font-size: 14px;
+  line-height: 1.6;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ClassDetails-formGroup input::placeholder,
+.ClassDetails-formGroup textarea::placeholder {
+  color: #929bad;
+  opacity: 1;
+}
+
+.ClassDetails-formGroup input:focus,
+.ClassDetails-formGroup select:focus,
+.ClassDetails-formGroup textarea:focus {
+  border-color: var(--ClassDetails-teal);
+  box-shadow: 0 0 0 3px rgba(8, 127, 137, 0.09);
+}
+
+.ClassDetails-formGroup select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 33px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23122d47' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  cursor: pointer;
+}
+
+.ClassDetails-formGroup textarea {
+  min-height: 138px;
+  resize: vertical;
+}
+
+.ClassDetails-formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* =========================================================
+   PREFERRED DAYS
+========================================================= */
+
+.ClassDetails-dayFieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ClassDetails-dayFieldset legend {
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.ClassDetails-preferredDays {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.ClassDetails-preferredDay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 48px;
+  padding: 8px 3px;
+  border: 1px solid var(--ClassDetails-border);
+  border-radius: 14px;
+  background: #ffffff;
+  color: var(--ClassDetails-navy);
+  font-size: 13px;
+  font-weight: 650;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.ClassDetails-preferredDay:hover {
+  border-color: #9dcbd1;
+  background: #f4fbfb;
+}
+
+.ClassDetails-preferredDay--active {
+  border-color: var(--ClassDetails-teal);
+  background: var(--ClassDetails-teal);
+  color: #ffffff;
+}
+
+/* =========================================================
+   SUBMIT ENQUIRY
+========================================================= */
+
+.ClassDetails-submitButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 57px;
+  padding: 13px 18px;
+  border: 1px solid var(--ClassDetails-gold);
+  border-radius: 14px;
+  background: var(--ClassDetails-gold);
+  color: #132d46;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.4;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ClassDetails-submitButton:hover {
+  transform: translateY(-1px);
+  background: #ffb51e;
+  box-shadow: 0 6px 16px rgba(245, 165, 20, 0.18);
+}
+
+/* =========================================================
+   PRIVACY NOTE
+========================================================= */
+
+.ClassDetails-privacyNote {
+  margin: 0;
+  color: var(--ClassDetails-muted);
+  font-size: 11px;
+  line-height: 1.75;
+}
+
+.ClassDetails-privacyNote a {
+  color: var(--ClassDetails-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ClassDetails-privacyNote a:hover {
+  color: var(--ClassDetails-teal);
+}
+
+/* =========================================================
+   LARGE DESKTOP
+========================================================= */
+
+@media (min-width: 1600px) {
+  .ClassDetails-headerContainer,
+  .ClassDetails-pageContainer {
+    max-width: 1470px;
+  }
+
+  .ClassDetails-pageContainer {
+    grid-template-columns: minmax(0, 1fr) 425px;
+    gap: 48px;
+  }
+
+  .ClassDetails-gallery {
+    height: 465px;
+  }
+}
+
+/* =========================================================
+   LAPTOP
+========================================================= */
+
+@media (max-width: 1250px) {
+  .ClassDetails-headerContainer,
+  .ClassDetails-pageContainer {
+    width: calc(100% - 48px);
+  }
+
+  .ClassDetails-pageContainer {
+    grid-template-columns: minmax(0, 1fr) 365px;
+    gap: 30px;
+    padding-top: 35px;
+  }
+
+  .ClassDetails-headingLayout {
+    gap: 20px;
+  }
+
+  .ClassDetails-headerActions {
+    max-width: 400px;
+  }
+
+  .ClassDetails-headerButton,
+  .ClassDetails-compareButton,
+  .ClassDetails-headerEnquire {
+    min-height: 44px;
+    padding-right: 13px;
+    padding-left: 13px;
+    font-size: 13px;
+  }
+
+  .ClassDetails-gallery {
+    height: 390px;
+  }
+
+  .ClassDetails-enquiryCard {
+    padding: 22px 20px;
+  }
+
+  .ClassDetails-priceHeader > strong {
+    font-size: 30px;
+  }
+
+  .ClassDetails-detailCell {
+    gap: 9px;
+    padding-right: 13px;
+    padding-left: 13px;
+    font-size: 12px;
+  }
+
+  .ClassDetails-similarGrid {
+    gap: 11px;
+  }
+
+  .ClassDetails-similarContent {
+    padding: 13px;
+  }
+
+  .ClassDetails-similarContent h3 {
+    font-size: 13px;
+  }
+}
+
+/* =========================================================
+   TABLET / SMALL LAPTOP
+========================================================= */
+
+@media (max-width: 1000px) {
+  .ClassDetails-header {
+    padding: 22px 0 27px;
+  }
+
+  .ClassDetails-headingLayout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 19px;
+  }
+
+  .ClassDetails-headerActions {
+    justify-content: flex-start;
+    max-width: none;
+  }
+
+  .ClassDetails-pageContainer {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 23px;
+    padding-top: 28px;
+  }
+
+  .ClassDetails-gallery {
+    height: 340px;
+    border-radius: 20px;
+  }
+
+  .ClassDetails-section {
+    margin-top: 34px;
+  }
+
+  .ClassDetails-sectionTitle {
+    font-size: 24px;
+  }
+
+  .ClassDetails-learningGrid {
+    gap: 10px;
+  }
+
+  .ClassDetails-learningItem {
+    padding: 14px;
+    font-size: 13px;
+  }
+
+  .ClassDetails-teacherCard {
+    grid-template-columns: 100px minmax(0, 1fr);
+  }
+
+  .ClassDetails-teacherAvatar {
+    min-height: 160px;
+  }
+
+  .ClassDetails-teacherContent {
+    padding: 18px;
+  }
+
+  .ClassDetails-similarGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ClassDetails-similarCard:last-child {
+    grid-column: auto;
+  }
+
+  .ClassDetails-similarImage {
+    height: 130px;
+  }
+
+  .ClassDetails-enquiryCard {
+    padding: 20px 17px;
+  }
+
+  .ClassDetails-formGrid {
+    gap: 9px;
+  }
+
+  .ClassDetails-preferredDays {
+    gap: 6px;
+  }
+
+  .ClassDetails-preferredDay {
+    min-height: 43px;
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   TABLET PORTRAIT
+========================================================= */
+
+@media (max-width: 800px) {
+  .ClassDetails-headerContainer,
+  .ClassDetails-pageContainer {
+    width: calc(100% - 36px);
+  }
+
+  .ClassDetails-pageContainer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding-top: 25px;
+  }
+
+  .ClassDetails-mainColumn {
+    width: 100%;
+  }
+
+  .ClassDetails-sidebar {
+    position: static;
+    width: 100%;
+    grid-row: 1;
+  }
+
+  .ClassDetails-enquiryCard {
+    max-height: none;
+    overflow: visible;
+    padding: 23px;
+    border-radius: 20px;
+  }
+
+  .ClassDetails-priceHeader > strong {
+    font-size: 32px;
+  }
+
+  .ClassDetails-enquiryForm {
+    gap: 17px;
+  }
+
+  .ClassDetails-formGrid {
+    gap: 15px;
+  }
+
+  .ClassDetails-preferredDays {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .ClassDetails-gallery {
+    height: 400px;
+  }
+
+  .ClassDetails-learningItem {
+    min-height: 65px;
+    font-size: 14px;
+  }
+
+  .ClassDetails-detailCell {
+    font-size: 13px;
+  }
+
+  .ClassDetails-similarGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ClassDetails-similarContent {
+    padding: 13px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .ClassDetails {
+    font-size: 14px;
+  }
+
+  .ClassDetails-header {
+    padding: 18px 0 24px;
+  }
+
+  .ClassDetails-headerContainer,
+  .ClassDetails-pageContainer {
+    width: calc(100% - 28px);
+  }
+
+  .ClassDetails-breadcrumb {
+    gap: 6px 8px;
+    margin-bottom: 19px;
+    font-size: 12px;
+  }
+
+  .ClassDetails-badges {
+    gap: 6px;
+    margin-bottom: 11px;
+  }
+
+  .ClassDetails-badge {
+    min-height: 26px;
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .ClassDetails-title {
+    font-size: clamp(30px, 8vw, 42px);
+    letter-spacing: -1.3px;
+    line-height: 1.17;
+  }
+
+  .ClassDetails-providerLine {
+    margin: 12px 0;
+    font-size: 16px;
+  }
+
+  .ClassDetails-quickInfo {
+    gap: 10px 15px;
+    font-size: 13px;
+  }
+
+  .ClassDetails-headerActions {
+    gap: 7px;
+  }
+
+  .ClassDetails-headerButton,
+  .ClassDetails-compareButton {
+    min-height: 41px;
+    gap: 6px;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .ClassDetails-headerButton svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .ClassDetails-compareButton input {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ClassDetails-headerEnquire {
+    min-height: 41px;
+    padding: 0 14px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .ClassDetails-pageContainer {
+    gap: 28px;
+    padding-top: 18px;
+    padding-bottom: 40px;
+  }
+
+  .ClassDetails-gallery {
+    height: 290px;
+    border-radius: 17px;
+  }
+
+  .ClassDetails-imageCaption {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+  }
+
+  .ClassDetails-section {
+    margin-top: 30px;
+  }
+
+  .ClassDetails-sectionTitle {
+    margin-bottom: 15px;
+    font-size: 22px;
+    letter-spacing: -0.45px;
+  }
+
+  .ClassDetails-bodyText,
+  .ClassDetails-lead {
+    font-size: 14px;
+    line-height: 1.85;
+  }
+
+  .ClassDetails-lead {
+    margin-bottom: 11px;
+  }
+
+  .ClassDetails-learningGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+  }
+
+  .ClassDetails-learningItem {
+    min-height: 57px;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+
+  .ClassDetails-detailsTable {
+    border-radius: 14px;
+  }
+
+  .ClassDetails-detailsRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ClassDetails-detailCell {
+    min-height: 49px;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+
+  .ClassDetails-detailCell + .ClassDetails-detailCell {
+    border-top: 1px dashed #e0e8ed;
+    border-left: 0;
+    background: #fbfcfd;
+  }
+
+  .ClassDetails-scheduleTable {
+    border-radius: 14px;
+  }
+
+  .ClassDetails-scheduleRow {
+    grid-template-columns: 0.9fr 1.3fr 0.65fr;
+    gap: 8px;
+    padding: 12px 10px;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+
+  .ClassDetails-teacherCard {
+    grid-template-columns: 85px minmax(0, 1fr);
+    border-radius: 15px;
+  }
+
+  .ClassDetails-teacherAvatar {
+    min-height: 170px;
+  }
+
+  .ClassDetails-teacherAvatar span {
+    font-size: 30px;
+  }
+
+  .ClassDetails-teacherContent {
+    padding: 14px 12px;
+  }
+
+  .ClassDetails-teacherNameLine {
+    align-items: flex-start;
+    gap: 7px;
+    margin-bottom: 8px;
+  }
+
+  .ClassDetails-teacherNameLine h3 {
+    font-size: 15px;
+  }
+
+  .ClassDetails-teacherVerified {
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  .ClassDetails-teacherContent > p {
+    font-size: 12px;
+  }
+
+  .ClassDetails-teacherMeta,
+  .ClassDetails-teacherFooter {
+    font-size: 11px;
+  }
+
+  .ClassDetails-teacherFooter {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .ClassDetails-locationCard {
+    gap: 11px;
+    padding: 15px;
+  }
+
+  .ClassDetails-sectionHeading {
+    align-items: flex-start;
+  }
+
+  .ClassDetails-outlineButton {
+    min-height: 39px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .ClassDetails-faqList {
+    gap: 9px;
+  }
+
+  .ClassDetails-faqItem {
+    border-radius: 13px;
+  }
+
+  .ClassDetails-faqQuestion {
+    min-height: 60px;
+    gap: 12px;
+    padding: 16px;
+    font-size: 13px;
+  }
+
+  .ClassDetails-faqQuestion > svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .ClassDetails-faqAnswer {
+    padding: 0 16px 17px;
+    font-size: 12px;
+  }
+
+  .ClassDetails-similarGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .ClassDetails-similarImage {
+    height: 115px;
+  }
+
+  .ClassDetails-similarContent {
+    padding: 12px;
+  }
+
+  .ClassDetails-similarContent h3 {
+    font-size: 13px;
+  }
+
+  .ClassDetails-similarContent p {
+    font-size: 11px;
+  }
+
+  .ClassDetails-similarContent > strong {
+    font-size: 13px;
+  }
+
+  .ClassDetails-similarContent > a {
+    font-size: 11px;
+  }
+
+  .ClassDetails-enquiryCard {
+    padding: 19px 15px;
+    border-radius: 17px;
+  }
+
+  .ClassDetails-priceHeader {
+    padding-bottom: 17px;
+  }
+
+  .ClassDetails-priceHeader > strong {
+    font-size: 30px;
+  }
+
+  .ClassDetails-priceHeader > span {
+    font-size: 13px;
+  }
+
+  .ClassDetails-enquiryIntro {
+    margin: 18px 0;
+  }
+
+  .ClassDetails-enquiryIntro h2 {
+    font-size: 20px;
+  }
+
+  .ClassDetails-enquiryIntro p {
+    font-size: 13px;
+  }
+
+  .ClassDetails-enquiryForm {
+    gap: 15px;
+  }
+
+  .ClassDetails-formGroup label,
+  .ClassDetails-dayFieldset legend {
+    font-size: 12px;
+  }
+
+  .ClassDetails-formGroup input,
+  .ClassDetails-formGroup select,
+  .ClassDetails-formGroup textarea {
+    min-height: 46px;
+    padding: 11px 12px;
+    border-radius: 11px;
+    font-size: 13px;
+  }
+
+  .ClassDetails-formGroup textarea {
+    min-height: 115px;
+  }
+
+  .ClassDetails-formGrid {
+    gap: 9px;
+  }
+
+  .ClassDetails-preferredDays {
+    gap: 6px;
+  }
+
+  .ClassDetails-preferredDay {
+    min-height: 41px;
+    border-radius: 10px;
+    font-size: 11px;
+  }
+
+  .ClassDetails-submitButton {
+    min-height: 51px;
+    border-radius: 11px;
+    font-size: 14px;
+  }
+
+  .ClassDetails-privacyNote {
+    font-size: 10px;
+  }
+
+  .ClassDetails-reviewForm {
+    padding: 16px;
+  }
+
+  .ClassDetails-disclaimer {
+    font-size: 11px;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+  .ClassDetails-headerContainer,
+  .ClassDetails-pageContainer {
+    width: calc(100% - 22px);
+  }
+
+  .ClassDetails-title {
+    font-size: 29px;
+  }
+
+  .ClassDetails-headerActions {
+    gap: 6px;
+  }
+
+  .ClassDetails-headerButton,
+  .ClassDetails-compareButton,
+  .ClassDetails-headerEnquire {
+    padding-right: 8px;
+    padding-left: 8px;
+    font-size: 11px;
+  }
+
+  .ClassDetails-gallery {
+    height: 235px;
+  }
+
+  .ClassDetails-teacherCard {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .ClassDetails-teacherAvatar span {
+    font-size: 25px;
+  }
+
+  .ClassDetails-teacherContent {
+    padding: 12px 10px;
+  }
+
+  .ClassDetails-similarGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ClassDetails-similarImage {
+    height: 160px;
+  }
+
+  .ClassDetails-formGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ClassDetails-preferredDay {
+    font-size: 10px;
+  }
+
+  .ClassDetails-scheduleRow {
+    grid-template-columns: 0.85fr 1.2fr 0.6fr;
+    gap: 5px;
+    padding-right: 7px;
+    padding-left: 7px;
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .ClassDetails *,
+  .ClassDetails *::before,
+  .ClassDetails *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

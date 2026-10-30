@@ -1,0 +1,1126 @@
+
+/* =========================================================
+   TRAINING THREE — GLOBAL STYLES
+========================================================= */
+
+.TrainingThree {
+  --TrainingThree-navy: #12304c;
+  --TrainingThree-teal: #07838b;
+  --TrainingThree-muted: #526e89;
+  --TrainingThree-border: #d9e5ed;
+  --TrainingThree-white: #ffffff;
+
+  width: 100%;
+  color: var(--TrainingThree-navy);
+  background: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.TrainingThree *,
+.TrainingThree *::before,
+.TrainingThree *::after {
+  box-sizing: border-box;
+}
+
+.TrainingThree a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.TrainingThree-container {
+  width: calc(100% - 80px);
+  max-width: 1508px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   DISCOVERY SECTION
+========================================================= */
+
+.TrainingThree-discovery {
+  width: 100%;
+  padding: 58px 0 69px;
+  border-top: 1px solid #e2eaee;
+  border-bottom: 1px solid var(--TrainingThree-border);
+  background: #f5f8f9;
+}
+
+.TrainingThree-infoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
+  align-items: stretch;
+}
+
+/* =========================================================
+   INFORMATION CARDS
+========================================================= */
+
+.TrainingThree-infoCard {
+  min-width: 0;
+  min-height: 318px;
+  padding: 31px 30px;
+  border: 1px solid var(--TrainingThree-border);
+  border-radius: 21px;
+  background: #ffffff;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.TrainingThree-infoCard:hover {
+  transform: translateY(-2px);
+  border-color: #cbdde6;
+  box-shadow: 0 8px 22px rgba(18, 48, 76, 0.035);
+}
+
+.TrainingThree-infoCardHeading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.TrainingThree-infoCardHeading h2 {
+  margin: 0;
+  color: var(--TrainingThree-navy);
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.55px;
+  line-height: 1.4;
+}
+
+.TrainingThree-infoHeadingIcon {
+  display: none;
+  flex: 0 0 39px;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 12px;
+}
+
+.TrainingThree-infoHeadingIcon--mint {
+  background: #e5f5ef;
+  color: #249c78;
+}
+
+.TrainingThree-infoHeadingIcon--lavender {
+  background: #eeedfc;
+  color: #6d65d9;
+}
+
+.TrainingThree-infoHeadingIcon--peach {
+  background: #fff0e3;
+  color: #e88b39;
+}
+
+/* =========================================================
+   CHIPS
+========================================================= */
+
+.TrainingThree-chipList {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.TrainingThree-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 43px;
+  padding: 0 17px;
+  border: 1px solid var(--TrainingThree-border);
+  border-radius: 25px;
+  background: #ffffff;
+  color: #112f4b;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.TrainingThree-chip:hover {
+  border-color: var(--TrainingThree-teal);
+  background: #eff9f9;
+  color: var(--TrainingThree-teal);
+}
+
+/* =========================================================
+   TEACHERS SECTION
+========================================================= */
+
+.TrainingThree-teachers {
+  width: 100%;
+  padding: 72px 0 70px;
+  background: #ffffff;
+}
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.TrainingThree-sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 25px;
+  margin-bottom: 29px;
+}
+
+.TrainingThree-sectionHeading {
+  min-width: 0;
+}
+
+.TrainingThree-sectionEyebrow,
+.TrainingThree-categoryEyebrow {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  color: var(--TrainingThree-teal);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+}
+
+.TrainingThree-sectionTitle {
+  margin: 0;
+  color: var(--TrainingThree-navy);
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1.1px;
+  line-height: 1.3;
+}
+
+.TrainingThree-viewAll {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 43px;
+  color: var(--TrainingThree-teal);
+  font-size: 17px;
+  font-weight: 750;
+  transition: gap 0.2s ease;
+}
+
+.TrainingThree-viewAll svg {
+  display: none;
+}
+
+.TrainingThree-viewAll:hover {
+  gap: 12px;
+}
+
+/* =========================================================
+   TEACHER GRID
+========================================================= */
+
+.TrainingThree-teacherGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+/* =========================================================
+   TEACHER CARD
+========================================================= */
+
+.TrainingThree-teacherCard {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  min-height: 192px;
+  overflow: hidden;
+  border: 1px solid var(--TrainingThree-border);
+  border-radius: 21px;
+  background: #ffffff;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.TrainingThree-teacherCard:hover {
+  transform: translateY(-2px);
+  border-color: #bfd6df;
+  box-shadow: 0 8px 24px rgba(18, 48, 76, 0.055);
+}
+
+/* =========================================================
+   TEACHER IMAGE / INITIALS
+========================================================= */
+
+.TrainingThree-teacherVisual {
+  display: flex;
+  flex: 0 0 137px;
+  align-items: center;
+  justify-content: center;
+  width: 137px;
+  min-height: 100%;
+  overflow: hidden;
+  background: #e5f3ee;
+}
+
+.TrainingThree-teacherVisual--mint {
+  background: #e5f3ee;
+  color: #279b73;
+}
+
+.TrainingThree-teacherVisual--peach {
+  background: #fff0e4;
+  color: #c47c40;
+}
+
+.TrainingThree-teacherVisual--lavender {
+  background: #eeedfc;
+  color: #7168d7;
+}
+
+.TrainingThree-teacherVisual--rose {
+  background: #fae9ed;
+  color: #cf627c;
+}
+
+.TrainingThree-teacherImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 192px;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.4s ease;
+}
+
+.TrainingThree-teacherCard:hover .TrainingThree-teacherImage {
+  transform: scale(1.04);
+}
+
+.TrainingThree-teacherInitials {
+  color: inherit;
+  font-size: 45px;
+  font-weight: 800;
+  letter-spacing: -1.8px;
+}
+
+/* =========================================================
+   TEACHER DETAILS
+========================================================= */
+
+.TrainingThree-teacherDetails {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 20px 24px;
+}
+
+.TrainingThree-teacherNameRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.TrainingThree-teacherName {
+  min-width: 0;
+  margin: 0;
+  color: var(--TrainingThree-navy);
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.45px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   VERIFIED BADGE
+========================================================= */
+
+.TrainingThree-verifiedBadge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 29px;
+  padding: 0 11px;
+  border-radius: 8px;
+  background: #e7f6f7;
+  color: #07828d;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1;
+}
+
+/* =========================================================
+   TEACHER SUBJECTS AND META
+========================================================= */
+
+.TrainingThree-teacherSubjects {
+  display: -webkit-box;
+  margin: 0 0 7px;
+  overflow: hidden;
+  color: #294965;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.TrainingThree-teacherMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  color: #71869b;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.TrainingThree-metaDot {
+  color: #8ca1b3;
+}
+
+/* =========================================================
+   TEACHER FOOTER
+========================================================= */
+
+.TrainingThree-teacherFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.TrainingThree-teacherClasses {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0;
+  color: #627b95;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.TrainingThree-teacherClasses > span:first-child {
+  font-weight: 750;
+}
+
+.TrainingThree-profileLink {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 5px;
+  color: var(--TrainingThree-teal);
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: gap 0.2s ease;
+}
+
+.TrainingThree-profileLink:hover {
+  gap: 9px;
+}
+
+/* =========================================================
+   POPULAR CATEGORIES SECTION
+========================================================= */
+
+.TrainingThree-categories {
+  width: 100%;
+  padding: 68px 0 70px;
+  border-top: 1px solid #dce9e9;
+  background: #eff8f7;
+}
+
+.TrainingThree-categoryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.TrainingThree-categoryTitle {
+  margin: 0;
+  color: var(--TrainingThree-navy);
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.3;
+}
+
+/* =========================================================
+   CATEGORY GRID
+========================================================= */
+
+.TrainingThree-categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 15px;
+}
+
+/* =========================================================
+   CATEGORY CARD
+========================================================= */
+
+.TrainingThree-categoryCard {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+  min-height: 88px;
+  padding: 14px 15px;
+  border: 1px solid var(--TrainingThree-border);
+  border-radius: 16px;
+  background: #ffffff;
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.TrainingThree-categoryCard:hover {
+  transform: translateY(-3px);
+  border-color: #c5dbe1;
+  box-shadow: 0 8px 22px rgba(18, 48, 76, 0.055);
+}
+
+/* =========================================================
+   CATEGORY ICON COLORS
+========================================================= */
+
+.TrainingThree-categoryIcon {
+  display: flex;
+  flex: 0 0 55px;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 11px;
+  transition: transform 0.22s ease;
+}
+
+.TrainingThree-categoryCard:hover .TrainingThree-categoryIcon {
+  transform: scale(1.04);
+}
+
+.TrainingThree-categoryIcon--teal {
+  background: #e1f0f0;
+  color: #098b96;
+}
+
+.TrainingThree-categoryIcon--orange {
+  background: #fff0e3;
+  color: #ed872e;
+}
+
+.TrainingThree-categoryIcon--purple {
+  background: #ececfb;
+  color: #6b63df;
+}
+
+.TrainingThree-categoryIcon--green {
+  background: #e4f4ec;
+  color: #22a177;
+}
+
+.TrainingThree-categoryIcon--pink {
+  background: #f9e8ed;
+  color: #e14f75;
+}
+
+.TrainingThree-categoryIcon--blue {
+  background: #e6f0fa;
+  color: #328ce6;
+}
+
+/* =========================================================
+   CATEGORY TEXT AND ARROW
+========================================================= */
+
+.TrainingThree-categoryName {
+  flex: 1;
+  min-width: 0;
+  color: #102e4b;
+  font-size: 18px;
+  font-weight: 750;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.TrainingThree-categoryArrow {
+  flex-shrink: 0;
+  color: var(--TrainingThree-teal);
+  opacity: 0;
+  transform: translateX(-5px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.TrainingThree-categoryCard:hover .TrainingThree-categoryArrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* =========================================================
+   LARGE DESKTOP
+========================================================= */
+
+@media (min-width: 1600px) {
+  .TrainingThree-container {
+    max-width: 1508px;
+  }
+
+  .TrainingThree-infoGrid {
+    gap: 30px;
+  }
+
+  .TrainingThree-teacherGrid {
+    gap: 24px;
+  }
+}
+
+/* =========================================================
+   LAPTOP
+========================================================= */
+
+@media (max-width: 1250px) {
+  .TrainingThree-container {
+    width: calc(100% - 64px);
+  }
+
+  .TrainingThree-discovery {
+    padding: 45px 0 52px;
+  }
+
+  .TrainingThree-infoGrid {
+    gap: 20px;
+  }
+
+  .TrainingThree-infoCard {
+    min-height: 285px;
+    padding: 25px 22px;
+  }
+
+  .TrainingThree-infoCardHeading h2 {
+    font-size: 20px;
+  }
+
+  .TrainingThree-chip {
+    min-height: 39px;
+    padding: 0 13px;
+    font-size: 14px;
+  }
+
+  .TrainingThree-teachers {
+    padding: 55px 0;
+  }
+
+  .TrainingThree-teacherGrid {
+    gap: 18px;
+  }
+
+  .TrainingThree-teacherVisual {
+    flex-basis: 112px;
+    width: 112px;
+  }
+
+  .TrainingThree-teacherDetails {
+    padding: 18px 17px;
+  }
+
+  .TrainingThree-teacherName {
+    font-size: 18px;
+  }
+
+  .TrainingThree-teacherSubjects {
+    font-size: 14px;
+  }
+
+  .TrainingThree-teacherMeta,
+  .TrainingThree-teacherClasses,
+  .TrainingThree-profileLink {
+    font-size: 13px;
+  }
+
+  .TrainingThree-verifiedBadge {
+    min-height: 25px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+
+  .TrainingThree-categoryGrid {
+    gap: 12px;
+  }
+
+  .TrainingThree-categoryCard {
+    gap: 11px;
+    min-height: 77px;
+    padding: 11px;
+  }
+
+  .TrainingThree-categoryIcon {
+    flex-basis: 47px;
+    width: 47px;
+    height: 47px;
+  }
+
+  .TrainingThree-categoryName {
+    font-size: 15px;
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .TrainingThree-container {
+    width: calc(100% - 44px);
+  }
+
+  .TrainingThree-infoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .TrainingThree-infoCard {
+    min-height: 225px;
+    padding: 23px 20px;
+  }
+
+  .TrainingThree-infoCard:last-child {
+    grid-column: 1 / -1;
+    min-height: auto;
+  }
+
+  .TrainingThree-infoCardHeading {
+    margin-bottom: 18px;
+  }
+
+  .TrainingThree-infoCardHeading h2 {
+    font-size: 19px;
+  }
+
+  .TrainingThree-chipList {
+    gap: 9px;
+  }
+
+  .TrainingThree-chip {
+    min-height: 37px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .TrainingThree-sectionTitle,
+  .TrainingThree-categoryTitle {
+    font-size: 30px;
+  }
+
+  .TrainingThree-teacherGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+  }
+
+  .TrainingThree-teacherCard {
+    min-height: 170px;
+  }
+
+  .TrainingThree-teacherVisual {
+    flex-basis: 125px;
+    width: 125px;
+  }
+
+  .TrainingThree-teacherImage {
+    min-height: 170px;
+  }
+
+  .TrainingThree-teacherDetails {
+    padding: 17px 20px;
+  }
+
+  .TrainingThree-teacherName {
+    font-size: 20px;
+  }
+
+  .TrainingThree-teacherSubjects {
+    font-size: 15px;
+  }
+
+  .TrainingThree-teacherMeta,
+  .TrainingThree-teacherClasses,
+  .TrainingThree-profileLink {
+    font-size: 14px;
+  }
+
+  .TrainingThree-categoryGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .TrainingThree-categoryCard {
+    min-height: 76px;
+  }
+
+  .TrainingThree-categoryIcon {
+    flex-basis: 43px;
+    width: 43px;
+    height: 43px;
+  }
+
+  .TrainingThree-categoryIcon svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .TrainingThree-categoryName {
+    font-size: 14px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .TrainingThree-container {
+    width: calc(100% - 30px);
+  }
+
+  /* Discovery cards */
+
+  .TrainingThree-discovery {
+    padding: 27px 0 30px;
+  }
+
+  .TrainingThree-infoGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+  }
+
+  .TrainingThree-infoCard,
+  .TrainingThree-infoCard:last-child {
+    grid-column: auto;
+    min-height: auto;
+    padding: 21px 18px;
+    border-radius: 16px;
+  }
+
+  .TrainingThree-infoCardHeading {
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .TrainingThree-infoHeadingIcon {
+    display: flex;
+    flex-basis: 35px;
+    width: 35px;
+    height: 35px;
+  }
+
+  .TrainingThree-infoHeadingIcon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .TrainingThree-infoCardHeading h2 {
+    font-size: 19px;
+    letter-spacing: -0.3px;
+  }
+
+  .TrainingThree-chipList {
+    gap: 8px;
+  }
+
+  .TrainingThree-chip {
+    min-height: 37px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  /* Teachers */
+
+  .TrainingThree-teachers {
+    padding: 37px 0 40px;
+  }
+
+  .TrainingThree-sectionHeader {
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 21px;
+  }
+
+  .TrainingThree-sectionEyebrow,
+  .TrainingThree-categoryEyebrow {
+    display: flex;
+    font-size: 10px;
+    letter-spacing: 0.7px;
+  }
+
+  .TrainingThree-sectionTitle,
+  .TrainingThree-categoryTitle {
+    font-size: clamp(24px, 6vw, 31px);
+    letter-spacing: -0.7px;
+    line-height: 1.3;
+  }
+
+  .TrainingThree-viewAll {
+    gap: 5px;
+    min-height: 35px;
+    font-size: 13px;
+  }
+
+  .TrainingThree-viewAll svg {
+    display: block;
+    width: 15px;
+    height: 15px;
+  }
+
+  .TrainingThree-teacherGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+  }
+
+  .TrainingThree-teacherCard {
+    min-height: 160px;
+    border-radius: 15px;
+  }
+
+  .TrainingThree-teacherVisual {
+    flex: 0 0 94px;
+    width: 94px;
+  }
+
+  .TrainingThree-teacherImage {
+    min-height: 160px;
+  }
+
+  .TrainingThree-teacherInitials {
+    font-size: 32px;
+  }
+
+  .TrainingThree-teacherDetails {
+    justify-content: center;
+    padding: 14px 12px;
+  }
+
+  .TrainingThree-teacherNameRow {
+    gap: 6px;
+    margin-bottom: 7px;
+  }
+
+  .TrainingThree-teacherName {
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .TrainingThree-verifiedBadge {
+    gap: 3px;
+    min-height: 22px;
+    padding: 0 6px;
+    border-radius: 6px;
+    font-size: 10px;
+  }
+
+  .TrainingThree-verifiedBadge svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .TrainingThree-teacherSubjects {
+    margin-bottom: 6px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .TrainingThree-teacherMeta {
+    gap: 4px;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  .TrainingThree-teacherFooter {
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 11px;
+  }
+
+  .TrainingThree-teacherClasses {
+    gap: 4px;
+    font-size: 11px;
+  }
+
+  .TrainingThree-profileLink {
+    gap: 3px;
+    font-size: 11px;
+  }
+
+  /* Categories */
+
+  .TrainingThree-categories {
+    padding: 38px 0 42px;
+  }
+
+  .TrainingThree-categoryHeader {
+    margin-bottom: 21px;
+  }
+
+  .TrainingThree-categoryEyebrow {
+    margin-bottom: 8px;
+  }
+
+  .TrainingThree-categoryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .TrainingThree-categoryCard {
+    gap: 10px;
+    min-height: 70px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .TrainingThree-categoryIcon {
+    flex: 0 0 39px;
+    width: 39px;
+    height: 39px;
+    border-radius: 9px;
+  }
+
+  .TrainingThree-categoryIcon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .TrainingThree-categoryName {
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.4;
+  }
+
+  .TrainingThree-categoryArrow {
+    display: none;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+  .TrainingThree-container {
+    width: calc(100% - 22px);
+  }
+
+  .TrainingThree-infoCard,
+  .TrainingThree-infoCard:last-child {
+    padding: 18px 13px;
+  }
+
+  .TrainingThree-infoCardHeading h2 {
+    font-size: 17px;
+  }
+
+  .TrainingThree-chip {
+    min-height: 34px;
+    padding: 0 9px;
+    font-size: 12px;
+  }
+
+  .TrainingThree-sectionTitle,
+  .TrainingThree-categoryTitle {
+    font-size: 23px;
+  }
+
+  .TrainingThree-viewAll {
+    font-size: 12px;
+  }
+
+  .TrainingThree-teacherVisual {
+    flex-basis: 78px;
+    width: 78px;
+  }
+
+  .TrainingThree-teacherDetails {
+    padding: 12px 9px;
+  }
+
+  .TrainingThree-teacherName {
+    font-size: 14px;
+  }
+
+  .TrainingThree-teacherSubjects {
+    font-size: 11px;
+  }
+
+  .TrainingThree-teacherMeta {
+    font-size: 10px;
+  }
+
+  .TrainingThree-teacherClasses,
+  .TrainingThree-profileLink {
+    font-size: 10px;
+  }
+
+  .TrainingThree-categoryGrid {
+    gap: 8px;
+  }
+
+  .TrainingThree-categoryCard {
+    gap: 7px;
+    min-height: 64px;
+    padding: 8px;
+  }
+
+  .TrainingThree-categoryIcon {
+    flex-basis: 33px;
+    width: 33px;
+    height: 33px;
+  }
+
+  .TrainingThree-categoryIcon svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .TrainingThree-categoryName {
+    font-size: 11px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .TrainingThree *,
+  .TrainingThree *::before,
+  .TrainingThree *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

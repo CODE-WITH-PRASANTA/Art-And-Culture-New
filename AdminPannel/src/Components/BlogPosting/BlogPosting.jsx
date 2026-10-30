@@ -1,6 +1,8 @@
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
+import { BLOGS_API_URL, formatImageUrl } from "../../config/api";
 import {
   FiFileText,
   FiPlus,
@@ -156,8 +158,12 @@ const normalizeImage = (image) => {
 };
 
 const BlogPosting = () => {
-  const [activeTab, setActiveTab] = useState("table");
-  const [blogs, setBlogs] = useState(initialBlogs);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState("form");
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState(createEmptyForm);
   const [editingId, setEditingId] = useState(null);
   const [search, setSearch] = useState("");
@@ -174,6 +180,46 @@ const BlogPosting = () => {
   const bodyImageOneRef = useRef(null);
   const bodyImageTwoRef = useRef(null);
   const characteristicInputRef = useRef(null);
+
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(BLOGS_API_URL);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.blogs)) {
+        setBlogs(data.blogs);
+      }
+    } catch (err) {
+      console.error("Error fetching blogs:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  useEffect(() => {
+    if (location.state?.blog) {
+      openEditForm(location.state.blog);
+    } else {
+      const params = new URLSearchParams(location.search);
+      const editId = params.get("edit");
+      if (editId) {
+        fetch(`${BLOGS_API_URL}/${editId}`)
+          .then((r) => r.json())
+          .then((d) => {
+            if (d.success && d.blog) {
+              openEditForm(d.blog);
+            }
+          })
+          .catch((e) => console.error("Error fetching blog by ID:", e));
+      } else {
+        setActiveTab("form");
+      }
+    }
+  }, [location.state, location.search]);
 
   const itemsPerPage = 6;
 
@@ -247,20 +293,36 @@ const BlogPosting = () => {
   };
 
   const openEditForm = (blog) => {
+    let pubDate = "";
+    if (blog.publishDate) {
+      pubDate = new Date(blog.publishDate).toISOString().split("T")[0];
+    } else if (blog.date) {
+      pubDate = new Date(blog.date).toISOString().split("T")[0];
+    }
+
     setForm({
       ...createEmptyForm(),
-      ...blog,
-      authorName: blog.authorName || "",
+      title: blog.title || "",
+      slug: blog.slug || makeSlug(blog.title || ""),
+      authorName: blog.authorName || blog.author || "",
+      category: blog.category || "",
       characteristics: [...(blog.characteristics || [])],
       characteristicInput: "",
-      mainImage: normalizeImage(blog.mainImage),
+      description: blog.description || "",
+      tags: Array.isArray(blog.tags) ? blog.tags.join(", ") : (blog.tags || ""),
+      metaDescription: blog.metaDescription || "",
+      status: blog.status || "Draft",
+      publishDate: pubDate,
+      mainImage: normalizeImage(blog.mainImage || blog.image),
       bodyImages: [
         normalizeImage(blog.bodyImages?.[0]),
         normalizeImage(blog.bodyImages?.[1]),
       ],
+      views: blog.views || 0,
+      blogCode: blog.blogCode || blog.code || "",
     });
 
-    setEditingId(blog.id);
+    setEditingId(blog._id || (blog._id || blog.id));
     setNotice("");
     setActiveTab("form");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -424,7 +486,7 @@ const BlogPosting = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!form.title.trim()) {
@@ -434,16 +496,6 @@ const BlogPosting = () => {
 
     const slug = makeSlug(form.slug || form.title);
 
-    const duplicateSlug = blogs.some(
-      (blog) => blog.slug === slug && blog.id !== editingId
-    );
-
-    if (duplicateSlug) {
-      setNotice("This slug already exists. Please use a different slug.");
-      return;
-    }
-
-    // Include any text that the user typed but did not press Enter to add.
     let finalCharacteristics = [...form.characteristics];
     const pendingCharacteristic = form.characteristicInput.trim();
 
@@ -456,35 +508,60 @@ const BlogPosting = () => {
       if (!duplicate) finalCharacteristics.push(pendingCharacteristic);
     }
 
-    const existingBlog = blogs.find((blog) => blog.id === editingId);
-
-    const blogData = {
-      ...form,
+    const payload = {
       title: form.title.trim(),
-      authorName: form.authorName.trim(),
       slug,
+      authorName: form.authorName.trim(),
+      category: form.category,
       characteristics: finalCharacteristics,
-      id: editingId || Date.now(),
-      views: existingBlog?.views || 0,
-      bodyImages: [...form.bodyImages],
+      description: form.description,
+      tags: form.tags,
+      metaDescription: form.metaDescription,
+      status: form.status,
+      publishDate: form.publishDate || new Date().toISOString(),
+      mainImage: form.mainImage?.preview || form.mainImage?.url || "",
+      bodyImages: [
+        form.bodyImages?.[0]?.preview || form.bodyImages?.[0]?.url || "",
+        form.bodyImages?.[1]?.preview || form.bodyImages?.[1]?.url || "",
+      ],
+      views: Number(form.views) || 0,
     };
 
-    if (editingId) {
-      setBlogs((previous) =>
-        previous.map((blog) => (blog.id === editingId ? blogData : blog))
-      );
-      setNotice("Blog updated successfully.");
-    } else {
-      setBlogs((previous) => [blogData, ...previous]);
-      setNotice("Blog created successfully.");
-    }
+    try {
+      setNotice("Saving blog...");
+      let response;
+      if (editingId) {
+        response = await fetch(`${BLOGS_API_URL}/${editingId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        response = await fetch(BLOGS_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
 
-    setEditingId(null);
-    setForm(createEmptyForm());
-    setCurrentPage(1);
-    setSelectedIds([]);
-    setActiveTab("table");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        setNotice(result.message || "Failed to save blog. Please try again.");
+        return;
+      }
+
+      setNotice(editingId ? "Blog updated successfully!" : "Blog created successfully!");
+      setEditingId(null);
+      setForm(createEmptyForm());
+      await fetchBlogs();
+
+      setTimeout(() => {
+        navigate("/blog/blog-management");
+      }, 1000);
+    } catch (error) {
+      console.error("Error saving blog:", error);
+      setNotice("An error occurred while saving the blog.");
+    }
   };
 
   const resetForm = () => {
@@ -493,17 +570,26 @@ const BlogPosting = () => {
     setNotice("");
   };
 
-  const confirmDelete = () => {
-    setBlogs((previous) =>
-      previous.filter((blog) => blog.id !== deleteBlogId)
-    );
-
-    setSelectedIds((previous) =>
-      previous.filter((id) => id !== deleteBlogId)
-    );
-
-    setDeleteBlogId(null);
-    setNotice("Blog deleted successfully.");
+  const confirmDelete = async () => {
+    if (!deleteBlogId) return;
+    try {
+      const response = await fetch(`${BLOGS_API_URL}/${deleteBlogId}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (data.success) {
+        setNotice("Blog deleted successfully.");
+        await fetchBlogs();
+      } else {
+        setNotice(data.message || "Failed to delete blog.");
+      }
+    } catch (err) {
+      console.error("Error deleting blog:", err);
+      setNotice("Error deleting blog.");
+    } finally {
+      setSelectedIds((previous) => previous.filter((id) => id !== deleteBlogId));
+      setDeleteBlogId(null);
+    }
   };
 
   const toggleSelect = (id) => {
@@ -515,7 +601,7 @@ const BlogPosting = () => {
   };
 
   const toggleSelectAll = () => {
-    const pageIds = paginatedBlogs.map((blog) => blog.id);
+    const pageIds = paginatedBlogs.map((blog) => (blog._id || blog.id));
     const allSelected =
       pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
 
@@ -530,7 +616,7 @@ const BlogPosting = () => {
     if (!selectedIds.length) return;
 
     setBlogs((previous) =>
-      previous.filter((blog) => !selectedIds.includes(blog.id))
+      previous.filter((blog) => !selectedIds.includes((blog._id || blog.id)))
     );
 
     setSelectedIds([]);
@@ -540,7 +626,7 @@ const BlogPosting = () => {
   const changeStatus = (blog, status) => {
     setBlogs((previous) =>
       previous.map((item) =>
-        item.id === blog.id ? { ...item, status } : item
+        item.id === (blog._id || blog.id) ? { ...item, status } : item
       )
     );
   };
@@ -554,8 +640,11 @@ const BlogPosting = () => {
     </span>
   );
 
-  const renderImagePreview = (image) =>
-    image?.preview || image?.url || null;
+  const renderImagePreview = (image) => {
+    const raw = typeof image === "string" ? image : (image?.preview || image?.url || null);
+    if (!raw) return null;
+    return formatImageUrl(raw);
+  };
 
   return (
     <div className="BlogPosting">
@@ -1271,7 +1360,7 @@ const BlogPosting = () => {
                         checked={
                           paginatedBlogs.length > 0 &&
                           paginatedBlogs.every((blog) =>
-                            selectedIds.includes(blog.id)
+                            selectedIds.includes((blog._id || blog.id))
                           )
                         }
                         onChange={toggleSelectAll}
@@ -1291,12 +1380,12 @@ const BlogPosting = () => {
 
                 <tbody>
                   {paginatedBlogs.map((blog) => (
-                    <tr key={blog.id}>
+                    <tr key={(blog._id || blog.id)}>
                       <td>
                         <input
                           type="checkbox"
-                          checked={selectedIds.includes(blog.id)}
-                          onChange={() => toggleSelect(blog.id)}
+                          checked={selectedIds.includes((blog._id || blog.id))}
+                          onChange={() => toggleSelect((blog._id || blog.id))}
                           aria-label={`Select ${blog.title}`}
                         />
                       </td>
@@ -1410,7 +1499,7 @@ const BlogPosting = () => {
                             className="BlogPosting-actionButton BlogPosting-actionButton--delete"
                             title="Delete blog"
                             aria-label={`Delete ${blog.title}`}
-                            onClick={() => setDeleteBlogId(blog.id)}
+                            onClick={() => setDeleteBlogId((blog._id || blog.id))}
                           >
                             <FiTrash2 />
                           </button>

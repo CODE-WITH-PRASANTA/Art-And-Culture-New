@@ -1,5 +1,5 @@
-
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Grid2X2,
@@ -23,123 +23,12 @@ import {
   UserRound,
   IndianRupee,
   SlidersHorizontal,
+  Sparkles,
 } from "lucide-react";
 
 import "./ArtManage.css";
 
-const initialArtworks = [
-  {
-    id: "1",
-    artNo: "ART-0001",
-    title: "The Golden Heritage",
-    artist: "Ananya Mohanty",
-    category: "Traditional Painting",
-    price: 12500,
-    discount: 10,
-    stock: 5,
-    status: "Published",
-    image:
-      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=900&q=85",
-    description:
-      "A timeless artwork celebrating the beauty of traditional Indian art and heritage.",
-    tags: ["Heritage", "Traditional", "Indian Art"],
-    createdAt: "26 Oct 2026",
-  },
-  {
-    id: "2",
-    artNo: "ART-0002",
-    title: "Colors of the Coast",
-    artist: "Ritika Das",
-    category: "Contemporary Art",
-    price: 8900,
-    discount: 5,
-    stock: 8,
-    status: "Published",
-    image:
-      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=900&q=85",
-    description:
-      "A vibrant composition inspired by coastal landscapes and the rhythm of nature.",
-    tags: ["Coastal", "Colorful", "Modern"],
-    createdAt: "25 Oct 2026",
-  },
-  {
-    id: "3",
-    artNo: "ART-0003",
-    title: "Whispers of Nature",
-    artist: "Sourav Behera",
-    category: "Nature Art",
-    price: 15700,
-    discount: 0,
-    stock: 3,
-    status: "Draft",
-    image:
-      "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=85",
-    description:
-      "An expressive nature-inspired artwork capturing quiet moments in the natural world.",
-    tags: ["Nature", "Landscape", "Original"],
-    createdAt: "24 Oct 2026",
-  },
-  {
-    id: "4",
-    artNo: "ART-0004",
-    title: "Stories in Clay",
-    artist: "Meera Nayak",
-    category: "Sculpture",
-    price: 6800,
-    discount: 15,
-    stock: 0,
-    status: "Published",
-    image:
-      "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=900&q=85",
-    description:
-      "A handcrafted sculptural piece inspired by everyday life and traditional craftsmanship.",
-    tags: ["Clay", "Handcrafted", "Sculpture"],
-    createdAt: "23 Oct 2026",
-  },
-  {
-    id: "5",
-    artNo: "ART-0005",
-    title: "Quiet Reflections",
-    artist: "Aarav Patnaik",
-    category: "Abstract Art",
-    price: 11200,
-    discount: 8,
-    stock: 6,
-    status: "Unpublished",
-    image:
-      "https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=900&q=85",
-    description:
-      "An abstract composition built around thoughtful shapes, texture and color.",
-    tags: ["Abstract", "Contemporary", "Original"],
-    createdAt: "22 Oct 2026",
-  },
-  {
-    id: "6",
-    artNo: "ART-0006",
-    title: "The Art of Tradition",
-    artist: "Priya Sahoo",
-    category: "Traditional Painting",
-    price: 18500,
-    discount: 12,
-    stock: 4,
-    status: "Published",
-    image:
-      "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&w=900&q=85",
-    description:
-      "A carefully crafted painting celebrating cultural identity and artistic expression.",
-    tags: ["Tradition", "Culture", "Painting"],
-    createdAt: "21 Oct 2026",
-  },
-];
-
-const categories = [
-  "All Categories",
-  "Traditional Painting",
-  "Contemporary Art",
-  "Nature Art",
-  "Sculpture",
-  "Abstract Art",
-];
+import { API_BASE_URL, ARTS_API_URL, CATEGORIES_API_URL } from "../../config/api";
 
 const formatPrice = (price) =>
   new Intl.NumberFormat("en-IN", {
@@ -156,23 +45,106 @@ const ArtManage = ({
   onAddArt,
   onStatusChange,
 }) => {
-  const [localArtworks, setLocalArtworks] = useState(initialArtworks);
+  const navigate = useNavigate();
+  const [localArtworks, setLocalArtworks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [view, setView] = useState("grid");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All Categories");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [typeFilter, setTypeFilter] = useState("All Types");
   const [openMenu, setOpenMenu] = useState(null);
   const [selectedArt, setSelectedArt] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [notice, setNotice] = useState("");
+  const [categories, setCategories] = useState(["All Categories"]);
+
+  const fetchArtworks = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(ARTS_API_URL);
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        const mapped = json.data.map((art) => ({
+          ...art,
+          id: art._id || art.id,
+          artist: art.artistName || art.artist || "Unknown Artist",
+          stock:
+            art.stockQuantity !== undefined
+              ? art.stockQuantity
+              : art.stock || 0,
+          status:
+            art.status === "Available"
+              ? "Published"
+              : art.status || "Published",
+          isPublished:
+            art.isPublished !== undefined
+              ? Boolean(art.isPublished)
+              : art.status !== "Unpublished" && art.status !== "Draft",
+          isGeneralArtwork:
+            art.isGeneralArtwork !== undefined
+              ? Boolean(art.isGeneralArtwork)
+              : art.artType !== "Streaming Collection",
+          isStreamingCollection:
+            art.isStreamingCollection !== undefined
+              ? Boolean(art.isStreamingCollection)
+              : art.artType === "Streaming Collection" || art.artType === "General & Streaming",
+          artType: art.artType || "General Artwork",
+          image: art.photos?.[0]?.url
+            ? art.photos[0].url.startsWith("http")
+              ? art.photos[0].url
+              : `${API_BASE_URL}${art.photos[0].url}`
+            : art.photos?.[0]?.dataUrl || art.image || "",
+          createdAt: art.createdAt
+            ? new Date(art.createdAt).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
+            : "",
+        }));
+        setLocalArtworks(mapped);
+      } else {
+        setLocalArtworks([]);
+      }
+    } catch (err) {
+      console.error("Failed to load artworks in ArtManage:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArtworks();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(CATEGORIES_API_URL);
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data)) {
+          setCategories(["All Categories", ...json.data.map((c) => c.name)]);
+        }
+      } catch (err) {
+        console.error("Failed to load categories in ArtManage:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const artworks = artworksProp ?? localArtworks;
 
   const updateLocalArtwork = (id, updater) => {
     setLocalArtworks((current) =>
       current.map((art) =>
-        art.id === id ? updater(art) : art
+        art.id === id || art._id === id ? updater(art) : art
       )
+    );
+    setSelectedArt((current) =>
+      current && (current.id === id || current._id === id)
+        ? updater(current)
+        : current
     );
   };
 
@@ -187,6 +159,7 @@ const ArtManage = ({
           art.artNo,
           art.artist,
           art.category,
+          art.artType,
           ...(art.tags || []),
         ]
           .filter(Boolean)
@@ -198,20 +171,32 @@ const ArtManage = ({
         category === "All Categories" ||
         art.category === category;
 
+      const matchesType =
+        typeFilter === "All Types" ||
+        (typeFilter === "Streaming Collection"
+          ? Boolean(art.isStreamingCollection)
+          : typeFilter === "General Artwork"
+          ? art.isGeneralArtwork !== false
+          : (art.artType || "General Artwork") === typeFilter);
+
       const matchesStatus =
         statusFilter === "All" ||
         art.status === statusFilter;
 
-      return matchesSearch && matchesCategory && matchesStatus;
+      return matchesSearch && matchesCategory && matchesType && matchesStatus;
     });
-  }, [artworks, search, category, statusFilter]);
+  }, [artworks, search, category, typeFilter, statusFilter]);
 
   const publishedCount = artworks.filter(
-    (art) => art.status === "Published"
+    (art) => art.status === "Published" || art.isPublished === true
   ).length;
 
-  const draftCount = artworks.filter(
-    (art) => art.status === "Draft"
+  const streamingCount = artworks.filter(
+    (art) => Boolean(art.isStreamingCollection)
+  ).length;
+
+  const generalCount = artworks.filter(
+    (art) => art.isGeneralArtwork !== false
   ).length;
 
   const totalStock = artworks.reduce(
@@ -226,13 +211,14 @@ const ArtManage = ({
 
   const handleEdit = (art) => {
     setOpenMenu(null);
+    setSelectedArt(null);
 
     if (onEditArt) {
       onEditArt(art);
       return;
     }
 
-    showNotice(`Connect the Art Posting form to edit ${art.artNo}.`);
+    navigate(`/art-management/art-posting?edit=${art._id || art.id}`);
   };
 
   const handleView = (art) => {
@@ -246,37 +232,154 @@ const ArtManage = ({
     setSelectedArt(art);
   };
 
-  const handleStatus = (art) => {
+  const handleStatus = async (art) => {
     const nextStatus =
       art.status === "Published" ? "Unpublished" : "Published";
+    const nextIsPublished = nextStatus === "Published";
+
+    updateLocalArtwork(art.id, (item) => ({
+      ...item,
+      status: nextStatus,
+      isPublished: nextIsPublished,
+    }));
 
     if (onStatusChange) {
       onStatusChange(art, nextStatus);
-    } else {
-      updateLocalArtwork(art.id, (item) => ({
-        ...item,
-        status: nextStatus,
-      }));
+    }
+
+    try {
+      const targetId = art._id || art.id;
+      const res = await fetch(`${ARTS_API_URL}/${targetId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: nextStatus,
+          isPublished: nextIsPublished,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        showNotice(data.message || "Failed to update status on server.");
+        fetchArtworks();
+      } else {
+        showNotice(
+          `"${art.title}" marked as ${nextStatus}.`
+        );
+      }
+    } catch (err) {
+      console.error("Status update error:", err);
+      showNotice("Network error updating status.");
+      fetchArtworks();
     }
 
     setOpenMenu(null);
-    showNotice(
-      `${art.title} ${nextStatus === "Published" ? "published" : "unpublished"}.`
-    );
   };
 
-  const handleDelete = () => {
+  const handleToggleStreaming = async (art) => {
+    const nextVal = !Boolean(art.isStreamingCollection);
+
+    updateLocalArtwork(art.id, (item) => ({
+      ...item,
+      isStreamingCollection: nextVal,
+      artType:
+        nextVal && item.isGeneralArtwork !== false
+          ? "General & Streaming"
+          : nextVal
+          ? "Streaming Collection"
+          : "General Artwork",
+    }));
+
+    try {
+      const targetId = art._id || art.id;
+      const res = await fetch(`${ARTS_API_URL}/${targetId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          isStreamingCollection: nextVal,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        showNotice(data.message || "Failed to update Streaming Collection.");
+        fetchArtworks();
+      } else {
+        showNotice(
+          `"${art.title}" Streaming Collection ${nextVal ? "enabled" : "disabled"}.`
+        );
+      }
+    } catch (err) {
+      console.error("Streaming update error:", err);
+      showNotice("Network error updating Streaming Collection.");
+      fetchArtworks();
+    }
+
+    setOpenMenu(null);
+  };
+
+  const handleToggleGeneral = async (art) => {
+    const nextVal = art.isGeneralArtwork === false;
+
+    updateLocalArtwork(art.id, (item) => ({
+      ...item,
+      isGeneralArtwork: nextVal,
+      artType:
+        item.isStreamingCollection && nextVal
+          ? "General & Streaming"
+          : item.isStreamingCollection
+          ? "Streaming Collection"
+          : "General Artwork",
+    }));
+
+    try {
+      const targetId = art._id || art.id;
+      const res = await fetch(`${ARTS_API_URL}/${targetId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          isGeneralArtwork: nextVal,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        showNotice(data.message || "Failed to update General Artwork.");
+        fetchArtworks();
+      } else {
+        showNotice(
+          `"${art.title}" General Artwork ${nextVal ? "enabled" : "disabled"}.`
+        );
+      }
+    } catch (err) {
+      console.error("General update error:", err);
+      showNotice("Network error updating General Artwork.");
+      fetchArtworks();
+    }
+
+    setOpenMenu(null);
+  };
+
+  const handleDelete = async () => {
     if (!deleteTarget) return;
 
     if (onDeleteArt) {
       onDeleteArt(deleteTarget);
     } else {
-      setLocalArtworks((current) =>
-        current.filter((art) => art.id !== deleteTarget.id)
-      );
+      const targetId = deleteTarget._id || deleteTarget.id;
+      try {
+        const res = await fetch(`${ARTS_API_URL}/${targetId}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (data.success) {
+          showNotice(`${deleteTarget.title} deleted.`);
+          fetchArtworks();
+        } else {
+          showNotice(data.message || "Failed to delete.");
+        }
+      } catch (err) {
+        showNotice("Failed to delete artwork.");
+      }
     }
 
-    showNotice(`${deleteTarget.title} deleted.`);
     setDeleteTarget(null);
     setOpenMenu(null);
   };
@@ -284,9 +387,9 @@ const ArtManage = ({
   const handleAddArt = () => {
     if (onAddArt) {
       onAddArt();
-    } else {
-      showNotice("Connect this button to your Art Posting page.");
+      return;
     }
+    navigate("/art-management/art-posting?mode=new");
   };
 
   const renderActions = (art) => (
@@ -340,10 +443,29 @@ const ArtManage = ({
               ) : (
                 <Upload size={15} />
               )}
-
               {art.status === "Published"
-                ? "Unpublish"
-                : "Publish"}
+                ? "Unpublish Artwork"
+                : "Publish Artwork"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleToggleStreaming(art)}
+            >
+              <Sparkles size={15} />
+              {art.isStreamingCollection
+                ? "Remove from Streaming"
+                : "Add to Streaming Collection"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleToggleGeneral(art)}
+            >
+              <Palette size={15} />
+              {art.isGeneralArtwork !== false
+                ? "Remove from General"
+                : "Add to General Artwork"}
             </button>
 
             <div className="ArtManage-actions__divider" />
@@ -426,13 +548,13 @@ const ArtManage = ({
         </article>
 
         <article className="ArtManage-stat">
-          <div className="ArtManage-stat__icon ArtManage-stat__icon--blue">
-            <Clock3 size={21} />
+          <div className="ArtManage-stat__icon ArtManage-stat__icon--purple">
+            <Sparkles size={21} />
           </div>
           <div>
-            <span>Drafts</span>
-            <strong>{draftCount}</strong>
-            <small>Awaiting publication</small>
+            <span>Streaming</span>
+            <strong>{streamingCount}</strong>
+            <small>Streaming collections</small>
           </div>
         </article>
 
@@ -531,6 +653,20 @@ const ArtManage = ({
             <ChevronDown size={14} />
           </label>
 
+          <label className="ArtManage-filter ArtManage-filter--type">
+            <Sparkles size={14} />
+            <select
+              aria-label="Filter by collection type"
+              value={typeFilter}
+              onChange={(event) => setTypeFilter(event.target.value)}
+            >
+              <option value="All Types">All Types</option>
+              <option value="General Artwork">General Artwork</option>
+              <option value="Streaming Collection">Streaming Collection</option>
+            </select>
+            <ChevronDown size={14} />
+          </label>
+
           <label className="ArtManage-filter ArtManage-filter--status">
             <select
               aria-label="Filter by publication status"
@@ -569,16 +705,14 @@ const ArtManage = ({
                   <div className="ArtManage-card__menu">
                     {renderActions(art)}
                   </div>
-
-                  <div className="ArtManage-card__image-status">
-                    {renderStatus(art.status)}
-                  </div>
                 </div>
 
                 <div className="ArtManage-card__body">
-                  <span className="ArtManage-card__category">
-                    {art.category}
-                  </span>
+                  <div className="ArtManage-card__meta-badges">
+                    <span className="ArtManage-card__category">
+                      {art.category}
+                    </span>
+                  </div>
 
                   <h3>{art.title}</h3>
 
@@ -605,6 +739,80 @@ const ArtManage = ({
                         {art.discount}% OFF
                       </span>
                     )}
+                  </div>
+
+                  {/* 3 SEPARATE TOGGLES */}
+                  <div className="ArtManage-card__toggles">
+                    {/* Toggle 1: Publish & Unpublish */}
+                    <div className="ArtManage-card__toggle-row">
+                      <div className="ArtManage-card__toggle-label">
+                        <span className="ArtManage-toggle-badge ArtManage-toggle-badge--1">1</span>
+                        <span>Publish Status</span>
+                      </div>
+                      <button
+                        type="button"
+                        className={`ArtManage-switch-btn ${
+                          art.status === "Published"
+                            ? "ArtManage-switch-btn--published"
+                            : "ArtManage-switch-btn--unpublished"
+                        }`}
+                        onClick={() => handleStatus(art)}
+                        title={`Click to ${
+                          art.status === "Published" ? "Unpublish" : "Publish"
+                        }`}
+                      >
+                        <span className="ArtManage-switch-btn__knob" />
+                        <span className="ArtManage-switch-btn__text">
+                          {art.status === "Published" ? "Published" : "Unpublished"}
+                        </span>
+                      </button>
+                    </div>
+
+                    {/* Toggle 2: Streaming Collection */}
+                    <div className="ArtManage-card__toggle-row">
+                      <div className="ArtManage-card__toggle-label">
+                        <span className="ArtManage-toggle-badge ArtManage-toggle-badge--2">2</span>
+                        <span>Streaming Collection</span>
+                      </div>
+                      <button
+                        type="button"
+                        className={`ArtManage-switch-btn ${
+                          art.isStreamingCollection
+                            ? "ArtManage-switch-btn--purple"
+                            : "ArtManage-switch-btn--off"
+                        }`}
+                        onClick={() => handleToggleStreaming(art)}
+                        title="Click to toggle Streaming Collection"
+                      >
+                        <span className="ArtManage-switch-btn__knob" />
+                        <span className="ArtManage-switch-btn__text">
+                          {art.isStreamingCollection ? "Active" : "Off"}
+                        </span>
+                      </button>
+                    </div>
+
+                    {/* Toggle 3: General Artwork */}
+                    <div className="ArtManage-card__toggle-row">
+                      <div className="ArtManage-card__toggle-label">
+                        <span className="ArtManage-toggle-badge ArtManage-toggle-badge--3">3</span>
+                        <span>General Artwork</span>
+                      </div>
+                      <button
+                        type="button"
+                        className={`ArtManage-switch-btn ${
+                          art.isGeneralArtwork !== false
+                            ? "ArtManage-switch-btn--gold"
+                            : "ArtManage-switch-btn--off"
+                        }`}
+                        onClick={() => handleToggleGeneral(art)}
+                        title="Click to toggle General Artwork"
+                      >
+                        <span className="ArtManage-switch-btn__knob" />
+                        <span className="ArtManage-switch-btn__text">
+                          {art.isGeneralArtwork !== false ? "Active" : "Off"}
+                        </span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="ArtManage-card__footer">
@@ -647,7 +855,9 @@ const ArtManage = ({
                   <th>Artist</th>
                   <th>Price</th>
                   <th>Stock</th>
-                  <th>Status</th>
+                  <th className="ArtManage-table__th-toggle">1. Publish Status</th>
+                  <th className="ArtManage-table__th-toggle">2. Streaming Collection</th>
+                  <th className="ArtManage-table__th-toggle">3. General Artwork</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -708,7 +918,64 @@ const ArtManage = ({
                       </span>
                     </td>
 
-                    <td>{renderStatus(art.status)}</td>
+                    {/* Toggle 1: Publish / Unpublish */}
+                    <td className="ArtManage-table__td-toggle">
+                      <button
+                        type="button"
+                        className={`ArtManage-switch-btn ${
+                          art.status === "Published"
+                            ? "ArtManage-switch-btn--published"
+                            : "ArtManage-switch-btn--unpublished"
+                        }`}
+                        onClick={() => handleStatus(art)}
+                        title={`Click to ${
+                          art.status === "Published" ? "Unpublish" : "Publish"
+                        }`}
+                      >
+                        <span className="ArtManage-switch-btn__knob" />
+                        <span className="ArtManage-switch-btn__text">
+                          {art.status === "Published" ? "Published" : "Unpublished"}
+                        </span>
+                      </button>
+                    </td>
+
+                    {/* Toggle 2: Streaming Collection */}
+                    <td className="ArtManage-table__td-toggle">
+                      <button
+                        type="button"
+                        className={`ArtManage-switch-btn ${
+                          art.isStreamingCollection
+                            ? "ArtManage-switch-btn--purple"
+                            : "ArtManage-switch-btn--off"
+                        }`}
+                        onClick={() => handleToggleStreaming(art)}
+                        title="Click to toggle Streaming Collection"
+                      >
+                        <span className="ArtManage-switch-btn__knob" />
+                        <span className="ArtManage-switch-btn__text">
+                          {art.isStreamingCollection ? "Active" : "Off"}
+                        </span>
+                      </button>
+                    </td>
+
+                    {/* Toggle 3: General Artwork */}
+                    <td className="ArtManage-table__td-toggle">
+                      <button
+                        type="button"
+                        className={`ArtManage-switch-btn ${
+                          art.isGeneralArtwork !== false
+                            ? "ArtManage-switch-btn--gold"
+                            : "ArtManage-switch-btn--off"
+                        }`}
+                        onClick={() => handleToggleGeneral(art)}
+                        title="Click to toggle General Artwork"
+                      >
+                        <span className="ArtManage-switch-btn__knob" />
+                        <span className="ArtManage-switch-btn__text">
+                          {art.isGeneralArtwork !== false ? "Active" : "Off"}
+                        </span>
+                      </button>
+                    </td>
 
                     <td>
                       {renderActions(art)}
@@ -733,17 +1000,30 @@ const ArtManage = ({
               Try changing your search or filters to find an artwork.
             </p>
 
-            <button
-              type="button"
-              className="ArtManage-empty__reset"
-              onClick={() => {
-                setSearch("");
-                setCategory("All Categories");
-                setStatusFilter("All");
-              }}
-            >
-              Clear filters
-            </button>
+            {artworks.length === 0 ? (
+              <button
+                type="button"
+                className="ArtManage-empty__reset"
+                style={{ background: "#7d5a36", color: "#fff", borderColor: "#7d5a36" }}
+                onClick={handleAddArt}
+              >
+                <Plus size={16} />
+                Add New Art
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="ArtManage-empty__reset"
+                onClick={() => {
+                  setSearch("");
+                  setCategory("All Categories");
+                  setTypeFilter("All Types");
+                  setStatusFilter("All");
+                }}
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         )}
       </section>
@@ -789,11 +1069,79 @@ const ArtManage = ({
               />
 
               <div className="ArtManage-preview__details">
-                <span className="ArtManage-preview__number">
-                  {selectedArt.artNo}
-                </span>
+                <div className="ArtManage-preview__badges-row">
+                  <span className="ArtManage-preview__number">
+                    {selectedArt.artNo}
+                  </span>
+                  <span className="ArtManage-preview__category-pill">
+                    {selectedArt.category}
+                  </span>
+                </div>
 
-                {renderStatus(selectedArt.status)}
+                {/* 3 SEPARATE TOGGLES IN PREVIEW */}
+                <div className="ArtManage-preview__toggles-panel">
+                  <span className="ArtManage-preview__toggles-title">
+                    COLLECTION & PUBLICATION TOGGLES
+                  </span>
+                  <div className="ArtManage-preview__toggles-grid">
+                    {/* Toggle 1: Publish */}
+                    <div className="ArtManage-preview__toggle-item">
+                      <span className="ArtManage-preview__toggle-label">1. Publish Status</span>
+                      <button
+                        type="button"
+                        className={`ArtManage-switch-btn ${
+                          selectedArt.status === "Published"
+                            ? "ArtManage-switch-btn--published"
+                            : "ArtManage-switch-btn--unpublished"
+                        }`}
+                        onClick={() => handleStatus(selectedArt)}
+                      >
+                        <span className="ArtManage-switch-btn__knob" />
+                        <span className="ArtManage-switch-btn__text">
+                          {selectedArt.status === "Published" ? "Published" : "Unpublished"}
+                        </span>
+                      </button>
+                    </div>
+
+                    {/* Toggle 2: Streaming Collection */}
+                    <div className="ArtManage-preview__toggle-item">
+                      <span className="ArtManage-preview__toggle-label">2. Streaming Collection</span>
+                      <button
+                        type="button"
+                        className={`ArtManage-switch-btn ${
+                          selectedArt.isStreamingCollection
+                            ? "ArtManage-switch-btn--purple"
+                            : "ArtManage-switch-btn--off"
+                        }`}
+                        onClick={() => handleToggleStreaming(selectedArt)}
+                      >
+                        <span className="ArtManage-switch-btn__knob" />
+                        <span className="ArtManage-switch-btn__text">
+                          {selectedArt.isStreamingCollection ? "Active" : "Off"}
+                        </span>
+                      </button>
+                    </div>
+
+                    {/* Toggle 3: General Artwork */}
+                    <div className="ArtManage-preview__toggle-item">
+                      <span className="ArtManage-preview__toggle-label">3. General Artwork</span>
+                      <button
+                        type="button"
+                        className={`ArtManage-switch-btn ${
+                          selectedArt.isGeneralArtwork !== false
+                            ? "ArtManage-switch-btn--gold"
+                            : "ArtManage-switch-btn--off"
+                        }`}
+                        onClick={() => handleToggleGeneral(selectedArt)}
+                      >
+                        <span className="ArtManage-switch-btn__knob" />
+                        <span className="ArtManage-switch-btn__text">
+                          {selectedArt.isGeneralArtwork !== false ? "Active" : "Off"}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="ArtManage-preview__field">
                   <span>Artist</span>
@@ -822,10 +1170,14 @@ const ArtManage = ({
 
                 <div className="ArtManage-preview__description">
                   <span>Description</span>
-                  <p>
-                    {selectedArt.description ||
-                      "No description available."}
-                  </p>
+                  <div
+                    className="ArtManage-preview__richtext"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        selectedArt.description ||
+                        "<p>No description available.</p>",
+                    }}
+                  />
                 </div>
 
                 <div className="ArtManage-preview__description">
