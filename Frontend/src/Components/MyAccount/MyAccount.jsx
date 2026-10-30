@@ -2319,6 +2319,80 @@ const MyAccount = ({ onAuthSuccess }) => {
                     </div>
                   </div>
 
+                  {/* Live Shipment Tracking Card if Shipped or Out for Delivery */}
+                  {(selectedOrderModal.status === "Shipped" || selectedOrderModal.status === "Out for Delivery" || selectedOrderModal.shipment?.trackingNumber) && (
+                    <div
+                      style={{
+                        margin: "14px 0",
+                        background: selectedOrderModal.status === "Out for Delivery" ? "#fff7ed" : "#f0f7ff",
+                        border: selectedOrderModal.status === "Out for Delivery" ? "1.5px solid #fed7aa" : "1.5px solid #bfdbfe",
+                        borderRadius: "12px",
+                        padding: "14px 18px",
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", marginBottom: "8px" }}>
+                        <strong style={{ fontSize: "13px", color: selectedOrderModal.status === "Out for Delivery" ? "#9a3412" : "#1e40af" }}>
+                          {selectedOrderModal.status === "Out for Delivery" ? "🚴 Out For Delivery Executive" : "📦 Speed Post / Courier Logistics Tracking"}
+                        </strong>
+                        {selectedOrderModal.shipment?.trackingNumber && (
+                          <span style={{ fontSize: "11.5px", fontFamily: "monospace", background: "#fff", padding: "2px 8px", borderRadius: "4px", border: "1px solid #cbd5e1" }}>
+                            AWB: {selectedOrderModal.shipment.trackingNumber}
+                          </span>
+                        )}
+                      </div>
+
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px", fontSize: "12.5px" }}>
+                        {selectedOrderModal.status === "Out for Delivery" ? (
+                          <>
+                            <div>
+                              <span style={{ color: "#7c2d12" }}>Agent Name: </span>
+                              <strong>{selectedOrderModal.shipment?.deliveryAgent?.name || "Assigned Executive"}</strong>
+                            </div>
+                            {selectedOrderModal.shipment?.deliveryAgent?.phone && (
+                              <div>
+                                <span style={{ color: "#7c2d12" }}>Agent Contact: </span>
+                                <a href={`tel:${selectedOrderModal.shipment.deliveryAgent.phone}`} style={{ color: "#ea580c", fontWeight: "700" }}>
+                                  {selectedOrderModal.shipment.deliveryAgent.phone}
+                                </a>
+                              </div>
+                            )}
+                            {(selectedOrderModal.shipment?.currentHub || selectedOrderModal.shipment?.currentLocation) && (
+                              <div>
+                                <span style={{ color: "#7c2d12" }}>Current Hub: </span>
+                                <strong>📍 {selectedOrderModal.shipment.currentHub || selectedOrderModal.shipment.currentLocation}</strong>
+                              </div>
+                            )}
+                            {(selectedOrderModal.shipment?.deliveryDate || selectedOrderModal.shipment?.estimatedDelivery) && (
+                              <div>
+                                <span style={{ color: "#7c2d12" }}>Date of Delivery: </span>
+                                <strong style={{ color: "#15803d" }}>{selectedOrderModal.shipment.deliveryDate || selectedOrderModal.shipment.estimatedDelivery}</strong>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <div>
+                              <span style={{ color: "#1e3a8a" }}>Courier: </span>
+                              <strong>{selectedOrderModal.shipment?.carrier || "India Post (Speed Post)"}</strong>
+                            </div>
+                            {(selectedOrderModal.shipment?.currentHub || selectedOrderModal.shipment?.currentLocation) && (
+                              <div>
+                                <span style={{ color: "#1e3a8a" }}>Current Courier Hub: </span>
+                                <strong>📍 {selectedOrderModal.shipment.currentHub || selectedOrderModal.shipment.currentLocation}</strong>
+                              </div>
+                            )}
+                            {(selectedOrderModal.shipment?.estimatedDelivery || selectedOrderModal.shipment?.deliveryDate) && (
+                              <div>
+                                <span style={{ color: "#1e3a8a" }}>Expected Delivery: </span>
+                                <strong style={{ color: "#15803d" }}>{selectedOrderModal.shipment.estimatedDelivery || selectedOrderModal.shipment.deliveryDate}</strong>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Items List */}
                   <div className="MyAccount-order-modal-items-section">
                     <h4>

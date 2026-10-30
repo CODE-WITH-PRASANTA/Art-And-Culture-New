@@ -466,22 +466,91 @@ const OrderDetails = () => {
             </div>
           </div>
 
+          {/* SHIPPED LOGISTICS TRACKING CARD (SPEED POST & COURIER HUB) */}
+          {(order.status === "Shipped" || order.shipment?.trackingNumber) && (
+            <div className="OrderDetails-shipped-card no-print">
+              <div className="OrderDetails-shipped-header">
+                <div>
+                  <span className="OrderDetails-shipped-tag">
+                    <Truck size={14} />
+                    <span>Dispatched via {order.shipment?.carrier || "India Post (Speed Post)"}</span>
+                  </span>
+                  <h4 className="OrderDetails-shipped-title">
+                    Artwork Shipped &amp; In Transit
+                  </h4>
+                </div>
+                {order.shipment?.trackingNumber && (
+                  <span className="OrderDetails-tracking-chip">
+                    Consignment #{order.shipment.trackingNumber}
+                  </span>
+                )}
+              </div>
+
+              <div className="OrderDetails-shipped-grid">
+                <div className="OrderDetails-shipped-meta-item">
+                  <span className="OrderDetails-shipped-meta-label">Courier Service</span>
+                  <span className="OrderDetails-shipped-meta-val">
+                    {order.shipment?.carrier || "India Post (Speed Post)"}
+                  </span>
+                </div>
+
+                <div className="OrderDetails-shipped-meta-item">
+                  <span className="OrderDetails-shipped-meta-label">Tracking ID / Consignment</span>
+                  <span className="OrderDetails-shipped-meta-val" style={{ fontFamily: "monospace", color: "#1e40af" }}>
+                    {order.shipment?.trackingNumber || "Assigned on Dispatch"}
+                  </span>
+                </div>
+
+                {(order.shipment?.currentHub || order.shipment?.currentLocation) && (
+                  <div className="OrderDetails-shipped-meta-item">
+                    <span className="OrderDetails-shipped-meta-label">Current Courier Hub</span>
+                    <span className="OrderDetails-shipped-meta-val">
+                      📍 {order.shipment.currentHub || order.shipment.currentLocation}
+                    </span>
+                  </div>
+                )}
+
+                {(order.shipment?.estimatedDelivery || order.shipment?.deliveryDate) && (
+                  <div className="OrderDetails-shipped-meta-item">
+                    <span className="OrderDetails-shipped-meta-label">Expected Delivery Date</span>
+                    <span className="OrderDetails-shipped-meta-val" style={{ color: "#15803d", fontWeight: "700" }}>
+                      {order.shipment.estimatedDelivery || order.shipment.deliveryDate}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* OUT FOR DELIVERY AGENT HIGHLIGHT CARD */}
-          {(order.status === "Out for Delivery" || order.shipment?.deliveryAgent?.name) && (
-            <div className="OrderDetails-agent-card no-print">
+          {(order.status === "Out for Delivery" || order.shipment?.deliveryAgent?.name || order.shipment?.deliveryAgent?.phone) && (
+            <div className="OrderDetails-agent-card no-print" style={{ marginBottom: "24px" }}>
               <div className="OrderDetails-agent-info">
                 <div className="OrderDetails-agent-avatar">
-                  <Truck size={24} />
+                  <Navigation size={24} />
                 </div>
                 <div>
-                  <span className="OrderDetails-agent-tag">🚴 Live Delivery Executive</span>
+                  <span className="OrderDetails-agent-tag">🚴 Live Delivery Executive &amp; Hub Details</span>
                   <h4 className="OrderDetails-agent-name">
                     {order.shipment?.deliveryAgent?.name || "Assigned Delivery Executive"}
                   </h4>
-                  <p className="OrderDetails-agent-meta">
-                    {order.shipment?.deliveryAgent?.vehicleNumber && `Vehicle: ${order.shipment.deliveryAgent.vehicleNumber} · `}
-                    {order.shipment?.estimatedDelivery ? `Expected: ${order.shipment.estimatedDelivery}` : "Handover scheduled today"}
-                  </p>
+                  <div style={{ marginTop: "4px", display: "flex", flexDirection: "column", gap: "2px", fontSize: "12.5px", color: "#7c2d12" }}>
+                    {(order.shipment?.currentHub || order.shipment?.currentLocation) && (
+                      <span>
+                        <strong>Current Hub: </strong> {order.shipment.currentHub || order.shipment.currentLocation}
+                      </span>
+                    )}
+                    {(order.shipment?.deliveryDate || order.shipment?.estimatedDelivery) && (
+                      <span>
+                        <strong>Date of Delivery: </strong> {order.shipment.deliveryDate || order.shipment.estimatedDelivery}
+                      </span>
+                    )}
+                    {order.shipment?.deliveryAgent?.vehicleNumber && (
+                      <span>
+                        <strong>Vehicle Registration: </strong> {order.shipment.deliveryAgent.vehicleNumber}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
