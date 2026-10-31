@@ -193,6 +193,14 @@
   border-radius: 12px;
 
   box-shadow: 0 4px 10px rgba(156, 114, 72, 0.15);
+  overflow: hidden;
+}
+
+.Topbar-brand-logo-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  display: block;
 }
 
 .Topbar-page-heading {

@@ -5,6 +5,9 @@ const ACCESS_TOKEN_KEY = "art_culture_access_token";
 const REFRESH_TOKEN_KEY = "art_culture_refresh_token";
 const USER_KEY = "art_culture_user";
 
+// In-flight refresh promise singleton to prevent race conditions & duplicate refreshes
+let inFlightRefreshPromise = null;
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -33,7 +36,15 @@ export const AuthProvider = ({ children }) => {
     }
   });
 
-  const [loading, setLoading] = useState(true);
+  // If user already exists in storage, loading is false so the UI renders instantly without flashing/logout
+  const [loading, setLoading] = useState(() => {
+    const hasExistingSession = Boolean(
+      (localStorage.getItem(ACCESS_TOKEN_KEY) || sessionStorage.getItem(ACCESS_TOKEN_KEY) ||
+       localStorage.getItem(REFRESH_TOKEN_KEY) || sessionStorage.getItem(REFRESH_TOKEN_KEY)) &&
+      (localStorage.getItem(USER_KEY) || sessionStorage.getItem(USER_KEY))
+    );
+    return !hasExistingSession;
+  });
 
   // Helper to store tokens and user
   const storeAuthData = (token, refresh, userData, remember = true) => {
@@ -56,7 +67,8 @@ export const AuthProvider = ({ children }) => {
     if (userData && (userData._id || userData.id) && userData.email) {
       storage.setItem(USER_KEY, JSON.stringify(userData));
       setUser(userData);
-    } else if (!userData) {
+    } else if (userData === null) {
+      // ONLY clear user if explicitly null, NEVER if undefined
       storage.removeItem(USER_KEY);
       alternate.removeItem(USER_KEY);
       setUser(null);
@@ -82,35 +94,59 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // Silently refresh the access token using refreshToken
+  // Silently refresh the access token using refreshToken with singleton promise deduplication
   const refreshSession = async () => {
-    const currentRefresh = refreshToken || localStorage.getItem(REFRESH_TOKEN_KEY) || sessionStorage.getItem(REFRESH_TOKEN_KEY);
+    if (inFlightRefreshPromise) {
+      return inFlightRefreshPromise;
+    }
+
+    const currentRefresh =
+      refreshToken ||
+      localStorage.getItem(REFRESH_TOKEN_KEY) ||
+      sessionStorage.getItem(REFRESH_TOKEN_KEY);
+
     if (!currentRefresh) {
-      clearAuthData();
       return null;
     }
 
-    try {
-      const res = await fetch(`${AUTH_API_URL}/refresh-token`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: currentRefresh }),
-      });
-      const data = await res.json();
+    inFlightRefreshPromise = (async () => {
+      try {
+        const res = await fetch(`${AUTH_API_URL}/refresh-token`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refreshToken: currentRefresh }),
+        });
+        const data = await res.json();
 
-      if (res.ok && data.success && data.accessToken) {
-        const isPersistent = Boolean(localStorage.getItem(REFRESH_TOKEN_KEY));
-        storeAuthData(data.accessToken, data.refreshToken || currentRefresh, user, isPersistent);
-        return data.accessToken;
-      } else {
-        clearAuthData();
+        if (res.ok && data.success && data.accessToken) {
+          const isPersistent = Boolean(localStorage.getItem(REFRESH_TOKEN_KEY));
+          const refreshedUser = data.user || user;
+          storeAuthData(
+            data.accessToken,
+            data.refreshToken || currentRefresh,
+            refreshedUser,
+            isPersistent
+          );
+          return data.accessToken;
+        } else if (res.status === 401 || res.status === 403) {
+          // Token is genuinely invalid or expired on server
+          clearAuthData();
+          return null;
+        } else {
+          // Temporary server error (500/502/503) - keep local session!
+          console.warn("Refresh token request returned server error status:", res.status);
+          return null;
+        }
+      } catch (err) {
+        console.error("Failed to refresh session due to network glitch:", err);
+        // Network error - keep local session!
         return null;
       }
-    } catch (err) {
-      console.error("Failed to refresh session:", err);
-      clearAuthData();
-      return null;
-    }
+    })().finally(() => {
+      inFlightRefreshPromise = null;
+    });
+
+    return inFlightRefreshPromise;
   };
 
   // Verify and hydrate current user on initial load
@@ -118,8 +154,14 @@ export const AuthProvider = ({ children }) => {
     let isMounted = true;
 
     const initAuth = async () => {
-      const currentAccess = accessToken || localStorage.getItem(ACCESS_TOKEN_KEY) || sessionStorage.getItem(ACCESS_TOKEN_KEY);
-      const currentRefresh = refreshToken || localStorage.getItem(REFRESH_TOKEN_KEY) || sessionStorage.getItem(REFRESH_TOKEN_KEY);
+      const currentAccess =
+        accessToken ||
+        localStorage.getItem(ACCESS_TOKEN_KEY) ||
+        sessionStorage.getItem(ACCESS_TOKEN_KEY);
+      const currentRefresh =
+        refreshToken ||
+        localStorage.getItem(REFRESH_TOKEN_KEY) ||
+        sessionStorage.getItem(REFRESH_TOKEN_KEY);
 
       if (!currentAccess && !currentRefresh) {
         if (isMounted) setLoading(false);
@@ -128,13 +170,16 @@ export const AuthProvider = ({ children }) => {
 
       try {
         let tokenToUse = currentAccess;
-        // Verify current access token
-        let res = await fetch(`${AUTH_API_URL}/me`, {
-          headers: { Authorization: `Bearer ${tokenToUse}` },
-        });
+        let res = null;
 
-        // If access token is expired or invalid, try to refresh
-        if (res.status === 401 && currentRefresh) {
+        if (tokenToUse) {
+          res = await fetch(`${AUTH_API_URL}/me`, {
+            headers: { Authorization: `Bearer ${tokenToUse}` },
+          });
+        }
+
+        // If access token is expired (401) or missing, attempt silent refresh
+        if ((!res || res.status === 401) && currentRefresh) {
           tokenToUse = await refreshSession();
           if (tokenToUse) {
             res = await fetch(`${AUTH_API_URL}/me`, {
@@ -143,21 +188,23 @@ export const AuthProvider = ({ children }) => {
           }
         }
 
-        if (res.ok) {
+        // If component unmounted during StrictMode / navigation, DO NOT touch auth storage
+        if (!isMounted) return;
+
+        if (res && res.ok) {
           const data = await res.json();
-          if (isMounted && data.success && data.user && data.user.email) {
+          if (data.success && data.user && data.user.email) {
             setUser(data.user);
             const isPersistent = Boolean(localStorage.getItem(REFRESH_TOKEN_KEY));
             const storage = isPersistent ? localStorage : sessionStorage;
             storage.setItem(USER_KEY, JSON.stringify(data.user));
-          } else {
-            clearAuthData();
           }
-        } else {
+        } else if (res && (res.status === 401 || res.status === 403)) {
+          // Only clear if server explicitly denied access and refresh was exhausted
           clearAuthData();
         }
       } catch (err) {
-        console.error("Auth init error:", err);
+        console.error("Auth init network error (preserving stored session):", err);
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -323,9 +370,43 @@ export const AuthProvider = ({ children }) => {
     return data.user;
   };
 
+  // Upload user profile photo
+  const uploadAvatar = async (file) => {
+    const token =
+      accessToken ||
+      localStorage.getItem(ACCESS_TOKEN_KEY) ||
+      sessionStorage.getItem(ACCESS_TOKEN_KEY);
+    if (!token) throw new Error("Not authenticated");
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    const res = await fetch(`${AUTH_API_URL}/avatar`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || "Failed to upload profile photo");
+    }
+
+    if (data.user) {
+      const isPersistent = Boolean(localStorage.getItem(REFRESH_TOKEN_KEY));
+      storeAuthData(token, refreshToken, data.user, isPersistent);
+    }
+    return data;
+  };
+
   // Helper for authenticated requests with token auto-refresh
   const authFetch = async (url, options = {}) => {
-    let token = accessToken;
+    let token =
+      accessToken ||
+      localStorage.getItem(ACCESS_TOKEN_KEY) ||
+      sessionStorage.getItem(ACCESS_TOKEN_KEY);
     const makeRequest = (t) => {
       const headers = {
         "Content-Type": "application/json",
@@ -466,7 +547,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isUserAuthenticated = Boolean(
-    accessToken && user && (user._id || user.id) && user.email
+    (accessToken || refreshToken) && user && (user._id || user.id) && user.email
   );
 
   return (
@@ -485,6 +566,7 @@ export const AuthProvider = ({ children }) => {
         verifyOtp,
         resetPassword,
         updateProfile,
+        uploadAvatar,
         refreshSession,
         getAddresses,
         addAddress,

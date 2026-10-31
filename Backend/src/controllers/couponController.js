@@ -15,6 +15,10 @@ const getCoupons = async (req, res) => {
       ];
     }
 
+    if (status === "active") {
+      filter.disabled = { $ne: true };
+    }
+
     const coupons = await Coupon.find(filter).sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -290,6 +294,104 @@ const deleteCoupon = async (req, res) => {
   }
 };
 
+// @desc    Validate and apply coupon to cart
+// @route   POST /api/coupons/validate
+// @access  Public
+const validateCoupon = async (req, res) => {
+  try {
+    const { code, cartTotal = 0 } = req.body;
+    const cleanCode = (code || "").trim().toUpperCase();
+
+    if (!cleanCode) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a coupon code.",
+      });
+    }
+
+    const coupon = await Coupon.findOne({ code: cleanCode });
+    if (!coupon) {
+      return res.status(404).json({
+        success: false,
+        message: `Coupon code '${cleanCode}' is invalid or does not exist.`,
+      });
+    }
+
+    if (coupon.disabled) {
+      return res.status(400).json({
+        success: false,
+        message: `Coupon '${cleanCode}' is currently deactivated.`,
+      });
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    if (coupon.start && coupon.start > today) {
+      return res.status(400).json({
+        success: false,
+        message: `Coupon '${cleanCode}' will be active starting ${coupon.start}.`,
+      });
+    }
+
+    if (coupon.end && coupon.end < today) {
+      return res.status(400).json({
+        success: false,
+        message: `Coupon '${cleanCode}' expired on ${coupon.end}.`,
+      });
+    }
+
+    if (Number(coupon.limit) > 0 && Number(coupon.used) >= Number(coupon.limit)) {
+      return res.status(400).json({
+        success: false,
+        message: `Coupon '${cleanCode}' maximum usage limit has been reached.`,
+      });
+    }
+
+    const subtotal = Number(cartTotal) || 0;
+    if (Number(coupon.minimum) > 0 && subtotal < Number(coupon.minimum)) {
+      const shortfall = Number(coupon.minimum) - subtotal;
+      return res.status(400).json({
+        success: false,
+        message: `Minimum purchase of ₹${coupon.minimum.toLocaleString("en-IN")} required. Add ₹${shortfall.toLocaleString("en-IN")} more to use this coupon.`,
+        minimum: coupon.minimum,
+        shortfall,
+      });
+    }
+
+    let discount = 0;
+    if (coupon.type === "Percentage (%)") {
+      discount = Math.round((subtotal * Number(coupon.value)) / 100);
+    } else {
+      discount = Math.min(Number(coupon.value), subtotal);
+    }
+
+    discount = Math.max(0, Math.min(discount, subtotal));
+    const finalTotal = Math.max(0, subtotal - discount);
+
+    return res.status(200).json({
+      success: true,
+      message: `Coupon '${coupon.code}' applied successfully! You saved ₹${discount.toLocaleString("en-IN")}.`,
+      coupon: {
+        _id: coupon._id,
+        code: coupon.code,
+        type: coupon.type,
+        value: coupon.value,
+        description: coupon.description,
+        minimum: coupon.minimum,
+      },
+      discount,
+      finalTotal,
+    });
+  } catch (error) {
+    console.error("Error in validateCoupon:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to validate coupon.",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getCoupons,
   getCouponById,
@@ -297,4 +399,5 @@ module.exports = {
   updateCoupon,
   toggleCouponStatus,
   deleteCoupon,
+  validateCoupon,
 };

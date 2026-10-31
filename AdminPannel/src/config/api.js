@@ -11,6 +11,9 @@ export const BLOGS_API_URL = `${API_BASE_URL}/api/blogs`;
 export const AUTH_API_URL = `${API_BASE_URL}/api/auth`;
 export const USERS_API_URL = `${API_BASE_URL}/api/users`;
 export const ORDERS_API_URL = `${API_BASE_URL}/api/orders`;
+export const ENQUIRIES_API_URL = `${API_BASE_URL}/api/enquiries`;
+export const BLOG_COMMENTS_API_URL = `${API_BASE_URL}/api/blog-comments`;
+export const REVIEWS_API_URL = `${API_BASE_URL}/api/blog-comments`;
 
 export const formatImageUrl = (img) => {
   if (!img) return "";

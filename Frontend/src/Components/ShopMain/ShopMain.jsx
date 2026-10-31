@@ -39,10 +39,10 @@ const getArtImage = (art, fallbackIndex = 0) => {
 };
 
 const priceOptions = [
-  { value: "under20", label: "Under ₹20,000", min: 0, max: 20000 },
-  { value: "20to35", label: "₹20,000 – ₹35,000", min: 20000, max: 35000 },
-  { value: "35to60", label: "₹35,000 – ₹60,000", min: 35000, max: 60000 },
-  { value: "above60", label: "Above ₹60,000", min: 60000, max: Infinity },
+  { value: "under500", label: "Under ₹500", min: 0, max: 500 },
+  { value: "500to1500", label: "₹500 – ₹1,500", min: 500, max: 1500 },
+  { value: "1500to3000", label: "₹1,500 – ₹3,000", min: 1500, max: 3000 },
+  { value: "above3000", label: "Above ₹3,000", min: 3000, max: Infinity },
 ];
 
 const sortOptions = [
@@ -652,7 +652,7 @@ const ShopMain = ({ onAddToCart, onView }) => {
   };
 
   const labelFor = (group, value) =>
-    group === "price" ? priceOptions.find((o) => o.value === value).label : value;
+    group === "price" ? priceOptions.find((o) => o.value === value)?.label || value : value;
 
   const chips = Object.keys(filters).flatMap((group) =>
     filters[group].map((value) => ({ group, value }))

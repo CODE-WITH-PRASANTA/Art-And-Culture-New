@@ -13,30 +13,120 @@ import {
   Sparkles,
   HelpCircle,
   AlertCircle,
+  AlertTriangle,
+  CreditCard,
   ExternalLink,
   Loader2,
   Navigation,
   Phone,
-  LayoutDashboard,
-  UserRound,
-  Heart,
-  ShoppingBag,
-  LogOut,
+  Download,
 } from "lucide-react";
+import {
+  launchRazorpayCheckout,
+  verifyPaymentSignature,
+  retryPaymentOrder,
+} from "../../services/razorpay";
 import { PAYMENT_API_URL, formatImageUrl } from "../../config/api";
 import { useAuth } from "../../context/AuthContext";
+import { downloadInvoicePdf } from "../../utils/generateInvoice";
 import heroFallback from "../../assets/my-account.webp";
+import { WHATSAPP_NUMBER, getWhatsAppUrl } from "../../config/api";
 import "./OrderDetails.css";
 
 const OrderDetails = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, accessToken, logout } = useAuth();
+  const { user, accessToken } = useAuth();
 
   const [order, setOrder] = useState(location.state?.order || null);
   const [loading, setLoading] = useState(!location.state?.order);
   const [error, setError] = useState("");
+  const [downloadingInvoice, setDownloadingInvoice] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  const [retryNotice, setRetryNotice] = useState("");
+
+  const isPaymentPaid =
+    (order?.payment?.status === "captured" || order?.payment?.status === "success") &&
+    Boolean(order?.payment?.razorpayPaymentId && order?.payment?.razorpayPaymentId !== "-");
+
+  const isPaymentFailed =
+    order?.status === "Payment Failed" ||
+    order?.status === "Cancelled" ||
+    order?.payment?.status === "failed" ||
+    (!isPaymentPaid && order?.payment?.status === "created");
+
+  const handleRetryPayment = async () => {
+    if (retrying || !order) return;
+    setRetrying(true);
+    setRetryNotice("");
+
+    try {
+      const retryData = await retryPaymentOrder({
+        orderId: order._id,
+        orderNumber: order.orderNumber,
+        token: accessToken,
+      });
+
+      await launchRazorpayCheckout({
+        orderData: retryData,
+        onSuccess: async (payResponse) => {
+          try {
+            const verifyRes = await verifyPaymentSignature({
+              orderId: payResponse.orderId,
+              razorpayOrderId: payResponse.razorpayOrderId,
+              razorpayPaymentId: payResponse.razorpayPaymentId,
+              razorpaySignature: payResponse.razorpaySignature,
+              token: accessToken,
+            });
+
+            if (verifyRes.order) {
+              setOrder(verifyRes.order);
+            } else {
+              window.location.reload();
+            }
+          } catch (vErr) {
+            console.error("Verification error on retry:", vErr);
+            alert("Payment completed! Refreshing order details...");
+            window.location.reload();
+          } finally {
+            setRetrying(false);
+          }
+        },
+        onFailure: (err) => {
+          console.error("Retry payment failed:", err);
+          setRetryNotice(err.description || "Payment failed or was cancelled.");
+          setRetrying(false);
+        },
+        onDismiss: () => {
+          setRetrying(false);
+        },
+      });
+    } catch (err) {
+      console.error("Failed to retry payment:", err);
+      alert(err.message || "Failed to initiate payment retry.");
+      setRetrying(false);
+    }
+  };
+
+  const isDelivered = (order?.status || "").trim().toLowerCase() === "delivered";
+
+  const handleDownloadInvoice = async () => {
+    if (!order || downloadingInvoice) return;
+    if (!isDelivered) {
+      alert("Tax invoice is available for download only after the artwork order has been delivered.");
+      return;
+    }
+    try {
+      setDownloadingInvoice(true);
+      await downloadInvoicePdf(order);
+    } catch (err) {
+      console.error("Failed to generate invoice PDF:", err);
+      alert(err.message || "Unable to generate PDF invoice right now. Please try again.");
+    } finally {
+      setDownloadingInvoice(false);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -85,6 +175,11 @@ const OrderDetails = () => {
   
 
   const getStepStatus = (stepName) => {
+    if (isPaymentFailed) {
+      if (stepName === "pending") return "failed";
+      return "disabled";
+    }
+
     let currentStatus = (order?.status || "Pending").toLowerCase();
     if (currentStatus === "confirmed" || currentStatus === "processing") {
       currentStatus = "pending";
@@ -93,44 +188,10 @@ const OrderDetails = () => {
     const currentIdx = sequence.indexOf(currentStatus);
     const stepIdx = sequence.indexOf(stepName);
 
-    if (currentStatus === "cancelled") {
-      return stepName === "pending" ? "completed" : "cancelled";
-    }
-
     if (currentIdx !== -1 && stepIdx <= currentIdx) return "completed";
     if (currentIdx !== -1 && stepIdx === currentIdx + 1) return "current";
     return "pending";
   };
-
-  // User details for luxury account sidebar
-  const displayName =
-    user?.firstName || user?.lastName
-      ? `${user.firstName || ""} ${user.lastName || ""}`.trim()
-      : order?.customer?.fullName || order?.customer?.name || "Saroj Kumar";
-
-  const initials =
-    displayName
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part) => (part[0] ? part[0].toUpperCase() : ""))
-      .join("") || "SK";
-
-  const userEmail =
-    user?.email ||
-    order?.customer?.email ||
-    "sarojkumarmallik94@gmail.com";
-
-  const userRole =
-    user?.role === "admin" ? "Administrator" : "Art Collector";
-
-  const joinedDate = user?.createdAt
-    ? new Date(user.createdAt).toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    : "28 October 2026";
 
   if (loading) {
     return (
@@ -204,135 +265,21 @@ const OrderDetails = () => {
 
   return (
     <div className="OrderDetails-page">
-      <div className="OrderDetails-shell">
-        {/* ========================================================= */}
-        {/* SIDEBAR NAVIGATION INTEGRATION */}
-        {/* ========================================================= */}
-        <aside className="OrderDetails-sidebar no-print">
-          <div className="OrderDetails-sidebar-card">
-            {/* User Profile Summary */}
-            <div className="OrderDetails-sidebar-profile">
-              <div className="OrderDetails-avatar-circle">{initials}</div>
-              <div className="OrderDetails-sidebar-userinfo">
-                <h3 className="OrderDetails-sidebar-name">{displayName}</h3>
-                <p className="OrderDetails-sidebar-email">{userEmail}</p>
-                <span className="OrderDetails-role-badge">{userRole}</span>
-                <span className="OrderDetails-sidebar-joined">
-                  Member since {joinedDate}
-                </span>
-              </div>
-            </div>
+      <div className="OrderDetails-container">
+        {/* Navigation Bar */}
+        <div className="OrderDetails-nav no-print">
+          <button
+            type="button"
+            onClick={() => navigate("/my-account?tab=orders")}
+            className="OrderDetails-back-link"
+          >
+            <ArrowLeft size={18} />
+            <span>Back to Order History</span>
+          </button>
+        </div>
 
-            <div className="OrderDetails-sidebar-divider" />
-
-            {/* Navigation Menu */}
-            <nav className="OrderDetails-sidebar-nav" aria-label="Account Navigation">
-              <button
-                type="button"
-                className="OrderDetails-sidebar-btn"
-                onClick={() => navigate("/my-account?tab=dashboard")}
-              >
-                <div className="OrderDetails-sidebar-btn-content">
-                  <LayoutDashboard size={18} className="OrderDetails-sidebar-btn-icon" />
-                  <span className="OrderDetails-sidebar-btn-label">Dashboard</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="OrderDetails-sidebar-btn"
-                onClick={() => navigate("/my-account?tab=profile")}
-              >
-                <div className="OrderDetails-sidebar-btn-content">
-                  <UserRound size={18} className="OrderDetails-sidebar-btn-icon" />
-                  <span className="OrderDetails-sidebar-btn-label">My Profile</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="OrderDetails-sidebar-btn OrderDetails-sidebar-btn--active"
-                onClick={() => navigate("/my-account?tab=orders")}
-              >
-                <div className="OrderDetails-sidebar-btn-content">
-                  <Package size={18} className="OrderDetails-sidebar-btn-icon" />
-                  <span className="OrderDetails-sidebar-btn-label">My Orders</span>
-                </div>
-                <span className="OrderDetails-sidebar-badge">Active</span>
-              </button>
-
-              <button
-                type="button"
-                className="OrderDetails-sidebar-btn"
-                onClick={() => navigate("/my-account?tab=addresses")}
-              >
-                <div className="OrderDetails-sidebar-btn-content">
-                  <MapPin size={18} className="OrderDetails-sidebar-btn-icon" />
-                  <span className="OrderDetails-sidebar-btn-label">Saved Addresses</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="OrderDetails-sidebar-btn"
-                onClick={() => navigate("/my-account?tab=wishlist")}
-              >
-                <div className="OrderDetails-sidebar-btn-content">
-                  <Heart size={18} className="OrderDetails-sidebar-btn-icon" />
-                  <span className="OrderDetails-sidebar-btn-label">My Wishlist</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="OrderDetails-sidebar-btn"
-                onClick={() => navigate("/cart")}
-              >
-                <div className="OrderDetails-sidebar-btn-content">
-                  <ShoppingBag size={18} className="OrderDetails-sidebar-btn-icon" />
-                  <span className="OrderDetails-sidebar-btn-label">Shopping Cart</span>
-                </div>
-              </button>
-            </nav>
-
-            <div className="OrderDetails-sidebar-divider" />
-
-            {/* Sign Out Button */}
-            <button
-              type="button"
-              className="OrderDetails-sidebar-logout"
-              onClick={() => {
-                if (logout) logout();
-                navigate("/my-account");
-              }}
-              title="Sign Out"
-            >
-              <LogOut size={16} />
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </aside>
-
-        {/* ========================================================= */}
-        {/* MAIN ORDER DETAILS CONTENT AREA */}
-        {/* ========================================================= */}
-        <div className="OrderDetails-main-area">
-          {/* Navigation Bar */}
-          <div className="OrderDetails-nav no-print">
-            <button
-              type="button"
-              onClick={() => navigate("/my-account?tab=orders")}
-              className="OrderDetails-back-link"
-            >
-              <ArrowLeft size={18} />
-              <span>Back to Order History</span>
-            </button>
-
-            
-          </div>
-
-          {/* Hero Header Card */}
-          <div className="OrderDetails-hero-card">
+        {/* Hero Header Card */}
+        <div className="OrderDetails-hero-card">
             <div className="OrderDetails-hero-left">
               <span className="OrderDetails-eyebrow">ORIGINAL ARTWORK ACQUISITION</span>
               <h1 className="OrderDetails-order-title">
@@ -345,19 +292,119 @@ const OrderDetails = () => {
             </div>
 
             <div className="OrderDetails-hero-right">
-              {isCaptured && (
+              {isPaymentPaid ? (
                 <span className="OrderDetails-badge OrderDetails-badge--paid">
                   <CheckCircle2 size={14} />
-                  <span>Paid via Razorpay</span>
+                  <span>Paid</span>
+                </span>
+              ) : (
+                <span className="OrderDetails-badge OrderDetails-badge--failed">
+                  <AlertTriangle size={14} />
+                  <span>Payment Failed</span>
                 </span>
               )}
               <span
-                className={`OrderDetails-badge OrderDetails-badge--status OrderDetails-badge--${(order.status || "pending").toLowerCase().replace(/\s+/g, "-")}`}
+                className={`OrderDetails-badge OrderDetails-badge--status OrderDetails-badge--${(order.status || (isPaymentFailed ? "payment-failed" : "pending")).toLowerCase().replace(/\s+/g, "-")}`}
               >
-                {order.status || "Pending"}
+                {order.status || (isPaymentFailed ? "Payment Failed" : "Pending")}
               </span>
+
+              {isDelivered && (
+                <button
+                  type="button"
+                  className="OrderDetails-download-btn no-print"
+                  onClick={handleDownloadInvoice}
+                  disabled={downloadingInvoice}
+                  title="Download official Tax Invoice PDF"
+                >
+                  {downloadingInvoice ? (
+                    <>
+                      <Loader2 size={15} className="OrderDetails-spin" />
+                      <span>Preparing PDF...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download size={15} />
+                      <span>Download Invoice</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              <a
+                href={getWhatsAppUrl(
+                  WHATSAPP_NUMBER,
+                  `Hello Art & Culture! I need help with my Order #${order.orderNumber || order.id || order._id}.`
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="OrderDetails-download-btn no-print"
+                style={{
+                  background: "#ffffff",
+                  color: "#6a461b",
+                  border: "1.5px solid #dfd0be",
+                  textDecoration: "none",
+                }}
+                title="Chat with support on WhatsApp"
+              >
+                <span>Need Help?</span>
+              </a>
             </div>
           </div>
+
+          {/* FAILED PAYMENT ALERT & RETRY ACTION BANNER */}
+          {isPaymentFailed && (
+            <div className="OrderDetails-failed-banner no-print">
+              <div className="OrderDetails-failed-banner-icon">
+                <AlertTriangle size={24} />
+              </div>
+              <div className="OrderDetails-failed-banner-content">
+                <div className="OrderDetails-failed-banner-text">
+                  <h4>Payment Incomplete or Cancelled</h4>
+                  <p>
+                    {order.payment?.failureReason ||
+                      "This artwork order could not be confirmed because payment was not successfully captured on the Razorpay gateway. Your bank account or card was not debited."}
+                  </p>
+                  {retryNotice && (
+                    <p style={{ color: "#dc2626", fontWeight: "600", marginTop: "4px" }}>
+                      {retryNotice}
+                    </p>
+                  )}
+                </div>
+                <div className="OrderDetails-failed-banner-actions">
+                  <button
+                    type="button"
+                    onClick={handleRetryPayment}
+                    disabled={retrying}
+                    className="OrderDetails-retry-btn"
+                  >
+                    {retrying ? (
+                      <>
+                        <Loader2 size={15} className="OrderDetails-spin" />
+                        <span>Connecting Gateway...</span>
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard size={15} />
+                        <span>Retry Payment / Pay Now</span>
+                      </>
+                    )}
+                  </button>
+                  <a
+                    href={getWhatsAppUrl(
+                      WHATSAPP_NUMBER,
+                      `Hello Art & Culture! I need assistance with my Order #${displayId}.`
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="OrderDetails-help-link-btn"
+                  >
+                    <span>Chat Support</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Order Status Stepper Tracker */}
           <div className="OrderDetails-stepper-card no-print">
@@ -365,15 +412,23 @@ const OrderDetails = () => {
             <div className="OrderDetails-stepper">
               <div className={`OrderDetails-step OrderDetails-step--${getStepStatus("pending")}`}>
                 <div className="OrderDetails-step-icon">
-                  <CheckCircle2 size={20} />
+                  {isPaymentFailed ? (
+                    <AlertTriangle size={20} />
+                  ) : (
+                    <CheckCircle2 size={20} />
+                  )}
                 </div>
                 <div className="OrderDetails-step-content">
-                  <strong>Order Confirmed</strong>
-                  <span>Payment captured successfully</span>
+                  <strong>{isPaymentFailed ? "Payment Failed" : "Order Confirmed"}</strong>
+                  <span>
+                    {isPaymentFailed
+                      ? "Payment was not captured via Razorpay"
+                      : "Payment captured successfully"}
+                  </span>
                 </div>
               </div>
 
-              <div className="OrderDetails-step-line" />
+              <div className={`OrderDetails-step-line ${isPaymentFailed ? "OrderDetails-step-line--disabled" : ""}`} />
 
               <div className={`OrderDetails-step OrderDetails-step--${getStepStatus("shipped")}`}>
                 <div className="OrderDetails-step-icon">
@@ -385,7 +440,7 @@ const OrderDetails = () => {
                 </div>
               </div>
 
-              <div className="OrderDetails-step-line" />
+              <div className={`OrderDetails-step-line ${isPaymentFailed ? "OrderDetails-step-line--disabled" : ""}`} />
 
               <div className={`OrderDetails-step OrderDetails-step--${getStepStatus("out for delivery")}`}>
                 <div className="OrderDetails-step-icon">
@@ -397,7 +452,7 @@ const OrderDetails = () => {
                 </div>
               </div>
 
-              <div className="OrderDetails-step-line" />
+              <div className={`OrderDetails-step-line ${isPaymentFailed ? "OrderDetails-step-line--disabled" : ""}`} />
 
               <div className={`OrderDetails-step OrderDetails-step--${getStepStatus("delivered")}`}>
                 <div className="OrderDetails-step-icon">
@@ -451,7 +506,7 @@ const OrderDetails = () => {
                   <h3 className="OrderDetails-card-title">Live Shipment Transit Journey</h3>
                 </div>
                 {order.shipment.trackingNumber && (
-                  <span style={{ fontSize: "12px", fontFamily: "monospace", color: "#8c5b0c", fontWeight: "700" }}>
+                  <span className="OrderDetails-tracking-chip">
                     Tracking #{order.shipment.trackingNumber} ({order.shipment.carrier || "Blue Dart Express"})
                   </span>
                 )}
@@ -598,6 +653,12 @@ const OrderDetails = () => {
                     <span>Artwork Subtotal</span>
                     <strong>₹{(order.subtotal || order.totalAmount || 0).toLocaleString("en-IN")}</strong>
                   </div>
+                  {order.discount > 0 && (
+                    <div className="OrderDetails-summary-row" style={{ color: "#16a34a" }}>
+                      <span>Coupon Discount {order.couponCode ? `(${order.couponCode})` : ""}</span>
+                      <strong style={{ color: "#16a34a" }}>- ₹{order.discount.toLocaleString("en-IN")}</strong>
+                    </div>
+                  )}
                   <div className="OrderDetails-summary-row">
                     <span>Standard Insured Shipping</span>
                     <span className="OrderDetails-text-free">FREE</span>
@@ -626,8 +687,8 @@ const OrderDetails = () => {
 
                 <div className="OrderDetails-payment-box">
                   <div className="OrderDetails-payment-row">
-                    <span>Payment Gateway</span>
-                    <strong>{order.payment?.gateway || "Razorpay Secure"}</strong>
+                    <span>Payment Method</span>
+                    <strong>Prepaid Online</strong>
                   </div>
                   <div className="OrderDetails-payment-row">
                     <span>Payment Status</span>
@@ -643,7 +704,7 @@ const OrderDetails = () => {
                   )}
                   {order.payment?.razorpayOrderId && (
                     <div className="OrderDetails-payment-row">
-                      <span>Razorpay Order ID</span>
+                      <span>Transaction ID</span>
                       <code className="OrderDetails-code">{order.payment.razorpayOrderId}</code>
                     </div>
                   )}
@@ -668,8 +729,7 @@ const OrderDetails = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default OrderDetails;

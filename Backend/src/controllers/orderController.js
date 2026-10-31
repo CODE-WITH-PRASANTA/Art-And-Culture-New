@@ -1,4 +1,10 @@
 const Order = require("../models/Order");
+const {
+  sendOrderConfirmationEmail,
+  sendOrderShippedEmail,
+  sendOrderOutForDeliveryEmail,
+  sendOrderDeliveredEmail,
+} = require("../utils/sendEmail");
 
 /**
  * @desc    Get all orders with successful payment only
@@ -7,8 +13,8 @@ const Order = require("../models/Order");
  */
 exports.getAllOrders = async (req, res) => {
   try {
-    // Strictly fetch ONLY orders with successful payment (captured or confirmed)
-    // DO NOT return failed, unpaid, or incomplete payments
+    // Strictly fetch ONLY orders with successful payment (captured or confirmed with valid payment ID)
+    // DO NOT return failed, unpaid, cancelled, or uncaptured checkout sessions
     const orders = await Order.find({
       $and: [
         {
@@ -16,20 +22,15 @@ exports.getAllOrders = async (req, res) => {
             { "payment.status": "captured" },
             { "payment.status": "success" },
             {
-              status: {
-                $in: [
-                  "Pending",
-                  "Confirmed",
-                  "Processing",
-                  "Shipped",
-                  "Out for Delivery",
-                  "Delivered",
-                ],
-              },
+              $and: [
+                { "payment.razorpayPaymentId": { $exists: true, $ne: "" } },
+                { "payment.status": { $ne: "failed" } },
+              ],
             },
           ],
         },
-        { "payment.status": { $nin: ["failed", "unpaid"] } },
+        { "payment.status": { $nin: ["failed", "unpaid", "created"] } },
+        { status: { $nin: ["Payment Failed", "Cancelled"] } },
       ],
     }).sort({ createdAt: -1 });
 
@@ -156,6 +157,7 @@ exports.updateOrder = async (req, res) => {
       });
     }
 
+    const previousStatus = order.status;
     const { status, payment, shipment } = req.body;
 
     if (status) {
@@ -233,6 +235,28 @@ exports.updateOrder = async (req, res) => {
     }
 
     await order.save();
+
+    // Trigger status transition emails asynchronously
+    if (order.customer?.email && status && status !== previousStatus) {
+      const recipient = order.customer.email;
+      if (status === "Shipped") {
+        sendOrderShippedEmail({ to: recipient, order }).catch((err) =>
+          console.error("[SMTP] Error sending Shipped email:", err.message)
+        );
+      } else if (status === "Out for Delivery") {
+        sendOrderOutForDeliveryEmail({ to: recipient, order }).catch((err) =>
+          console.error("[SMTP] Error sending Out for Delivery email:", err.message)
+        );
+      } else if (status === "Delivered") {
+        sendOrderDeliveredEmail({ to: recipient, order }).catch((err) =>
+          console.error("[SMTP] Error sending Delivered email:", err.message)
+        );
+      } else if (status === "Confirmed") {
+        sendOrderConfirmationEmail({ to: recipient, order }).catch((err) =>
+          console.error("[SMTP] Error sending Confirmation email:", err.message)
+        );
+      }
+    }
 
     res.status(200).json({
       success: true,

@@ -694,6 +694,500 @@
   letter-spacing: -0.5px;
 }
 
+/* ==========================================================================
+   ITEMISED ACQUISITIONS LIST IN SUMMARY
+   ========================================================================== */
+
+.CartMain-summaryItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #eee7de;
+  max-height: 260px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.CartMain-summaryItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.CartMain-summaryItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.CartMain-summaryItemThumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 7px;
+  object-fit: cover;
+  border: 1px solid #ebd9c4;
+  flex-shrink: 0;
+  background: #faf5ee;
+}
+
+.CartMain-summaryItemMeta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.CartMain-summaryItemTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2b1708;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.35;
+}
+
+.CartMain-summaryItemQty {
+  font-size: 11px;
+  color: #8c7662;
+  font-weight: 500;
+}
+
+.CartMain-summaryItemPrice {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--CartMain-gold-dark);
+  white-space: nowrap;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* ==========================================================================
+   PROMOTIONS & COUPONS SECTION (BELOW PROCEED TO CHECKOUT)
+   ========================================================================== */
+
+.CartMain-couponCard {
+  border: 1.5px dashed #e6d3bf;
+  border-radius: 12px;
+  background: #fdfaf6;
+  padding: 14px 16px;
+  margin-top: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 10px rgba(176, 111, 21, 0.03);
+  transition: all 0.25s ease;
+}
+
+.CartMain-couponCardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 11px;
+}
+
+.CartMain-couponTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2b1f14;
+}
+
+.CartMain-couponIcon {
+  color: var(--CartMain-gold);
+  flex-shrink: 0;
+}
+
+.CartMain-viewCouponsToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: var(--CartMain-gold-dark);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.18s ease;
+}
+
+.CartMain-viewCouponsToggle:hover {
+  color: #784206;
+  background: #fbf1e2;
+}
+
+.CartMain-couponForm {
+  margin-top: 2px;
+}
+
+.CartMain-couponInputWrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.CartMain-couponInput {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid #dfcfbc;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #2b1f14;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.CartMain-couponInput::placeholder {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  color: #a49688;
+  text-transform: none;
+}
+
+.CartMain-couponInput:focus {
+  border-color: var(--CartMain-gold);
+  box-shadow: 0 0 0 3px rgba(201, 134, 35, 0.15);
+}
+
+.CartMain-couponApplyBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #c98623, #a5630f);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.CartMain-couponApplyBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b27317, #8f5309);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(165, 99, 15, 0.25);
+}
+
+.CartMain-couponApplyBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Applied Coupon Active Card */
+.CartMain-appliedCouponBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 8px;
+  animation: CartMain-fadeUp 0.3s ease both;
+}
+
+.CartMain-appliedCouponLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.CartMain-appliedCouponBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #15803d;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+}
+
+.CartMain-appliedCouponText {
+  margin: 0;
+  font-size: 11.5px;
+  color: #166534;
+}
+
+.CartMain-appliedSavings {
+  font-weight: 700;
+  color: #15803d;
+}
+
+.CartMain-removeCouponBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 9px;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  background: #fff;
+  color: #dc2626;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.CartMain-removeCouponBtn:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #b91c1c;
+}
+
+/* Status Messages */
+.CartMain-couponMessage {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 9px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  animation: CartMain-fadeUp 0.25s ease both;
+}
+
+.CartMain-couponMessage svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.CartMain-couponMessage--error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.CartMain-couponMessage--success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.CartMain-couponMessage--warning {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+/* Available Offers Drawer */
+.CartMain-availableCouponsList {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #e6d3bf;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: CartMain-fadeUp 0.25s ease both;
+}
+
+.CartMain-availableCouponsTitle {
+  margin: 0 0 4px;
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #8c5d23;
+}
+
+.CartMain-availableCouponItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+  background: #ffffff;
+  border: 1px solid #ecdac8;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.CartMain-availableCouponItem:hover {
+  border-color: var(--CartMain-gold);
+  box-shadow: 0 2px 8px rgba(189, 121, 25, 0.08);
+}
+
+.CartMain-availableCouponItem--active {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.CartMain-availableCouponContent {
+  min-width: 0;
+  flex: 1;
+}
+
+.CartMain-availableCouponHeader {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.CartMain-couponPill {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #fff7ed;
+  border: 1px dashed #ea580c;
+  color: #c2410c;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.CartMain-couponTagDiscount {
+  font-size: 11px;
+  font-weight: 800;
+  color: #16a34a;
+}
+
+.CartMain-couponDesc {
+  margin: 2px 0 3px;
+  font-size: 11px;
+  color: #69635e;
+  line-height: 1.35;
+}
+
+.CartMain-couponMin {
+  display: block;
+  font-size: 10.5px;
+  color: #855516;
+}
+
+.CartMain-couponShortfall {
+  color: #ea580c;
+  font-weight: 600;
+}
+
+.CartMain-couponQuickApplyBtn {
+  padding: 4px 10px;
+  border: 1px solid #d4a362;
+  border-radius: 6px;
+  background: #fffdf9;
+  color: #92530c;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.CartMain-couponQuickApplyBtn:hover:not(:disabled) {
+  background: var(--CartMain-gold);
+  border-color: var(--CartMain-gold);
+  color: #ffffff;
+}
+
+.CartMain-couponQuickApplyBtn:disabled {
+  opacity: 0.5;
+  background: #f4ede3;
+  border-color: #dfcfbc;
+  color: #9f8f7f;
+  cursor: not-allowed;
+}
+
+.CartMain-couponAppliedLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #15803d;
+  flex-shrink: 0;
+}
+
+/* Discount row in summary */
+.CartMain-summaryRow--discount {
+  color: #15803d !important;
+}
+
+.CartMain-discountLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #15803d;
+  font-weight: 700;
+}
+
+.CartMain-discountAmount {
+  color: #15803d !important;
+  font-weight: 800 !important;
+}
+
+.CartMain-modalDiscountValue {
+  color: #15803d !important;
+  font-weight: 700;
+}
+
+/* Total Amount With Savings */
+.CartMain-totalValuesWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.CartMain-originalTotalStrikethrough {
+  font-size: 15px;
+  font-weight: 500;
+  color: #9c9288;
+  text-decoration: line-through;
+}
+
+.CartMain-totalSavingsBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 7px;
+  color: #047857;
+  font-size: 11.5px;
+  font-weight: 700;
+  animation: CartMain-fadeUp 0.3s ease both;
+}
+
+.CartMain-spin {
+  animation: CartMain-spin 0.8s linear infinite;
+}
+
+@keyframes CartMain-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .CartMain-summaryRows {
   display: flex;
   flex-direction: column;
@@ -863,30 +1357,35 @@
   align-items: center;
   justify-content: center;
   overflow-y: auto;
-  padding: 24px;
-  background: rgba(24, 20, 15, 0.55);
-  backdrop-filter: blur(5px);
+  padding: 24px 16px;
+  background: rgba(24, 20, 15, 0.65);
+  backdrop-filter: blur(6px);
   animation: CartMain-fadeIn 0.2s ease both;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .CartMain-checkoutModal {
   position: relative;
   width: min(100%, 540px);
   max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 36px);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 30px;
   border: 1px solid #eee2d2;
-  border-radius: 12px;
+  border-radius: 14px;
   background: #fffdf9;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
-  animation: CartMain-modalIn 0.3s ease both;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+  animation: CartMain-modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  box-sizing: border-box;
 }
 
 /* Two-column split layout for checkout modal */
 .CartMain-checkoutModal--split {
-  width: min(100% - 32px, 920px);
+  width: min(100% - 24px, 920px);
   max-width: 920px;
-  padding: 34px 38px;
+  padding: 32px 34px;
 }
 
 .CartMain-checkoutModalGrid {
@@ -1256,10 +1755,10 @@
   color: #72675b;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 960px) {
   .CartMain-checkoutModal--split {
-    width: min(100% - 24px, 600px);
-    padding: 24px 20px;
+    width: min(100% - 24px, 720px);
+    padding: 28px 24px;
   }
 
   .CartMain-checkoutModalGrid {
@@ -1269,6 +1768,262 @@
 
   .CartMain-checkoutRight {
     position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .CartMain-modalBackdrop {
+    padding: 16px 10px;
+    align-items: center;
+  }
+
+  .CartMain-checkoutModal {
+    max-height: calc(100dvh - 20px);
+    border-radius: 12px;
+  }
+
+  .CartMain-checkoutModal--split {
+    width: 100%;
+    max-width: 580px;
+    padding: 24px 18px;
+  }
+
+  .CartMain-checkoutModalGrid {
+    gap: 20px;
+  }
+
+  .CartMain-checkoutModal h2 {
+    font-size: 22px;
+    padding-right: 40px;
+  }
+
+  .CartMain-modalDescription {
+    font-size: 12.5px;
+    margin: 4px 0 16px;
+    line-height: 1.5;
+  }
+
+  .CartMain-modalClose {
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    font-size: 22px;
+  }
+
+  .CartMain-deliveryCard {
+    padding: 16px 14px;
+  }
+
+  .CartMain-deliveryRecipient {
+    font-size: 16.5px;
+  }
+
+  .CartMain-deliveryAddressText {
+    font-size: 13.5px;
+  }
+
+  .CartMain-modalSummaryCard {
+    padding: 18px 16px;
+  }
+
+  .CartMain-summaryTitle {
+    font-size: 18px;
+  }
+
+  .CartMain-modalTotalAmount {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 520px) {
+  .CartMain-modalBackdrop {
+    padding: 10px 6px;
+    align-items: flex-end;
+  }
+
+  .CartMain-checkoutModal {
+    width: 100%;
+    max-height: 94dvh;
+    border-radius: 16px 16px 0 0;
+    padding: 20px 14px 22px;
+  }
+
+  .CartMain-checkoutModal--split {
+    width: 100%;
+    padding: 20px 14px 22px;
+  }
+
+  .CartMain-checkoutModalGrid {
+    gap: 16px;
+  }
+
+  .CartMain-checkoutModal h2 {
+    font-size: 20px;
+    padding-right: 36px;
+  }
+
+  .CartMain-modalClose {
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+  }
+
+  .CartMain-deliveryCardTop {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .CartMain-deliveryCardBadges {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .CartMain-deliveryVerifiedTag {
+    font-size: 10.5px;
+    padding: 2px 7px;
+  }
+
+  .CartMain-deliveryRecipient {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .CartMain-deliveryAddressText {
+    font-size: 13px;
+    line-height: 1.45;
+    word-break: break-word;
+  }
+
+  .CartMain-deliveryMetaGrid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+
+  .CartMain-deliveryMetaItem {
+    font-size: 12px;
+    word-break: break-all;
+  }
+
+  .CartMain-otherAddrPill {
+    font-size: 12px;
+    padding: 7px 8px;
+  }
+
+  .CartMain-addNewAddrBtn {
+    width: 100%;
+    justify-content: center;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .CartMain-modalSummaryCard {
+    padding: 14px 12px;
+    border-radius: 10px;
+  }
+
+  .CartMain-modalSummaryHead {
+    padding-bottom: 10px;
+  }
+
+  .CartMain-summaryTitle {
+    font-size: 17px;
+  }
+
+  .CartMain-itemCountBadge {
+    font-size: 10.5px;
+    padding: 2px 7px;
+  }
+
+  .CartMain-modalItemsList {
+    max-height: 160px;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .CartMain-modalItemThumb {
+    width: 44px;
+    height: 44px;
+  }
+
+  .CartMain-modalItemTitle {
+    font-size: 12.5px;
+  }
+
+  .CartMain-modalItemArtist {
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+
+  .CartMain-modalItemMeta {
+    font-size: 11.5px;
+  }
+
+  .CartMain-modalItemPrice {
+    font-size: 12.5px;
+  }
+
+  .CartMain-breakdownRow {
+    font-size: 12px;
+  }
+
+  .CartMain-modalTotalRow {
+    padding: 12px 0 14px;
+  }
+
+  .CartMain-modalTotalLabel {
+    font-size: 13px;
+  }
+
+  .CartMain-modalTotalSubtext {
+    font-size: 10.5px;
+  }
+
+  .CartMain-modalTotalAmount {
+    font-size: 20px;
+    overflow-wrap: anywhere;
+  }
+
+  .CartMain-checkoutButton--pay {
+    min-height: 46px;
+    font-size: 13px;
+  }
+
+  .CartMain-modalTrustList {
+    margin-top: 12px;
+    padding-top: 10px;
+    gap: 6px;
+  }
+
+  .CartMain-trustItem {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 360px) {
+  .CartMain-checkoutModal {
+    padding: 16px 10px 18px;
+  }
+
+  .CartMain-checkoutModal h2 {
+    font-size: 18px;
+  }
+
+  .CartMain-deliveryCard {
+    padding: 10px 8px;
+  }
+
+  .CartMain-modalSummaryCard {
+    padding: 12px 8px;
+  }
+
+  .CartMain-checkoutButton--pay {
+    font-size: 12px;
+    padding: 10px 8px;
   }
 }
 
@@ -1956,6 +2711,32 @@
 
   .CartMain-checkoutModal {
     padding: 24px 18px;
+  }
+
+  .CartMain-couponCard {
+    padding: 12px;
+  }
+
+  .CartMain-couponInput {
+    font-size: 11px;
+    height: 36px;
+    padding: 0 9px;
+  }
+
+  .CartMain-couponApplyBtn {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 11px;
+  }
+
+  .CartMain-availableCouponItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .CartMain-couponQuickApplyBtn {
+    align-self: flex-end;
   }
 }
 

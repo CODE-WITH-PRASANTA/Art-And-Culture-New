@@ -6,6 +6,7 @@ const fs = require("fs");
 // Upload directories
 const baseUploadDir = path.resolve(__dirname, "../../uploads");
 const galleryUploadDir = path.join(baseUploadDir, "gallery");
+const avatarsUploadDir = path.join(baseUploadDir, "avatars");
 
 // Ensure directories exist
 if (!fs.existsSync(baseUploadDir)) {
@@ -13,6 +14,9 @@ if (!fs.existsSync(baseUploadDir)) {
 }
 if (!fs.existsSync(galleryUploadDir)) {
   fs.mkdirSync(galleryUploadDir, { recursive: true });
+}
+if (!fs.existsSync(avatarsUploadDir)) {
+  fs.mkdirSync(avatarsUploadDir, { recursive: true });
 }
 
 // Memory storage so sharp can process the image before saving
@@ -82,8 +86,47 @@ const convertToWebp = async (req, res, next) => {
   }
 };
 
+/**
+ * Middleware: Convert uploaded avatar (req.file) into WebP format (400x400) and save to /uploads/avatars
+ */
+const convertAvatarToWebp = async (req, res, next) => {
+  if (!req.file || !req.file.buffer) {
+    return next();
+  }
+
+  try {
+    const userId = req.user ? req.user.id || req.user._id : "user";
+    const uniqueName = `avatar-${userId}-${Date.now()}.webp`;
+    const outputPath = path.join(avatarsUploadDir, uniqueName);
+
+    // Resize square avatar and convert to high-quality WebP
+    await sharp(req.file.buffer)
+      .resize(400, 400, { fit: "cover", position: "center" })
+      .webp({ quality: 85 })
+      .toFile(outputPath);
+
+    req.file.filename = uniqueName;
+    req.file.path = outputPath;
+    req.file.destination = avatarsUploadDir;
+    req.file.subfolder = "avatars";
+    req.file.mimetype = "image/webp";
+    req.file.relativeUrl = `/uploads/avatars/${uniqueName}`;
+
+    next();
+  } catch (error) {
+    console.error("Error processing avatar image:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to process and save avatar image",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   upload,
   convertToWebp,
+  convertAvatarToWebp,
   galleryUploadDir,
+  avatarsUploadDir,
 };

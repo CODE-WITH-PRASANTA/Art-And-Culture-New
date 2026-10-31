@@ -37,7 +37,6 @@ const statusOptions = [
   "Shipped",
   "Out for Delivery",
   "Delivered",
-  "Cancelled",
 ];
 
 const carrierOptions = [
@@ -71,7 +70,17 @@ const Order = () => {
       const res = await fetch(ORDERS_API_URL);
       const data = await res.json();
       if (data.success && Array.isArray(data.orders)) {
-        setOrders(data.orders);
+        // Strictly exclude any payment failed, unpaid, or cancelled orders from Admin Panel
+        const paidOrdersOnly = data.orders.filter((order) => {
+          const isFailed =
+            order.status === "Payment Failed" ||
+            order.status === "Cancelled" ||
+            order.paymentStatus === "failed" ||
+            order.paymentStatus === "created" ||
+            order.paymentStatus === "unpaid";
+          return !isFailed;
+        });
+        setOrders(paidOrdersOnly);
       }
     } catch (err) {
       console.error("Failed to load orders:", err);
@@ -173,6 +182,15 @@ const Order = () => {
   const filteredOrders = useMemo(() => {
     return orders
       .filter((order) => {
+        // Exclude failed or unpaid orders from Admin Panel display
+        const isFailed =
+          order.status === "Payment Failed" ||
+          order.status === "Cancelled" ||
+          order.paymentStatus === "failed" ||
+          order.paymentStatus === "created" ||
+          order.paymentStatus === "unpaid";
+        if (isFailed) return false;
+
         const query = searchTerm.trim().toLowerCase();
         const matchesSearch =
           !query ||
@@ -1072,408 +1090,6 @@ const Order = () => {
         )}
       </section>
 
-      {/* ------------------------------------------------------------- */}
-      {/* MANAGE SHIPMENT & STATUS MODAL */}
-      {/* ------------------------------------------------------------- */}
-      {statusModalOpen && statusOrder && (
-        <div
-          className="Order-modal-overlay"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget && !savingStatus) {
-              setStatusModalOpen(false);
-            }
-          }}
-        >
-          <section
-            className="Order-modal Order-shipment-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="Order-shipment-title"
-          >
-            <header className="Order-modal__header">
-              <div>
-                <span className="Order-section-eyebrow">SHIPMENT &amp; FULFILLMENT</span>
-                <h2 id="Order-shipment-title">
-                  Update Shipment · #{statusOrder.id}
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                className="Order-modal__close"
-                onClick={() => !savingStatus && setStatusModalOpen(false)}
-                aria-label="Close modal"
-              >
-                <FiX size={20} />
-              </button>
-            </header>
-
-            <form onSubmit={handleSaveStatusModal} className="Order-shipment-form">
-              {/* Order Customer Summary Bar */}
-              <div className="Order-shipment-summary-bar">
-                <div className="Order-shipment-summary-item">
-                  <span>Customer</span>
-                  <strong>{statusOrder.customer}</strong>
-                </div>
-                <div className="Order-shipment-summary-item">
-                  <span>Phone / Email</span>
-                  <strong>{statusOrder.phone || statusOrder.email}</strong>
-                </div>
-                <div className="Order-shipment-summary-item">
-                  <span>Total Amount</span>
-                  <strong style={{ color: "#8c5b0c" }}>
-                    {formatCurrency(statusOrder.amount)}
-                  </strong>
-                </div>
-              </div>
-
-              {/* Status Stepper / Stage Selector */}
-              <div className="Order-stage-selector">
-                <label className="Order-field-label">Order Fulfillment Status</label>
-                <div className="Order-stage-buttons">
-                  {[
-                    { key: "Pending", label: "Pending", icon: FiClock },
-                    { key: "Shipped", label: "Shipped", icon: FiTruck },
-                    { key: "Out for Delivery", label: "Out for Delivery", icon: FiNavigation },
-                    { key: "Delivered", label: "Delivered", icon: FiCheckCircle },
-                  ].map((stage) => {
-                    const StageIcon = stage.icon;
-                    const isActive = statusForm.status === stage.key;
-                    return (
-                      <button
-                        type="button"
-                        key={stage.key}
-                        className={`Order-stage-btn ${isActive ? "Order-stage-btn--active" : ""} Order-stage-btn--${stage.key.toLowerCase().replace(/\s+/g, "-")}`}
-                        onClick={() => setStatusForm((prev) => ({ ...prev, status: stage.key }))}
-                      >
-                        <StageIcon size={16} />
-                        <span>{stage.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* IF PENDING: CLEAN MINIMAL NOTICE */}
-              {statusForm.status === "Pending" && (
-                <div
-                  style={{
-                    background: "#fffbeb",
-                    border: "1px solid #fde68a",
-                    borderRadius: "10px",
-                    padding: "14px 18px",
-                    fontSize: "13px",
-                    color: "#92400e",
-                    lineHeight: "1.5",
-                  }}
-                >
-                  Order payment is captured. Select <strong>Shipped</strong> when the artwork is dispatched to add shipping address, carrier tracking, and transit checkpoints.
-                </div>
-              )}
-
-              {/* SECTION: SHIPPING ADDRESS (When Shipped, Out for Delivery, Delivered) */}
-              {statusForm.status !== "Pending" && (
-                <div className="Order-shipment-card">
-                  <div className="Order-card-header">
-                    <FiMapPin size={16} style={{ color: "#8c5b0c" }} />
-                    <h4>Delivery Destination Address</h4>
-                  </div>
-                  <textarea
-                    rows={2}
-                    className="Order-textarea"
-                    value={statusForm.shippingAddress}
-                    onChange={(e) =>
-                      setStatusForm((prev) => ({ ...prev, shippingAddress: e.target.value }))
-                    }
-                    placeholder="Enter complete delivery address..."
-                    required
-                  />
-                </div>
-              )}
-
-              {/* SECTION: CARRIER & AWB TRACKING */}
-              {statusForm.status !== "Pending" && (
-                <div className="Order-shipment-card">
-                  <div className="Order-card-header">
-                    <FiTruck size={16} style={{ color: "#1d4ed8" }} />
-                    <h4>Logistics &amp; Tracking Details</h4>
-                  </div>
-                  <div className="Order-three-col">
-                    <div>
-                      <label className="Order-field-label">Courier Carrier</label>
-                      <select
-                        className="Order-select"
-                        value={statusForm.carrier}
-                        onChange={(e) =>
-                          setStatusForm((prev) => ({ ...prev, carrier: e.target.value }))
-                        }
-                      >
-                        {carrierOptions.map((c) => (
-                          <option key={c} value={c}>
-                            {c}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="Order-field-label">AWB / Tracking Number</label>
-                      <input
-                        type="text"
-                        className="Order-input"
-                        value={statusForm.trackingNumber}
-                        onChange={(e) =>
-                          setStatusForm((prev) => ({ ...prev, trackingNumber: e.target.value }))
-                        }
-                        placeholder="e.g. BD-892348123IN"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="Order-field-label">Estimated Delivery</label>
-                      <input
-                        type="text"
-                        className="Order-input"
-                        value={statusForm.estimatedDelivery}
-                        onChange={(e) =>
-                          setStatusForm((prev) => ({ ...prev, estimatedDelivery: e.target.value }))
-                        }
-                        placeholder="e.g. 31 Oct 2026"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* SECTION: MULTIPLE SHIPPED TRANSIT CHECKPOINTS */}
-              {statusForm.status !== "Pending" && (
-                <div className="Order-shipment-card">
-                  <div className="Order-card-header" style={{ justifyContent: "space-between" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <FiNavigation size={16} style={{ color: "#8c5b0c" }} />
-                      <h4>Transit Hub Checkpoints ({statusForm.transitLocations.length})</h4>
-                    </div>
-                  </div>
-
-                  {/* Existing Checkpoints List */}
-                  {statusForm.transitLocations.length > 0 && (
-                    <div className="Order-transit-list">
-                      {statusForm.transitLocations.map((loc, idx) => (
-                        <div key={idx} className="Order-transit-item">
-                          <div className="Order-transit-num">#{idx + 1}</div>
-                          <div className="Order-transit-details">
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                              <strong>{loc.location}</strong>
-                              <span className="Order-transit-status-tag">{loc.status}</span>
-                            </div>
-                            <div style={{ fontSize: "12px", color: "#666", marginTop: "2px" }}>
-                              {loc.city && <span>📍 {loc.city} · </span>}
-                              <span>🕒 {formatDateTime(loc.timestamp)}</span>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            className="Order-transit-delete-btn"
-                            onClick={() => handleRemoveCheckpoint(idx)}
-                            title="Remove checkpoint"
-                          >
-                            <FiTrash2 size={14} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Add Checkpoint Form */}
-                  <div className="Order-add-checkpoint-box">
-                    <h5 style={{ margin: "0 0 12px", fontSize: "12.5px", color: "#2d241e", fontWeight: "700" }}>
-                      + Add Transit Hub Checkpoint
-                    </h5>
-                    <div className="Order-two-col">
-                      <div>
-                        <label className="Order-field-label">Hub / Facility Name *</label>
-                        <input
-                          type="text"
-                          className="Order-input"
-                          placeholder="e.g. Bhubaneswar Sorting Facility"
-                          value={newCheckpoint.location}
-                          onChange={(e) =>
-                            setNewCheckpoint((prev) => ({ ...prev, location: e.target.value }))
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="Order-field-label">City / State</label>
-                        <input
-                          type="text"
-                          className="Order-input"
-                          placeholder="e.g. Bhubaneswar, Odisha"
-                          value={newCheckpoint.city}
-                          onChange={(e) =>
-                            setNewCheckpoint((prev) => ({ ...prev, city: e.target.value }))
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="Order-two-col" style={{ marginTop: "10px" }}>
-                      <div>
-                        <label className="Order-field-label">Status</label>
-                        <select
-                          className="Order-select"
-                          value={newCheckpoint.status}
-                          onChange={(e) =>
-                            setNewCheckpoint((prev) => ({ ...prev, status: e.target.value }))
-                          }
-                        >
-                          <option value="Dispatched">Dispatched from Origin</option>
-                          <option value="In Transit">In Transit to Hub</option>
-                          <option value="Arrived at Sorting Facility">Arrived at Sorting Facility</option>
-                          <option value="Departed Facility">Departed Facility</option>
-                          <option value="Arrived at Destination City">Arrived at Destination City</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="Order-field-label">Date &amp; Time</label>
-                        <input
-                          type="datetime-local"
-                          className="Order-input"
-                          value={newCheckpoint.timestamp}
-                          onChange={(e) =>
-                            setNewCheckpoint((prev) => ({ ...prev, timestamp: e.target.value }))
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="Order-add-checkpoint-btn"
-                      onClick={handleAddCheckpoint}
-                    >
-                      <FiPlus size={14} />
-                      <span>Add Checkpoint</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* SECTION: OUT FOR DELIVERY (DELIVERY AGENT DETAILS) */}
-              {(statusForm.status === "Out for Delivery" || statusForm.status === "Delivered") && (
-                <div className="Order-shipment-card Order-shipment-card--highlight">
-                  <div className="Order-card-header">
-                    <FiUser size={16} style={{ color: "#c2410c" }} />
-                    <h4 style={{ color: "#9a3412" }}>
-                      Delivery Executive Details {statusForm.status === "Out for Delivery" && "(Required)"}
-                    </h4>
-                  </div>
-
-                  <div className="Order-two-col">
-                    <div>
-                      <label className="Order-field-label">
-                        Agent Name <span style={{ color: "#dc2626" }}>*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="Order-input"
-                        placeholder="e.g. Ramesh Kumar"
-                        value={statusForm.deliveryAgent.name}
-                        onChange={(e) =>
-                          setStatusForm((prev) => ({
-                            ...prev,
-                            deliveryAgent: { ...prev.deliveryAgent, name: e.target.value },
-                          }))
-                        }
-                        required={statusForm.status === "Out for Delivery"}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="Order-field-label">
-                        Agent Contact Number <span style={{ color: "#dc2626" }}>*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        className="Order-input"
-                        placeholder="e.g. +91 98765 43210"
-                        value={statusForm.deliveryAgent.phone}
-                        onChange={(e) =>
-                          setStatusForm((prev) => ({
-                            ...prev,
-                            deliveryAgent: { ...prev.deliveryAgent, phone: e.target.value },
-                          }))
-                        }
-                        required={statusForm.status === "Out for Delivery"}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="Order-two-col" style={{ marginTop: "10px" }}>
-                    <div>
-                      <label className="Order-field-label">Vehicle Registration #</label>
-                      <input
-                        type="text"
-                        className="Order-input"
-                        placeholder="e.g. OD-02-AX-8910"
-                        value={statusForm.deliveryAgent.vehicleNumber}
-                        onChange={(e) =>
-                          setStatusForm((prev) => ({
-                            ...prev,
-                            deliveryAgent: { ...prev.deliveryAgent, vehicleNumber: e.target.value },
-                          }))
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      <label className="Order-field-label">Delivery Time Slot</label>
-                      <input
-                        type="text"
-                        className="Order-input"
-                        placeholder="e.g. Today 2:00 PM – 5:00 PM"
-                        value={statusForm.notes}
-                        onChange={(e) =>
-                          setStatusForm((prev) => ({ ...prev, notes: e.target.value }))
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Modal Actions Footer */}
-              <footer className="Order-modal__footer">
-                <button
-                  type="button"
-                  className="Order-modal__button Order-modal__button--secondary"
-                  onClick={() => setStatusModalOpen(false)}
-                  disabled={savingStatus}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="Order-modal__button Order-modal__button--primary"
-                  disabled={savingStatus}
-                >
-                  {savingStatus ? (
-                    <>
-                      <FiRefreshCw size={15} style={{ animation: "spin 1s linear infinite" }} />
-                      <span>Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FiCheck size={16} />
-                      <span>Update Status</span>
-                    </>
-                  )}
-                </button>
-              </footer>
-            </form>
-          </section>
-        </div>
-      )}
 
       {/* ------------------------------------------------------------- */}
       {/* VIEW ORDER DETAILS DRAWER / MODAL */}
@@ -1738,6 +1354,422 @@ const Order = () => {
                 Manage Shipment
               </button>
             </footer>
+          </section>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* MANAGE SHIPMENT & STATUS MODAL */}
+      {/* ------------------------------------------------------------- */}
+      {statusModalOpen && statusOrder && (
+        <div
+          className="Order-modal-overlay Order-modal-overlay--shipment"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget && !savingStatus) {
+              setStatusModalOpen(false);
+            }
+          }}
+        >
+          <section
+            className="Order-modal Order-shipment-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="Order-shipment-title"
+          >
+            <header className="Order-modal__header">
+              <div>
+                <span className="Order-section-eyebrow">SHIPMENT &amp; FULFILLMENT</span>
+                <h2 id="Order-shipment-title">
+                  Update Shipment · #{statusOrder.id}
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                className="Order-modal__close"
+                onClick={() => !savingStatus && setStatusModalOpen(false)}
+                aria-label="Close modal"
+              >
+                <FiX size={20} />
+              </button>
+            </header>
+
+            <form onSubmit={handleSaveStatusModal} className="Order-shipment-form">
+              {/* Order Customer Summary Bar */}
+              <div className="Order-shipment-summary-bar">
+                <div className="Order-shipment-summary-item">
+                  <span>Customer</span>
+                  <strong>{statusOrder.customer}</strong>
+                </div>
+                <div className="Order-shipment-summary-item">
+                  <span>Phone / Email</span>
+                  <strong>{statusOrder.phone || statusOrder.email}</strong>
+                </div>
+                <div className="Order-shipment-summary-item">
+                  <span>Total Amount</span>
+                  <strong style={{ color: "#8c5b0c" }}>
+                    {formatCurrency(statusOrder.amount)}
+                  </strong>
+                </div>
+              </div>
+
+              {/* Status Stepper / Stage Selector */}
+              <div className="Order-stage-selector">
+                <label className="Order-field-label">Order Fulfillment Status</label>
+                <div className="Order-stage-buttons">
+                  {[
+                    { key: "Pending", label: "Pending", icon: FiClock },
+                    { key: "Shipped", label: "Shipped", icon: FiTruck },
+                    { key: "Out for Delivery", label: "Out for Delivery", icon: FiNavigation },
+                    { key: "Delivered", label: "Delivered", icon: FiCheckCircle },
+                  ].map((stage) => {
+                    const StageIcon = stage.icon;
+                    const isActive = statusForm.status === stage.key;
+                    return (
+                      <button
+                        type="button"
+                        key={stage.key}
+                        className={`Order-stage-btn ${isActive ? "Order-stage-btn--active" : ""} Order-stage-btn--${stage.key.toLowerCase().replace(/\s+/g, "-")}`}
+                        onClick={() => setStatusForm((prev) => ({ ...prev, status: stage.key }))}
+                      >
+                        <StageIcon size={16} />
+                        <span>{stage.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* IF PENDING: CLEAN MINIMAL NOTICE */}
+              {statusForm.status === "Pending" && (
+                <div
+                  style={{
+                    background: "#fffbeb",
+                    border: "1px solid #fde68a",
+                    borderRadius: "10px",
+                    padding: "14px 18px",
+                    fontSize: "13px",
+                    color: "#92400e",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Order payment is captured. Select <strong>Shipped</strong> when the artwork is dispatched to add shipping address, carrier tracking, and transit checkpoints.
+                </div>
+              )}
+
+              {/* SECTION: SHIPPING ADDRESS (When Shipped, Out for Delivery, Delivered) */}
+              {statusForm.status !== "Pending" && (
+                <div className="Order-shipment-card">
+                  <div className="Order-card-header">
+                    <FiMapPin size={16} style={{ color: "#8c5b0c" }} />
+                    <h4>Delivery Destination Address</h4>
+                  </div>
+                  <textarea
+                    rows={3}
+                    className="Order-textarea"
+                    value={statusForm.shippingAddress ?? ""}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setStatusForm((prev) => ({ ...prev, shippingAddress: val }));
+                    }}
+                    placeholder="Enter complete delivery address..."
+                    style={{
+                      pointerEvents: "auto",
+                      userSelect: "text",
+                      cursor: "text",
+                      resize: "vertical",
+                      minHeight: "70px",
+                    }}
+                    required
+                  />
+                </div>
+              )}
+
+              {/* SECTION: CARRIER & AWB TRACKING */}
+              {statusForm.status !== "Pending" && (
+                <div className="Order-shipment-card">
+                  <div className="Order-card-header">
+                    <FiTruck size={16} style={{ color: "#1d4ed8" }} />
+                    <h4>Logistics &amp; Tracking Details</h4>
+                  </div>
+                  <div className="Order-three-col">
+                    <div>
+                      <label className="Order-field-label">Courier Carrier</label>
+                      <select
+                        className="Order-select"
+                        value={statusForm.carrier}
+                        onChange={(e) =>
+                          setStatusForm((prev) => ({ ...prev, carrier: e.target.value }))
+                        }
+                      >
+                        {carrierOptions.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="Order-field-label">AWB / Tracking Number</label>
+                      <input
+                        type="text"
+                        className="Order-input"
+                        value={statusForm.trackingNumber}
+                        onChange={(e) =>
+                          setStatusForm((prev) => ({ ...prev, trackingNumber: e.target.value }))
+                        }
+                        placeholder="e.g. BD-892348123IN"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="Order-field-label">Estimated Delivery</label>
+                      <input
+                        type="text"
+                        className="Order-input"
+                        value={statusForm.estimatedDelivery}
+                        onChange={(e) =>
+                          setStatusForm((prev) => ({ ...prev, estimatedDelivery: e.target.value }))
+                        }
+                        placeholder="e.g. 31 Oct 2026"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* SECTION: MULTIPLE SHIPPED TRANSIT CHECKPOINTS */}
+              {statusForm.status !== "Pending" && (
+                <div className="Order-shipment-card">
+                  <div className="Order-card-header" style={{ justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <FiNavigation size={16} style={{ color: "#8c5b0c" }} />
+                      <h4>Transit Hub Checkpoints ({statusForm.transitLocations.length})</h4>
+                    </div>
+                  </div>
+
+                  {/* Existing Checkpoints List */}
+                  {statusForm.transitLocations.length > 0 && (
+                    <div className="Order-transit-list">
+                      {statusForm.transitLocations.map((loc, idx) => (
+                        <div key={idx} className="Order-transit-item">
+                          <div className="Order-transit-num">#{idx + 1}</div>
+                          <div className="Order-transit-details">
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <strong>{loc.location}</strong>
+                              <span className="Order-transit-status-tag">{loc.status}</span>
+                            </div>
+                            <div style={{ fontSize: "12px", color: "#666", marginTop: "2px" }}>
+                              {loc.city && <span>📍 {loc.city} · </span>}
+                              <span>🕒 {formatDateTime(loc.timestamp)}</span>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            className="Order-transit-delete-btn"
+                            onClick={() => handleRemoveCheckpoint(idx)}
+                            title="Remove checkpoint"
+                          >
+                            <FiTrash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Add Checkpoint Form */}
+                  <div className="Order-add-checkpoint-box">
+                    <h5 style={{ margin: "0 0 12px", fontSize: "12.5px", color: "#2d241e", fontWeight: "700" }}>
+                      + Add Transit Hub Checkpoint
+                    </h5>
+                    <div className="Order-two-col">
+                      <div>
+                        <label className="Order-field-label">Hub / Facility Name *</label>
+                        <input
+                          type="text"
+                          className="Order-input"
+                          placeholder="e.g. Bhubaneswar Sorting Facility"
+                          value={newCheckpoint.location}
+                          onChange={(e) =>
+                            setNewCheckpoint((prev) => ({ ...prev, location: e.target.value }))
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="Order-field-label">City / State</label>
+                        <input
+                          type="text"
+                          className="Order-input"
+                          placeholder="e.g. Bhubaneswar, Odisha"
+                          value={newCheckpoint.city}
+                          onChange={(e) =>
+                            setNewCheckpoint((prev) => ({ ...prev, city: e.target.value }))
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="Order-two-col" style={{ marginTop: "10px" }}>
+                      <div>
+                        <label className="Order-field-label">Status</label>
+                        <select
+                          className="Order-select"
+                          value={newCheckpoint.status}
+                          onChange={(e) =>
+                            setNewCheckpoint((prev) => ({ ...prev, status: e.target.value }))
+                          }
+                        >
+                          <option value="Dispatched">Dispatched from Origin</option>
+                          <option value="In Transit">In Transit to Hub</option>
+                          <option value="Arrived at Sorting Facility">Arrived at Sorting Facility</option>
+                          <option value="Departed Facility">Departed Facility</option>
+                          <option value="Arrived at Destination City">Arrived at Destination City</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="Order-field-label">Date &amp; Time</label>
+                        <input
+                          type="datetime-local"
+                          className="Order-input"
+                          value={newCheckpoint.timestamp}
+                          onChange={(e) =>
+                            setNewCheckpoint((prev) => ({ ...prev, timestamp: e.target.value }))
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="Order-add-checkpoint-btn"
+                      onClick={handleAddCheckpoint}
+                    >
+                      <FiPlus size={14} />
+                      <span>Add Checkpoint</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* SECTION: OUT FOR DELIVERY (DELIVERY AGENT DETAILS) */}
+              {(statusForm.status === "Out for Delivery" || statusForm.status === "Delivered") && (
+                <div className="Order-shipment-card Order-shipment-card--highlight">
+                  <div className="Order-card-header">
+                    <FiUser size={16} style={{ color: "#c2410c" }} />
+                    <h4 style={{ color: "#9a3412" }}>
+                      Delivery Executive Details {statusForm.status === "Out for Delivery" && "(Required)"}
+                    </h4>
+                  </div>
+
+                  <div className="Order-two-col">
+                    <div>
+                      <label className="Order-field-label">
+                        Agent Name <span style={{ color: "#dc2626" }}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="Order-input"
+                        placeholder="e.g. Ramesh Kumar"
+                        value={statusForm.deliveryAgent.name}
+                        onChange={(e) =>
+                          setStatusForm((prev) => ({
+                            ...prev,
+                            deliveryAgent: { ...prev.deliveryAgent, name: e.target.value },
+                          }))
+                        }
+                        required={statusForm.status === "Out for Delivery"}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="Order-field-label">
+                        Agent Contact Number <span style={{ color: "#dc2626" }}>*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        className="Order-input"
+                        placeholder="e.g. +91 98765 43210"
+                        value={statusForm.deliveryAgent.phone}
+                        onChange={(e) =>
+                          setStatusForm((prev) => ({
+                            ...prev,
+                            deliveryAgent: { ...prev.deliveryAgent, phone: e.target.value },
+                          }))
+                        }
+                        required={statusForm.status === "Out for Delivery"}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="Order-two-col" style={{ marginTop: "10px" }}>
+                    <div>
+                      <label className="Order-field-label">Vehicle Registration #</label>
+                      <input
+                        type="text"
+                        className="Order-input"
+                        placeholder="e.g. OD-02-AX-8910"
+                        value={statusForm.deliveryAgent.vehicleNumber}
+                        onChange={(e) =>
+                          setStatusForm((prev) => ({
+                            ...prev,
+                            deliveryAgent: { ...prev.deliveryAgent, vehicleNumber: e.target.value },
+                          }))
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <label className="Order-field-label">Delivery Time Slot</label>
+                      <input
+                        type="text"
+                        className="Order-input"
+                        placeholder="e.g. Today 2:00 PM – 5:00 PM"
+                        value={statusForm.notes}
+                        onChange={(e) =>
+                          setStatusForm((prev) => ({ ...prev, notes: e.target.value }))
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Modal Actions Footer */}
+              <footer className="Order-modal__footer">
+                <div style={{ marginRight: "auto", fontSize: "12px", color: "#8c735d", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <FiAlertCircle size={14} style={{ color: "#b06f15", flexShrink: 0 }} />
+                  <span>Updates trigger real-time customer tracking &amp; emails.</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="Order-modal__button Order-modal__button--secondary"
+                  onClick={() => setStatusModalOpen(false)}
+                  disabled={savingStatus}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="Order-modal__button Order-modal__button--primary"
+                  disabled={savingStatus}
+                >
+                  {savingStatus ? (
+                    <>
+                      <FiRefreshCw size={15} style={{ animation: "spin 1s linear infinite" }} />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FiCheck size={16} />
+                      <span>Update Status</span>
+                    </>
+                  )}
+                </button>
+              </footer>
+            </form>
           </section>
         </div>
       )}

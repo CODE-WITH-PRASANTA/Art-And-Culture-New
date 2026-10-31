@@ -7,6 +7,7 @@ const {
   updateCoupon,
   toggleCouponStatus,
   deleteCoupon,
+  validateCoupon,
 } = require("../controllers/couponController");
 
 // /api/coupons
@@ -14,6 +15,9 @@ router
   .route("/")
   .get(getCoupons)
   .post(createCoupon);
+
+// /api/coupons/validate
+router.post("/validate", validateCoupon);
 
 // /api/coupons/:id
 router

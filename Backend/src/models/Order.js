@@ -75,6 +75,16 @@ const orderSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    discount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    couponCode: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     shipping: {
       type: Number,
       default: 0,
@@ -102,6 +112,7 @@ const orderSchema = new mongoose.Schema(
         "Out for Delivery",
         "Delivered",
         "Cancelled",
+        "Payment Failed",
       ],
       default: "Pending",
     },
@@ -133,6 +144,10 @@ const orderSchema = new mongoose.Schema(
       },
       paidAt: {
         type: Date,
+      },
+      failureReason: {
+        type: String,
+        default: "",
       },
     },
   },

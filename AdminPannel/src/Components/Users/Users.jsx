@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useMemo, useState } from "react";
-import { USERS_API_URL } from "../../config/api";
+import { USERS_API_URL, formatImageUrl } from "../../config/api";
 
 import {
   FiUsers,
@@ -738,14 +738,22 @@ const Users = () => {
                         {user.avatar ? (
                           <img
                             className="Users-avatar"
-                            src={user.avatar}
+                            src={formatImageUrl(user.avatar)}
                             alt={user.name}
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                              if (e.currentTarget.nextSibling) {
+                                e.currentTarget.nextSibling.style.display = "flex";
+                              }
+                            }}
                           />
-                        ) : (
-                          <div className="Users-avatar Users-avatar-initials">
-                            {getInitials(user.name)}
-                          </div>
-                        )}
+                        ) : null}
+                        <div
+                          className="Users-avatar Users-avatar-initials"
+                          style={{ display: user.avatar ? "none" : "flex" }}
+                        >
+                          {getInitials(user.name)}
+                        </div>
 
                         <div className="Users-user-info">
                           <strong>{user.name}</strong>
@@ -940,14 +948,22 @@ const Users = () => {
               {selectedUser.avatar ? (
                 <img
                   className="Users-profile-avatar"
-                  src={selectedUser.avatar}
+                  src={formatImageUrl(selectedUser.avatar)}
                   alt={selectedUser.name}
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                    if (e.currentTarget.nextSibling) {
+                      e.currentTarget.nextSibling.style.display = "flex";
+                    }
+                  }}
                 />
-              ) : (
-                <div className="Users-profile-avatar Users-profile-initials">
-                  {getInitials(selectedUser.name)}
-                </div>
-              )}
+              ) : null}
+              <div
+                className="Users-profile-avatar Users-profile-initials"
+                style={{ display: selectedUser.avatar ? "none" : "flex" }}
+              >
+                {getInitials(selectedUser.name)}
+              </div>
 
               <h3>{selectedUser.name}</h3>
               <p>{selectedUser.email}</p>

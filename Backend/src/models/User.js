@@ -126,6 +126,16 @@ const userSchema = new mongoose.Schema(
       default: "",
       select: false,
     },
+    previousRefreshToken: {
+      type: String,
+      default: "",
+      select: false,
+    },
+    refreshTokenRotatedAt: {
+      type: Date,
+      default: null,
+      select: false,
+    },
     resetPasswordCode: {
       type: String,
       default: "",

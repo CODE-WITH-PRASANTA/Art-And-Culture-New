@@ -1495,8 +1495,8 @@
 }
 
 .MyAccount-sidebar-profile .MyAccount-avatar-circle {
-  width: 70px;
-  height: 70px;
+  width: 76px;
+  height: 76px;
   font-size: 24px;
   border-radius: 50%;
   background: linear-gradient(135deg, #d08a24, #513f2f);
@@ -1507,6 +1507,195 @@
   font-weight: 700;
   letter-spacing: 1px;
   box-shadow: 0 6px 18px rgba(208, 138, 36, 0.28);
+  position: relative;
+}
+
+.MyAccount-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.MyAccount-avatar-edit-badge {
+  position: absolute;
+  bottom: 0px;
+  right: -2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #d08a24;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+}
+
+.MyAccount-avatar-edit-badge:hover {
+  background: #8c5b0c;
+  transform: scale(1.15);
+}
+
+/* ==================================================================
+   PROFILE AVATAR UPLOAD COMPONENT
+================================================================== */
+.MyAccount-avatar-upload-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 20px 22px;
+  background: #fdfaf6;
+  border: 1.5px dashed #ebd9c4;
+  border-radius: 16px;
+  margin-bottom: 26px;
+  transition: all 0.2s ease;
+}
+
+.MyAccount-avatar-upload-card:hover {
+  border-color: #d08a24;
+  background: #fdf8f2;
+}
+
+.MyAccount-avatar-preview-wrap {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 6px 20px rgba(81, 63, 47, 0.12);
+}
+
+.MyAccount-avatar-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  display: block;
+}
+
+.MyAccount-avatar-preview-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d08a24, #513f2f);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border: 3px solid #ffffff;
+}
+
+.MyAccount-avatar-uploading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(46, 38, 30, 0.75);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  backdrop-filter: blur(2px);
+}
+
+.MyAccount-avatar-upload-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.MyAccount-avatar-upload-info h4 {
+  font-family: var(--MA-font-display, Georgia, serif);
+  font-size: 16.5px;
+  font-weight: 700;
+  color: #2e261e;
+  margin: 0;
+}
+
+.MyAccount-avatar-upload-info p {
+  font-size: 12.5px;
+  color: #7b6f63;
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+.MyAccount-avatar-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.MyAccount-avatar-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #d08a24 0%, #b06f15 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 3px 10px rgba(208, 138, 36, 0.25);
+}
+
+.MyAccount-avatar-upload-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b06f15 0%, #8c5b0c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(208, 138, 36, 0.35);
+}
+
+.MyAccount-avatar-upload-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.MyAccount-avatar-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 15px;
+  background: #ffffff;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.MyAccount-avatar-remove-btn:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #f87171;
+  color: #991b1b;
+}
+
+@media (max-width: 600px) {
+  .MyAccount-avatar-upload-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 18px 16px;
+    gap: 16px;
+  }
+  .MyAccount-avatar-btn-group {
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 .MyAccount-sidebar-userinfo {
@@ -2768,6 +2957,71 @@
   flex-shrink: 0;
 }
 
+.MyAccount-order-head-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.MyAccount-order-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.MyAccount-order-status--paid {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.MyAccount-order-item-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.MyAccount-order-item-price {
+  margin: 0;
+  font-size: 12px;
+  color: #7b6f63;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.MyAccount-order-total-info {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 13px;
+  color: #4b3d30;
+}
+
+.MyAccount-order-total-label strong {
+  color: #d08a24;
+  font-size: 15px;
+}
+
+.MyAccount-order-shipping-note {
+  font-size: 12px;
+  color: #8c5b0c;
+}
+
+.MyAccount-order-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.MyAccount-help-btn {
+  padding: 5px 12px !important;
+  font-size: 12px !important;
+}
+
 .MyAccount-view-order-btn {
   background: #fff;
   border: 1px solid #d08a24;
@@ -2783,9 +3037,128 @@
   transition: all 0.2s ease;
 }
 
+.MyAccount-download-invoice-btn {
+  background: linear-gradient(135deg, #8a5524 0%, #b06f15 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(138, 85, 36, 0.2);
+}
+
+.MyAccount-download-invoice-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #704218 0%, #94570d 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(138, 85, 36, 0.3);
+}
+
+.MyAccount-download-invoice-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .MyAccount-view-order-btn:hover {
   background: #d08a24;
   color: #ffffff;
+}
+
+/* ==================================================================
+   RESPONSIVE ENHANCEMENTS FOR ORDERS TAB
+================================================================== */
+@media (max-width: 768px) {
+  .MyAccount-order-card {
+    padding: 14px 14px;
+    border-radius: 12px;
+  }
+
+  .MyAccount-order-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding-top: 6px;
+  }
+
+  .MyAccount-order-actions {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .MyAccount-download-invoice-btn,
+  .MyAccount-view-order-btn,
+  .MyAccount-help-btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+    padding: 8px 12px !important;
+    font-size: 12.5px !important;
+  }
+
+  .MyAccount-order-shipping-note {
+    display: block;
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .MyAccount-order-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .MyAccount-order-badges {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .MyAccount-order-item-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .MyAccount-order-item-title-group {
+    width: 100%;
+  }
+
+  .MyAccount-order-item-title-group h5 {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.35;
+  }
+}
+
+@media (max-width: 380px) {
+  .MyAccount-order-card {
+    padding: 12px 10px;
+  }
+
+  .MyAccount-order-id {
+    font-size: 12.5px;
+    word-break: break-all;
+  }
+
+  .MyAccount-order-actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .MyAccount-download-invoice-btn,
+  .MyAccount-view-order-btn,
+  .MyAccount-help-btn {
+    width: 100%;
+  }
 }
 
 /* ==================================================================

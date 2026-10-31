@@ -19,12 +19,28 @@ import logo from "../../assets/Art and Culture logo.webp";
 import { useWishlist } from "../../context/WishlistContext";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
+import { formatImageUrl } from "../../config/api";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  // Listen to window scroll to apply sticky elevation styling
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 15);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const { wishlistCount, clearWishlist } = useWishlist();
   const { cartCount, clearCart } = useCart();
@@ -86,7 +102,7 @@ const Navbar = () => {
     : "AC";
 
   return (
-    <header className="Navbar">
+    <header className={`Navbar ${scrolled ? "Navbar--scrolled" : ""}`}>
       <div className="Navbar-container">
         {/* Logo */}
         <Link
@@ -178,10 +194,19 @@ const Navbar = () => {
               >
                 <div className="Navbar-user-avatar">
                   {user.avatar ? (
-                    <img src={user.avatar} alt={user.firstName} />
-                  ) : (
-                    <span>{userInitials}</span>
-                  )}
+                    <img
+                      src={formatImageUrl(user.avatar)}
+                      alt=""
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                        const fallback = e.currentTarget.nextSibling;
+                        if (fallback) fallback.style.display = "flex";
+                      }}
+                    />
+                  ) : null}
+                  <span style={{ display: user.avatar ? "none" : "flex" }}>
+                    {userInitials}
+                  </span>
                 </div>
                 <span className="Navbar-user-name">{user.firstName}</span>
                 <FaChevronDown
@@ -195,7 +220,22 @@ const Navbar = () => {
                 <div className="Navbar-user-dropdown" role="menu">
                   {/* User Profile Header */}
                   <div className="Navbar-dropdown-header">
-                    <div className="Navbar-dropdown-avatar">{userInitials}</div>
+                    <div className="Navbar-dropdown-avatar">
+                      {user.avatar ? (
+                        <img
+                          src={formatImageUrl(user.avatar)}
+                          alt=""
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            const fallback = e.currentTarget.nextSibling;
+                            if (fallback) fallback.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+                      <span style={{ display: user.avatar ? "none" : "flex" }}>
+                        {userInitials}
+                      </span>
+                    </div>
                     <div className="Navbar-dropdown-meta">
                       <span className="Navbar-dropdown-name">
                         {user.firstName} {user.lastName}
