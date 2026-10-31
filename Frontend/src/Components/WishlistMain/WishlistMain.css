@@ -73,21 +73,39 @@
 
 
 .WishlistMain-message {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 13px 18px 16px;
+  border: 1px solid #c8e6c4;
+  border-radius: 10px;
+  background: #f1f9ef;
+  color: #2b612d;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(43, 97, 45, 0.08);
+  animation: WishlistMain-msgEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.WishlistMain-messageContent {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
-  padding: 12px 15px;
-  border: 1px solid #d8e9d7;
-  border-radius: 9px;
-  background: #f2faf0;
-  color: #326b34;
-  font-size: 13px;
-  animation: WishlistMain-enter 0.25s ease both;
+  flex: 1;
 }
 
-.WishlistMain-message > span {
+.WishlistMain-messageContent > span {
   flex: 1;
+  line-height: 1.5;
+}
+
+.WishlistMain-messageIcon {
+  flex-shrink: 0;
+  color: #2e7d32;
 }
 
 .WishlistMain-message button {
@@ -98,12 +116,48 @@
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: inherit;
+  color: #2b612d;
   cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .WishlistMain-message button:hover {
-  background: rgba(50, 107, 52, 0.08);
+  background: rgba(43, 97, 45, 0.12);
+  transform: scale(1.08);
+}
+
+/* Animated Timeline Bar (3.5s countdown) */
+.WishlistMain-messageTimeline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, #2e7d32, #66bb6a);
+  border-radius: 0 0 10px 10px;
+  transform-origin: left center;
+  animation: WishlistMain-timelineProgress 3.5s linear forwards;
+}
+
+@keyframes WishlistMain-msgEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes WishlistMain-timelineProgress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
 }
 
 /* Main wishlist panel */

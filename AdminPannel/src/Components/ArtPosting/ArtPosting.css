@@ -2466,3 +2466,322 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =========================================
+   PUBLISHING & COLLECTION TOGGLES & BADGES
+========================================= */
+
+.ArtPosting-toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.ArtPosting-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  min-height: 46px;
+  padding: 10px 16px;
+  background: #fff;
+  border: 1px solid #e5ded4;
+  border-radius: 9px;
+  color: #645a50;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.ArtPosting-toggle-btn:hover {
+  background: #fbf9f6;
+  border-color: #d8cdbe;
+}
+
+.ArtPosting-toggle-btn--active-green {
+  background: #eff8f2 !important;
+  border-color: #32805b !important;
+  color: #1f6443 !important;
+  box-shadow: 0 3px 10px rgba(50, 128, 91, 0.12);
+}
+
+.ArtPosting-toggle-btn--active-amber {
+  background: #fef7ee !important;
+  border-color: #d97706 !important;
+  color: #b45309 !important;
+  box-shadow: 0 3px 10px rgba(217, 119, 6, 0.12);
+}
+
+.ArtPosting-toggle-btn--active-gold {
+  background: #fbf5ee !important;
+  border-color: #b68b59 !important;
+  color: #7b562a !important;
+  box-shadow: 0 3px 10px rgba(182, 139, 89, 0.14);
+}
+
+.ArtPosting-toggle-btn--active-purple {
+  background: #f5f0fb !important;
+  border-color: #7c3aed !important;
+  color: #5b21b6 !important;
+  box-shadow: 0 3px 10px rgba(124, 58, 237, 0.14);
+}
+
+.ArtPosting-toggle-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ArtPosting-toggle-dot--green {
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.ArtPosting-toggle-dot--amber {
+  background: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.ArtPosting-type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ArtPosting-type-badge--gold {
+  background: #fdf8f0;
+  color: #8f683e;
+  border: 1px solid #ebd9c4;
+}
+
+.ArtPosting-type-badge--purple {
+  background: #f6f1fd;
+  color: #6d28d9;
+  border: 1px solid #ddd0f8;
+}
+
+.ArtPosting-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ArtPosting-status-badge__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.ArtPosting-status-badge--published {
+  background: #eaf6ee;
+  color: #1f6443;
+  border: 1px solid #c2e5cc;
+}
+
+.ArtPosting-status-badge--published .ArtPosting-status-badge__dot {
+  background: #1f9d62;
+}
+
+.ArtPosting-status-badge--unpublished {
+  background: #fef5ea;
+  color: #b45309;
+  border: 1px solid #f8dec0;
+}
+
+.ArtPosting-status-badge--unpublished .ArtPosting-status-badge__dot {
+  background: #d97706;
+}
+
+/* =========================================
+   PUBLISHING & COLLECTIONS THREE TOGGLES
+========================================= */
+
+.ArtPosting-toggles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .ArtPosting-toggles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ArtPosting-toggle-card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1.5px solid #ece5dc;
+  border-radius: 14px;
+  transition: all 0.22s ease;
+  box-shadow: 0 2px 8px rgba(41, 37, 31, 0.03);
+}
+
+.ArtPosting-toggle-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(41, 37, 31, 0.06);
+}
+
+.ArtPosting-toggle-card--green {
+  border-color: #a8dfb5;
+  background: #fbfffc;
+}
+
+.ArtPosting-toggle-card--gold {
+  border-color: #e5cbab;
+  background: #fffdf9;
+}
+
+.ArtPosting-toggle-card--purple {
+  border-color: #cfbbf5;
+  background: #fdfaff;
+}
+
+.ArtPosting-toggle-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ArtPosting-toggle-card__title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ArtPosting-toggle-card__tag {
+  font-size: 9.5px;
+  font-weight: 850;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #9c8e7e;
+}
+
+.ArtPosting-toggle-card__header h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 750;
+  color: #352d24;
+}
+
+/* Switch Track & Thumb */
+.ArtPosting-switch-track {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  background: #d8d0c5;
+  border: none;
+  border-radius: 999px;
+  padding: 2px;
+  cursor: pointer;
+  transition: background-color 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  outline: none;
+}
+
+.ArtPosting-switch-track:focus-visible {
+  box-shadow: 0 0 0 3px rgba(182, 139, 89, 0.35);
+}
+
+.ArtPosting-switch-thumb {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(0);
+}
+
+.ArtPosting-switch-track--green {
+  background: #1f9d62;
+}
+
+.ArtPosting-switch-track--green .ArtPosting-switch-thumb {
+  transform: translateX(22px);
+}
+
+.ArtPosting-switch-track--gold {
+  background: #9d713f;
+}
+
+.ArtPosting-switch-track--gold .ArtPosting-switch-thumb {
+  transform: translateX(22px);
+}
+
+.ArtPosting-switch-track--purple {
+  background: #7339d6;
+}
+
+.ArtPosting-switch-track--purple .ArtPosting-switch-thumb {
+  transform: translateX(22px);
+}
+
+.ArtPosting-toggle-card__state {
+  margin-bottom: 10px;
+}
+
+.ArtPosting-state-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+.ArtPosting-state-pill--published {
+  background: #eaf6ee;
+  color: #1f6443;
+  border: 1px solid #c2e5cc;
+}
+.ArtPosting-state-pill--unpublished {
+  background: #fef5ea;
+  color: #b45309;
+  border: 1px solid #f8dec0;
+}
+.ArtPosting-state-pill--general {
+  background: #fdf8f0;
+  color: #8f683e;
+  border: 1px solid #ebd9c4;
+}
+.ArtPosting-state-pill--streaming {
+  background: #f6f1fd;
+  color: #6d28d9;
+  border: 1px solid #ddd0f8;
+}
+.ArtPosting-state-pill--inactive {
+  background: #f4efe8;
+  color: #8a7e71;
+  border: 1px solid #e5ded5;
+}
+
+.ArtPosting-toggle-card__desc {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #82776a;
+}
+

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import contactImage from "../../assets/about-us-1.webp";
+import { ENQUIRIES_API_URL } from "../../config/api";
 import "./ContactMain.css";
 
 /* ---------------- Inline icons (no extra packages needed) ---------------- */
@@ -86,7 +87,7 @@ const details = [
   },
 ];
 
-const initialValues = { name: "", email: "", subject: "", message: "" };
+const initialValues = { name: "", email: "", phone: "", subject: "", message: "" };
 
 const validate = (values) => {
   const errors = {};
@@ -149,12 +150,28 @@ const ContactMain = ({ onSubmit }) => {
       if (onSubmit) {
         await onSubmit(values);
       } else {
-        // Demo only: replace with your API call (fetch / axios / EmailJS ...)
-        await new Promise((resolve) => setTimeout(resolve, 1200));
+        const response = await fetch(ENQUIRIES_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: values.name.trim(),
+            email: values.email.trim(),
+            phone: (values.phone || "").trim(),
+            subject: values.subject.trim(),
+            message: values.message.trim(),
+            source: "Website",
+          }),
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || "Failed to submit enquiry.");
+        }
       }
       setValues(initialValues);
       setStatus("sent");
     } catch (error) {
+      console.error("Enquiry submission error:", error);
       setStatus("failed");
     }
   };
@@ -268,24 +285,44 @@ const ContactMain = ({ onSubmit }) => {
             </div>
           </div>
 
-          <div className="ContactMain-field" style={{ "--delay": "0.9s" }}>
-            <input
-              className={`ContactMain-input ${
-                errors.subject ? "ContactMain-inputError" : ""
-              }`}
-              type="text"
-              name="subject"
-              placeholder="Subject *"
-              aria-label="Subject"
-              value={values.subject}
-              onChange={handleChange}
-              aria-invalid={Boolean(errors.subject)}
-            />
-            {errors.subject && (
-              <span className="ContactMain-error" role="alert">
-                {errors.subject}
-              </span>
-            )}
+          <div className="ContactMain-row">
+            <div
+              className="ContactMain-field"
+              style={{ "--delay": "0.85s" }}
+            >
+              <input
+                className="ContactMain-input"
+                type="tel"
+                name="phone"
+                placeholder="Phone Number (Optional)"
+                aria-label="Phone Number"
+                value={values.phone || ""}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div
+              className="ContactMain-field"
+              style={{ "--delay": "0.9s" }}
+            >
+              <input
+                className={`ContactMain-input ${
+                  errors.subject ? "ContactMain-inputError" : ""
+                }`}
+                type="text"
+                name="subject"
+                placeholder="Subject *"
+                aria-label="Subject"
+                value={values.subject}
+                onChange={handleChange}
+                aria-invalid={Boolean(errors.subject)}
+              />
+              {errors.subject && (
+                <span className="ContactMain-error" role="alert">
+                  {errors.subject}
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="ContactMain-field" style={{ "--delay": "1s" }}>

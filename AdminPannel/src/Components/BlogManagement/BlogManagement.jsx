@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { BLOGS_API_URL, formatImageUrl } from "../../config/api";
 import { useNavigate } from "react-router-dom";
 import {
   FiGrid,
@@ -164,7 +165,27 @@ const initialBlogs = [
 const BlogManagement = () => {
   const navigate = useNavigate();
 
-  const [blogs, setBlogs] = useState(initialBlogs);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(BLOGS_API_URL);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.blogs)) {
+        setBlogs(data.blogs);
+      }
+    } catch (err) {
+      console.error("Error fetching blogs:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
   const [viewMode, setViewMode] = useState("grid");
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
@@ -213,9 +234,9 @@ const BlogManagement = () => {
         const matchesSearch =
           !query ||
           blog.title.toLowerCase().includes(query) ||
-          blog.author.toLowerCase().includes(query) ||
+          (blog.authorName || blog.author || '').toLowerCase().includes(query) ||
           blog.category.toLowerCase().includes(query) ||
-          blog.code.toLowerCase().includes(query) ||
+          (blog.blogCode || blog.code || '').toLowerCase().includes(query) ||
           blog.tags.some((tag) => tag.toLowerCase().includes(query));
 
         const matchesCategory =
@@ -271,12 +292,15 @@ const BlogManagement = () => {
 
   const formatDate = (date) => {
     if (!date) return "—";
-
-    return new Date(`${date}T00:00:00`).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    try {
+      return new Date(date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return String(date);
+    }
   };
 
   const changeFilter = (setter, value) => {
@@ -297,34 +321,61 @@ const BlogManagement = () => {
     setOpenMenu(null);
   };
 
-  const handleDelete = () => {
-    setBlogs((previous) =>
-      previous.filter((blog) => blog.id !== deleteId)
-    );
-
-    if (selectedBlog?.id === deleteId) {
-      setSelectedBlog(null);
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    try {
+      const res = await fetch(`${BLOGS_API_URL}/${deleteId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBlogs((previous) =>
+          previous.filter((blog) => (blog._id || (blog._id || blog.id)) !== deleteId)
+        );
+        showNotice("Blog post deleted successfully.");
+      } else {
+        showNotice(data.message || "Failed to delete blog.");
+      }
+    } catch (err) {
+      console.error("Error deleting blog:", err);
+      showNotice("Failed to delete blog.");
+    } finally {
+      if ((selectedBlog?._id || selectedBlog?.id) === deleteId) {
+        setSelectedBlog(null);
+      }
+      setDeleteId(null);
+      setOpenMenu(null);
     }
-
-    setDeleteId(null);
-    setOpenMenu(null);
-
-    showNotice("Blog post deleted successfully.");
   };
 
-  const handleStatusChange = (blog) => {
+  const handleStatusChange = async (blog) => {
+    const blogId = blog._id || (blog._id || blog.id);
     const nextStatus =
       blog.status === "Published" ? "Draft" : "Published";
 
-    setBlogs((previous) =>
-      previous.map((item) =>
-        item.id === blog.id
-          ? { ...item, status: nextStatus }
-          : item
-      )
-    );
-
-    showNotice(`Blog status changed to ${nextStatus}.`);
+    try {
+      const res = await fetch(`${BLOGS_API_URL}/${blogId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: nextStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBlogs((previous) =>
+          previous.map((item) =>
+            (item._id || item.id) === blogId
+              ? { ...item, status: nextStatus }
+              : item
+          )
+        );
+        showNotice(`Blog status changed to ${nextStatus}.`);
+      } else {
+        showNotice(data.message || "Failed to update status.");
+      }
+    } catch (err) {
+      console.error("Error updating status:", err);
+      showNotice("Failed to update status.");
+    }
   };
 
   const renderStatus = (status) => (
@@ -342,15 +393,15 @@ const BlogManagement = () => {
         type="button"
         className="BlogManagement-menuTrigger"
         onClick={() =>
-          setOpenMenu(openMenu === blog.id ? null : blog.id)
+          setOpenMenu(openMenu === (blog._id || blog.id) ? null : (blog._id || blog.id))
         }
         aria-label={`Actions for ${blog.title}`}
-        aria-expanded={openMenu === blog.id}
+        aria-expanded={openMenu === (blog._id || blog.id)}
       >
         <FiMoreVertical />
       </button>
 
-      {openMenu === blog.id && (
+      {openMenu === (blog._id || blog.id) && (
         <div className="BlogManagement-menuDropdown">
           <button
             type="button"
@@ -387,7 +438,7 @@ const BlogManagement = () => {
             type="button"
             className="BlogManagement-menuDelete"
             onClick={() => {
-              setDeleteId(blog.id);
+              setDeleteId((blog._id || blog.id));
               setOpenMenu(null);
             }}
           >
@@ -648,11 +699,11 @@ const BlogManagement = () => {
             {visibleBlogs.map((blog) => (
               <article
                 className="BlogManagement-card"
-                key={blog.id}
+                key={(blog._id || blog.id)}
               >
                 <div className="BlogManagement-cardImage">
                   <img
-                    src={blog.image}
+                    src={formatImageUrl(blog.mainImage || blog.image)}
                     alt={blog.title}
                     loading="lazy"
                     onError={(event) => {
@@ -661,7 +712,7 @@ const BlogManagement = () => {
                   />
 
                   <span className="BlogManagement-blogCode">
-                    {blog.code}
+                    {(blog.blogCode || blog.code || '')}
                   </span>
 
                   {renderActions(blog)}
@@ -679,19 +730,19 @@ const BlogManagement = () => {
                   <h3>{blog.title}</h3>
 
                   <p className="BlogManagement-excerpt">
-                    {blog.excerpt}
+                    {(blog.excerpt || (blog.description ? blog.description.replace(/<[^>]+>/g, ' ').slice(0, 140) : ''))}
                   </p>
 
                   <div className="BlogManagement-author">
                     <FiUser />
-                    <span>{blog.author}</span>
+                    <span>{(blog.authorName || blog.author || '')}</span>
                   </div>
 
                   <div className="BlogManagement-cardFooter">
                     <div className="BlogManagement-cardMeta">
                       <span>
                         <FiCalendar />
-                        {formatDate(blog.date)}
+                        {formatDate((blog.publishDate || blog.date || ''))}
                       </span>
 
                       <span>
@@ -732,11 +783,11 @@ const BlogManagement = () => {
 
               <tbody>
                 {visibleBlogs.map((blog) => (
-                  <tr key={blog.id}>
+                  <tr key={(blog._id || blog.id)}>
                     <td>
                       <div className="BlogManagement-listPost">
                         <img
-                          src={blog.image}
+                          src={formatImageUrl(blog.mainImage || blog.image)}
                           alt={blog.title}
                           loading="lazy"
                           onError={(event) => {
@@ -746,8 +797,8 @@ const BlogManagement = () => {
 
                         <div>
                           <strong>{blog.title}</strong>
-                          <span>{blog.code}</span>
-                          <small>{blog.excerpt}</small>
+                          <span>{(blog.blogCode || blog.code || '')}</span>
+                          <small>{(blog.excerpt || (blog.description ? blog.description.replace(/<[^>]+>/g, ' ').slice(0, 140) : ''))}</small>
                         </div>
                       </div>
                     </td>
@@ -760,7 +811,7 @@ const BlogManagement = () => {
 
                     <td>
                       <span className="BlogManagement-listAuthor">
-                        <FiUser /> {blog.author}
+                        <FiUser /> {(blog.authorName || blog.author || '')}
                       </span>
                     </td>
 
@@ -768,7 +819,7 @@ const BlogManagement = () => {
 
                     <td>{blog.views.toLocaleString("en-IN")}</td>
 
-                    <td>{formatDate(blog.date)}</td>
+                    <td>{formatDate((blog.publishDate || blog.date || ''))}</td>
 
                     <td>
                       <div className="BlogManagement-listActions">
@@ -795,7 +846,7 @@ const BlogManagement = () => {
                           className="BlogManagement-listDelete"
                           aria-label={`Delete ${blog.title}`}
                           title="Delete"
-                          onClick={() => setDeleteId(blog.id)}
+                          onClick={() => setDeleteId((blog._id || blog.id))}
                         >
                           <FiTrash2 />
                         </button>
@@ -915,7 +966,7 @@ const BlogManagement = () => {
 
             <img
               className="BlogManagement-detailImage"
-              src={selectedBlog.image}
+              src={formatImageUrl(selectedBlog.mainImage || selectedBlog.image)}
               alt={selectedBlog.title}
             />
 
@@ -928,17 +979,17 @@ const BlogManagement = () => {
                 </span>
 
                 <span>
-                  <FiCalendar /> {formatDate(selectedBlog.date)}
+                  <FiCalendar /> {formatDate((selectedBlog?.publishDate || selectedBlog?.date || ''))}
                 </span>
               </div>
 
               <h3>{selectedBlog.title}</h3>
 
-              <p>{selectedBlog.excerpt}</p>
+              <p>{(selectedBlog?.excerpt || (selectedBlog?.description ? selectedBlog.description.replace(/<[^>]+>/g, ' ').slice(0, 200) : ''))}</p>
 
               <div className="BlogManagement-detailAuthor">
                 <FiUser />
-                Written by {selectedBlog.author}
+                Written by {(selectedBlog?.authorName || selectedBlog?.author || '')}
               </div>
 
               <div className="BlogManagement-detailTags">

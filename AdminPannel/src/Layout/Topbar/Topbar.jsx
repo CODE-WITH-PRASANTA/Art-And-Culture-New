@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getAdminUser, clearAdminSession } from "../../utils/adminAuth";
 import {
   Menu,
   ChevronDown,
@@ -121,6 +122,7 @@ const initialMessages = [
 
 const Topbar = ({ toggleSidebar }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -146,8 +148,8 @@ const Topbar = ({ toggleSidebar }) => {
 
   const currentPage =
     pageDetails[location.pathname] || {
-      title: "Art & Culture",
-      subtitle: "Preserving heritage, inspiring creativity",
+      title: "",
+      subtitle: "",
       icon: Palette,
     };
 
@@ -162,6 +164,17 @@ const Topbar = ({ toggleSidebar }) => {
   ).length;
 
   useEffect(() => {
+    const saved = getAdminUser();
+    if (saved) {
+      setCurrentProfile((prev) => ({
+        ...prev,
+        name: saved.name || prev.name,
+        email: saved.email || prev.email,
+        role: saved.role || prev.role,
+        avatar: saved.avatar || prev.avatar,
+      }));
+    }
+
     const handleProfileUpdate = (event) => {
       if (event.detail) {
         setCurrentProfile((previous) => ({
@@ -332,9 +345,6 @@ const Topbar = ({ toggleSidebar }) => {
             </button>
 
             <div className="Topbar-page-label">
-              <span className="Topbar-page-icon">
-                <PageIcon size={19} strokeWidth={1.7} />
-              </span>
 
               <div className="Topbar-page-heading">
                 <span className="Topbar-page-title">
@@ -651,15 +661,6 @@ const Topbar = ({ toggleSidebar }) => {
                   >
                     <UserRound size={16} />
                     My Profile
-                  </Link>
-
-                  <Link
-                    to="/settings"
-                    className="Topbar-dropdown-item"
-                    onClick={closeAllMenus}
-                  >
-                    <ShieldCheck size={16} />
-                    Settings & Security
                   </Link>
 
                   <div className="Topbar-dropdown-divider" />

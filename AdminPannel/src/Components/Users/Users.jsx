@@ -1,6 +1,7 @@
 
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { USERS_API_URL, formatImageUrl } from "../../config/api";
 
 import {
   FiUsers,
@@ -28,115 +29,13 @@ import {
 import "./Users.css";
 
 
-/* ========================================
-   INITIAL USER DATA
-======================================== */
-
-const initialUsers = [
-  {
-    id: 1,
-    name: "Aarav Sharma",
-    email: "aarav.sharma@example.com",
-    phone: "+91 98765 43210",
-    role: "Customer",
-    status: "Active",
-    joined: "2026-09-12",
-    orders: 12,
-    spent: 18500,
-    avatar: "",
-  },
-  {
-    id: 2,
-    name: "Priya Patel",
-    email: "priya.patel@example.com",
-    phone: "+91 98765 12345",
-    role: "Customer",
-    status: "Active",
-    joined: "2026-08-25",
-    orders: 8,
-    spent: 12400,
-    avatar: "",
-  },
-  {
-    id: 3,
-    name: "Rahul Das",
-    email: "rahul.das@example.com",
-    phone: "+91 91234 56789",
-    role: "Customer",
-    status: "Inactive",
-    joined: "2026-07-18",
-    orders: 3,
-    spent: 4200,
-    avatar: "",
-  },
-  {
-    id: 4,
-    name: "Ananya Mishra",
-    email: "ananya.mishra@example.com",
-    phone: "+91 99887 66554",
-    role: "Admin",
-    status: "Active",
-    joined: "2026-06-10",
-    orders: 0,
-    spent: 0,
-    avatar: "",
-  },
-  {
-    id: 5,
-    name: "Rohan Kumar",
-    email: "rohan.kumar@example.com",
-    phone: "+91 90909 80808",
-    role: "Customer",
-    status: "Blocked",
-    joined: "2026-05-21",
-    orders: 5,
-    spent: 7600,
-    avatar: "",
-  },
-  {
-    id: 6,
-    name: "Sneha Mohanty",
-    email: "sneha.mohanty@example.com",
-    phone: "+91 93333 44444",
-    role: "Manager",
-    status: "Active",
-    joined: "2026-10-02",
-    orders: 0,
-    spent: 0,
-    avatar: "",
-  },
-  {
-    id: 7,
-    name: "Aditya Singh",
-    email: "aditya.singh@example.com",
-    phone: "+91 97777 11111",
-    role: "Customer",
-    status: "Active",
-    joined: "2026-09-30",
-    orders: 15,
-    spent: 24500,
-    avatar: "",
-  },
-  {
-    id: 8,
-    name: "Ishita Roy",
-    email: "ishita.roy@example.com",
-    phone: "+91 96666 22222",
-    role: "Customer",
-    status: "Inactive",
-    joined: "2026-04-16",
-    orders: 2,
-    spent: 1800,
-    avatar: "",
-  },
-];
-
 const emptyUser = {
   name: "",
   email: "",
   phone: "",
   role: "Customer",
   status: "Active",
+  password: "",
 };
 
 /* ========================================
@@ -173,7 +72,8 @@ const getInitials = (name) =>
 ======================================== */
 
 const Users = () => {
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -187,6 +87,30 @@ const Users = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [activeMenu, setActiveMenu] = useState(null);
   const [notice, setNotice] = useState("");
+
+  /* ========================================
+     FETCH USERS FROM BACKEND
+  ======================================== */
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(USERS_API_URL);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.users)) {
+        setUsers(data.users);
+      }
+    } catch (err) {
+      console.error("Failed to load users from backend:", err);
+      setNotice("Could not load users from backend API.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   /* ========================================
      STATISTICS
@@ -250,14 +174,16 @@ const Users = () => {
   };
 
   const openEditForm = (user) => {
-    setEditingId(user.id);
+    const userId = user.id || user._id;
+    setEditingId(userId);
 
     setForm({
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      status: user.status,
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.phone === "—" ? "" : user.phone || "",
+      role: user.role || "Customer",
+      status: user.status || "Active",
+      password: "",
     });
 
     setShowForm(true);
@@ -281,15 +207,16 @@ const Users = () => {
     setShowForm(false);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const normalizedEmail = form.email.trim().toLowerCase();
+    const normalizedPhone = form.phone ? form.phone.trim() : "";
 
     const emailExists = users.some(
       (user) =>
-        user.email.toLowerCase() === normalizedEmail &&
-        user.id !== editingId
+        (user.email || "").toLowerCase() === normalizedEmail &&
+        (user.id || user._id) !== editingId
     );
 
     if (emailExists) {
@@ -297,97 +224,132 @@ const Users = () => {
       return;
     }
 
-    const normalizedPhone = form.phone.trim();
+    try {
+      if (editingId !== null) {
+        // Update user in backend
+        const res = await fetch(`${USERS_API_URL}/${editingId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name.trim(),
+            email: normalizedEmail,
+            phone: normalizedPhone,
+            role: form.role,
+            status: form.status,
+            password: form.password ? form.password.trim() : undefined,
+          }),
+        });
 
-    const phoneExists =
-      normalizedPhone &&
-      users.some(
-        (user) =>
-          user.phone.replace(/\s/g, "") ===
-            normalizedPhone.replace(/\s/g, "") &&
-          user.id !== editingId
-      );
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          setNotice(data.message || "Failed to update user in database.");
+          return;
+        }
 
-    if (phoneExists) {
-      setNotice("A user with this phone number already exists.");
-      return;
-    }
+        setUsers((previous) =>
+          previous.map((user) =>
+            (user.id === editingId || user._id === editingId)
+              ? { ...user, ...data.user }
+              : user
+          )
+        );
 
-    if (editingId !== null) {
-      setUsers((previous) =>
-        previous.map((user) =>
-          user.id === editingId
-            ? {
-                ...user,
-                ...form,
-                name: form.name.trim(),
-                email: normalizedEmail,
-                phone: normalizedPhone,
-              }
-            : user
-        )
-      );
+        setNotice("");
+        resetForm();
+        return;
+      }
 
+      // Create new user in backend
+      const res = await fetch(USERS_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: normalizedEmail,
+          phone: normalizedPhone,
+          role: form.role,
+          status: form.status,
+          password: form.password ? form.password.trim() : "123456",
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setNotice(data.message || "Failed to create user in database.");
+        return;
+      }
+
+      setUsers((previous) => [data.user, ...previous]);
       setNotice("");
       resetForm();
-      return;
+    } catch (err) {
+      console.error("User save error:", err);
+      setNotice(err.message || "An unexpected error occurred while saving user.");
     }
-
-    const newUser = {
-      id: Date.now(),
-      ...form,
-      name: form.name.trim(),
-      email: normalizedEmail,
-      phone: normalizedPhone,
-      joined: new Date().toISOString().slice(0, 10),
-      orders: 0,
-      spent: 0,
-      avatar: "",
-    };
-
-    setUsers((previous) => [newUser, ...previous]);
-    setNotice("");
-    resetForm();
   };
 
   /* ========================================
      DELETE USER
   ======================================== */
 
-  const handleDelete = () => {
-    setUsers((previous) =>
-      previous.filter((user) => user.id !== deleteId)
-    );
+  const handleDelete = async () => {
+    if (!deleteId) return;
 
-    if (selectedUser?.id === deleteId) {
-      setSelectedUser(null);
+    try {
+      const res = await fetch(`${USERS_API_URL}/${deleteId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setUsers((previous) =>
+          previous.filter((user) => (user.id !== deleteId && user._id !== deleteId))
+        );
+      }
+    } catch (err) {
+      console.error("Delete user error:", err);
+    } finally {
+      if (selectedUser?.id === deleteId || selectedUser?._id === deleteId) {
+        setSelectedUser(null);
+      }
+      setDeleteId(null);
+      setActiveMenu(null);
     }
-
-    setDeleteId(null);
-    setActiveMenu(null);
   };
 
   /* ========================================
      TOGGLE USER STATUS
   ======================================== */
 
-  const toggleUserStatus = (user) => {
+  const toggleUserStatus = async (user) => {
     const nextStatus = user.status === "Blocked" ? "Active" : "Blocked";
+    const userId = user.id || user._id;
 
-    setUsers((previous) =>
-      previous.map((item) =>
-        item.id === user.id
-          ? { ...item, status: nextStatus }
-          : item
-      )
-    );
-
-    setActiveMenu(null);
-    setSelectedUser((previous) =>
-      previous?.id === user.id
-        ? { ...previous, status: nextStatus }
-        : previous
-    );
+    try {
+      const res = await fetch(`${USERS_API_URL}/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: nextStatus }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setUsers((previous) =>
+          previous.map((item) =>
+            (item.id === userId || item._id === userId)
+              ? { ...item, status: nextStatus }
+              : item
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Status toggle error:", err);
+    } finally {
+      setActiveMenu(null);
+      setSelectedUser((previous) =>
+        (previous?.id === userId || previous?._id === userId)
+          ? { ...previous, status: nextStatus }
+          : previous
+      );
+    }
   };
 
   /* ========================================
@@ -581,7 +543,7 @@ const Users = () => {
                     required
                   >
                     <option value="Customer">Customer</option>
-                    <option value="Manager">Manager</option>
+                    <option value="Artist">Artist</option>
                     <option value="Admin">Admin</option>
                   </select>
                   <FiChevronDown />
@@ -604,6 +566,26 @@ const Users = () => {
                   </select>
                   <FiChevronDown />
                 </div>
+              </div>
+
+              <div className="Users-field">
+                <label htmlFor="Users-password">
+                  {editingId ? "Change Password (optional)" : "Password (default: 123456)"}
+                </label>
+                <input
+                  id="Users-password"
+                  type="password"
+                  name="password"
+                  value={form.password || ""}
+                  onChange={handleChange}
+                  placeholder={
+                    editingId
+                      ? "Leave blank to keep current password"
+                      : "Enter password or default: 123456"
+                  }
+                  autoComplete="new-password"
+                  minLength={6}
+                />
               </div>
             </div>
 
@@ -635,9 +617,21 @@ const Users = () => {
             <p>View and manage registered accounts.</p>
           </div>
 
-          <div className="Users-list-count">
-            <FiUsers />
-            <span>{filteredUsers.length} users</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <button
+              type="button"
+              className="Users-secondary-button"
+              onClick={fetchUsers}
+              title="Refresh users from database"
+              style={{ padding: "6px 12px", fontSize: "12px", display: "inline-flex", alignItems: "center", gap: "6px" }}
+            >
+              <FiRefreshCw style={loading ? { animation: "spin 1s linear infinite" } : {}} />
+              <span>Sync</span>
+            </button>
+            <div className="Users-list-count">
+              <FiUsers />
+              <span>{filteredUsers.length} users</span>
+            </div>
           </div>
         </div>
 
@@ -729,7 +723,14 @@ const Users = () => {
             </thead>
 
             <tbody>
-              {filteredUsers.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="8" style={{ textAlign: "center", padding: "40px" }}>
+                    <FiRefreshCw style={{ animation: "spin 1s linear infinite", fontSize: "24px", color: "var(--color-primary, #d08a24)" }} />
+                    <p style={{ marginTop: "10px", color: "#666", fontSize: "13px" }}>Loading users from database...</p>
+                  </td>
+                </tr>
+              ) : filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
                   <tr key={user.id}>
                     <td>
@@ -737,14 +738,22 @@ const Users = () => {
                         {user.avatar ? (
                           <img
                             className="Users-avatar"
-                            src={user.avatar}
+                            src={formatImageUrl(user.avatar)}
                             alt={user.name}
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                              if (e.currentTarget.nextSibling) {
+                                e.currentTarget.nextSibling.style.display = "flex";
+                              }
+                            }}
                           />
-                        ) : (
-                          <div className="Users-avatar Users-avatar-initials">
-                            {getInitials(user.name)}
-                          </div>
-                        )}
+                        ) : null}
+                        <div
+                          className="Users-avatar Users-avatar-initials"
+                          style={{ display: user.avatar ? "none" : "flex" }}
+                        >
+                          {getInitials(user.name)}
+                        </div>
 
                         <div className="Users-user-info">
                           <strong>{user.name}</strong>
@@ -939,14 +948,22 @@ const Users = () => {
               {selectedUser.avatar ? (
                 <img
                   className="Users-profile-avatar"
-                  src={selectedUser.avatar}
+                  src={formatImageUrl(selectedUser.avatar)}
                   alt={selectedUser.name}
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                    if (e.currentTarget.nextSibling) {
+                      e.currentTarget.nextSibling.style.display = "flex";
+                    }
+                  }}
                 />
-              ) : (
-                <div className="Users-profile-avatar Users-profile-initials">
-                  {getInitials(selectedUser.name)}
-                </div>
-              )}
+              ) : null}
+              <div
+                className="Users-profile-avatar Users-profile-initials"
+                style={{ display: selectedUser.avatar ? "none" : "flex" }}
+              >
+                {getInitials(selectedUser.name)}
+              </div>
 
               <h3>{selectedUser.name}</h3>
               <p>{selectedUser.email}</p>

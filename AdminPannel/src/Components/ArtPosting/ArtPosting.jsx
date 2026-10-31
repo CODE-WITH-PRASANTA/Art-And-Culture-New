@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 import {
   FiPlus,
@@ -22,21 +23,7 @@ import {
 
 import "./ArtPosting.css";
 
-const STORAGE_KEY = "art-posting-records";
-const COUNTER_KEY = "art-posting-counter";
-
-const categories = [
-  "Painting",
-  "Sculpture",
-  "Traditional Art",
-  "Modern Art",
-  "Abstract Art",
-  "Photography",
-  "Digital Art",
-  "Handicrafts",
-  "Canvas Art",
-  "Other",
-];
+import { API_BASE_URL, ARTS_API_URL, CATEGORIES_API_URL } from "../../config/api";
 
 const emptyForm = {
   artNo: "",
@@ -56,32 +43,37 @@ const emptyForm = {
   photos: [],
   signature: null,
   certificate: "No",
+  isPublished: true,
+  isGeneralArtwork: true,
+  isStreamingCollection: false,
+  artType: "General Artwork",
 };
 
-const readStoredArts = () => {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
+const getImageUrl = (photo) => {
+  if (!photo) return "";
+  if (typeof photo === "string") {
+    if (photo.startsWith("data:") || photo.startsWith("http")) return photo;
+    return `${API_BASE_URL}${photo}`;
   }
+  if (photo.dataUrl && photo.dataUrl.startsWith("data:")) return photo.dataUrl;
+  if (photo.url) {
+    if (photo.url.startsWith("http")) return photo.url;
+    return `${API_BASE_URL}${photo.url}`;
+  }
+  if (photo.dataUrl) {
+    if (photo.dataUrl.startsWith("http")) return photo.dataUrl;
+    return `${API_BASE_URL}${photo.dataUrl}`;
+  }
+  return "";
 };
 
 const getNextArtNumber = (arts) => {
-  let storedCounter = 1;
-
-  try {
-    storedCounter = Number(localStorage.getItem(COUNTER_KEY)) || 1;
-  } catch {
-    storedCounter = 1;
-  }
-
-  const highestExisting = arts.reduce((max, art) => {
-    const match = String(art.artNo || "").match(/ART-(\d+)/);
+  const highestExisting = (arts || []).reduce((max, art) => {
+    const match = String(art.artNo || "").match(/ART-(\d+)/i);
     return match ? Math.max(max, Number(match[1])) : max;
   }, 0);
 
-  return Math.max(storedCounter, highestExisting + 1);
+  return highestExisting + 1;
 };
 
 const formatCurrency = (value) =>
@@ -110,7 +102,12 @@ const fileToDataUrl = (file) =>
   });
 
 const ArtPosting = () => {
-  const [arts, setArts] = useState(readStoredArts);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const editParam = searchParams.get("edit");
+  const modeParam = searchParams.get("mode");
+
+  const [arts, setArts] = useState([]);
+  const [loadingArts, setLoadingArts] = useState(true);
   const [form, setForm] = useState(emptyForm);
   const [activeView, setActiveView] = useState("form");
   const [editingId, setEditingId] = useState(null);
@@ -132,19 +129,87 @@ const ArtPosting = () => {
 
   const itemsPerPage = 8;
 
-  const nextArtNo = useMemo(() => {
-    return `ART-${String(getNextArtNumber(arts)).padStart(4, "0")}`;
-  }, [arts]);
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  // Fetch live arts from database
+  const fetchArts = async () => {
+    try {
+      setLoadingArts(true);
+      const res = await fetch(ARTS_API_URL);
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        setArts(json.data);
+      } else {
+        setArts([]);
+      }
+    } catch (err) {
+      console.error("Failed to load artworks in ArtPosting:", err);
+    } finally {
+      setLoadingArts(false);
+    }
+  };
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(arts));
-    } catch {
-      setNotice({
-        type: "error",
-        text: "Browser storage is full. Remove large photos or connect a backend for reliable storage.",
-      });
+    fetchArts();
+  }, []);
+
+  // Auto-open artwork in edit mode if ?edit=<id> is in URL
+  useEffect(() => {
+    if (!editParam) return;
+
+    const loadArtToEdit = async () => {
+      try {
+        const res = await fetch(`${ARTS_API_URL}/${editParam}`);
+        const json = await res.json();
+        if (json.success && json.data) {
+          handleEdit(json.data);
+        }
+      } catch (err) {
+        console.error("Failed to load artwork for editing:", err);
+      }
+    };
+
+    loadArtToEdit();
+  }, [editParam]);
+
+  // Open fresh creation form if ?mode=new is in URL
+  useEffect(() => {
+    if (modeParam === "new") {
+      setEditingId(null);
+      setForm(emptyForm);
+      setPhotoPreviews([]);
+      setSignaturePreview(null);
+      setActiveView("form");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  }, [modeParam]);
+
+  // Fetch live categories from database
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const res = await fetch(CATEGORIES_API_URL);
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data)) {
+          const names = json.data.map((cat) => cat.name);
+          setCategories(names);
+        } else {
+          setCategories([]);
+        }
+      } catch (err) {
+        console.error("Failed to load categories in ArtPosting:", err);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const nextArtNo = useMemo(() => {
+    return `ART-${String(getNextArtNumber(arts)).padStart(4, "0")}`;
   }, [arts]);
 
   useEffect(() => {
@@ -320,6 +385,9 @@ const ArtPosting = () => {
     if (signatureInputRef.current) {
       signatureInputRef.current.value = "";
     }
+    if (searchParams.get("edit")) {
+      setSearchParams({}, { replace: true });
+    }
   };
 
   const openNewForm = () => {
@@ -358,7 +426,7 @@ const ArtPosting = () => {
     return null;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const validationError = validateForm();
@@ -382,72 +450,128 @@ const ArtPosting = () => {
       ...new Set([...form.tags, ...pendingTags]),
     ];
 
-    const artRecord = {
+    const payload = {
       ...form,
       tags: finalTags,
       tagsInput: "",
-      id: editingId || `art-${Date.now()}`,
       artNo: editingId ? form.artNo : nextArtNo,
       price: Number(form.price),
       discount: Number(form.discount || 0),
       stockQuantity: Number(form.stockQuantity),
+      isPublished: Boolean(form.isPublished),
+      isGeneralArtwork: Boolean(form.isGeneralArtwork),
+      isStreamingCollection: Boolean(form.isStreamingCollection),
+      status: form.isPublished ? "Published" : "Unpublished",
+      artType:
+        form.isGeneralArtwork && form.isStreamingCollection
+          ? "General & Streaming"
+          : form.isStreamingCollection
+          ? "Streaming Collection"
+          : "General Artwork",
       photos: photoPreviews,
       signature: signaturePreview,
-      updatedAt: new Date().toISOString(),
     };
 
     setIsSaving(true);
 
     try {
-      if (editingId) {
-        setArts((prev) =>
-          prev.map((art) =>
-            art.id === editingId ? artRecord : art
-          )
-        );
+      const endpoint = editingId
+        ? `${ARTS_API_URL}/${editingId}`
+        : ARTS_API_URL;
+      const method = editingId ? "PUT" : "POST";
 
-        setNotice({
-          type: "success",
-          text: "Artwork updated successfully.",
-        });
-      } else {
-        setArts((prev) => [artRecord, ...prev]);
+      const res = await fetch(endpoint, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-        try {
-          localStorage.setItem(
-            COUNTER_KEY,
-            String(getNextArtNumber(arts) + 1)
-          );
-        } catch {
-          // The saved record still contains its assigned art number.
-        }
+      const resData = await res.json();
 
-        setNotice({
-          type: "success",
-          text: `${artRecord.artNo} created successfully.`,
-        });
+      if (!res.ok || !resData.success) {
+        throw new Error(resData.message || "Failed to save artwork.");
       }
 
+      setNotice({
+        type: "success",
+        text:
+          resData.message ||
+          (editingId
+            ? "Artwork updated successfully."
+            : `${payload.artNo} created successfully.`),
+      });
+
+      await fetchArts();
       resetForm();
       setActiveView("table");
       setCurrentPage(1);
+    } catch (err) {
+      console.error("Save error:", err);
+      setNotice({
+        type: "error",
+        text: err.message || "Error saving artwork to database.",
+      });
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleEdit = (art) => {
-    setEditingId(art.id);
+    setEditingId(art._id || art.id);
 
     setForm({
       ...emptyForm,
       ...art,
+      artNo: art.artNo,
+      title: art.title,
+      description: art.description || "",
+      category: art.category,
+      artistName: art.artistName,
+      price: art.price,
+      discount: art.discount !== undefined ? String(art.discount) : "0",
+      stockQuantity:
+        art.stockQuantity !== undefined ? String(art.stockQuantity) : "",
+      artistAbout: art.artistAbout || "",
+      sizeOverview: art.sizeOverview || "",
+      framing: art.framing || "No",
+      themeDetails: art.themeDetails || "",
+      certificate: art.certificate || "No",
+      isPublished:
+        art.isPublished !== undefined
+          ? Boolean(art.isPublished)
+          : art.status !== "Unpublished" && art.status !== "Draft",
+      isGeneralArtwork:
+        art.isGeneralArtwork !== undefined
+          ? Boolean(art.isGeneralArtwork)
+          : art.artType !== "Streaming Collection",
+      isStreamingCollection:
+        art.isStreamingCollection !== undefined
+          ? Boolean(art.isStreamingCollection)
+          : art.artType === "Streaming Collection" || art.artType === "General & Streaming",
+      artType: art.artType || "General Artwork",
       tags: art.tags || [],
       tagsInput: "",
     });
 
-    setPhotoPreviews(art.photos || []);
-    setSignaturePreview(art.signature || null);
+    const mappedPhotos = (art.photos || []).map((p, idx) => ({
+      id: p.id || `photo-${idx}`,
+      name: p.name || `photo-${idx + 1}`,
+      dataUrl: getImageUrl(p),
+      url: p.url,
+    }));
+    setPhotoPreviews(mappedPhotos);
+
+    if (art.signature) {
+      setSignaturePreview({
+        name: art.signature.name || "signature",
+        dataUrl: getImageUrl(art.signature),
+        url: art.signature.url,
+      });
+    } else {
+      setSignaturePreview(null);
+    }
 
     setActiveView("form");
 
@@ -457,23 +581,39 @@ const ArtPosting = () => {
     });
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteTarget) return;
 
-    setArts((prev) =>
-      prev.filter((art) => art.id !== deleteTarget.id)
-    );
+    const targetId = deleteTarget._id || deleteTarget.id;
 
-    if (editingId === deleteTarget.id) {
-      resetForm();
+    try {
+      const res = await fetch(`${ARTS_API_URL}/${targetId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to delete artwork.");
+      }
+
+      setNotice({
+        type: "success",
+        text: "Artwork deleted successfully from database.",
+      });
+
+      if (editingId === targetId) {
+        resetForm();
+      }
+
+      setDeleteTarget(null);
+      await fetchArts();
+    } catch (err) {
+      console.error("Delete error:", err);
+      setNotice({
+        type: "error",
+        text: err.message || "Could not delete artwork.",
+      });
     }
-
-    setDeleteTarget(null);
-
-    setNotice({
-      type: "success",
-      text: "Artwork deleted successfully.",
-    });
   };
 
   const filteredArts = useMemo(() => {
@@ -732,7 +872,7 @@ const ArtPosting = () => {
                       className="ArtPosting-photo"
                       key={photo.id || `${photo.name}-${index}`}
                     >
-                      <img src={photo.dataUrl} alt={photo.name} />
+                      <img src={getImageUrl(photo)} alt={photo.name} />
 
                       <span className="ArtPosting-photo__number">
                         {index + 1}
@@ -824,7 +964,13 @@ const ArtPosting = () => {
                       }
                       required
                     >
-                      <option value="">Select category</option>
+                      <option value="">
+                        {loadingCategories
+                          ? "Loading categories..."
+                          : categories.length === 0
+                          ? "No categories found"
+                          : "Select category"}
+                      </option>
                       {categories.map((category) => (
                         <option key={category} value={category}>
                           {category}
@@ -1138,7 +1284,7 @@ const ArtPosting = () => {
                   {signaturePreview ? (
                     <div className="ArtPosting-signature-preview">
                       <img
-                        src={signaturePreview.dataUrl}
+                        src={getImageUrl(signaturePreview)}
                         alt="Artist signature"
                       />
 
@@ -1177,6 +1323,7 @@ const ArtPosting = () => {
                   />
                 </div>
               </section>
+
 
               {/* Form Actions */}
               <div className="ArtPosting-form-actions">
@@ -1267,6 +1414,7 @@ const ArtPosting = () => {
                       <th>Art No.</th>
                       <th>Artist</th>
                       <th>Category</th>
+                      <th>Type</th>
                       <th>Price</th>
                       <th>Stock</th>
                       <th>Status</th>
@@ -1277,13 +1425,13 @@ const ArtPosting = () => {
                   <tbody>
                     {paginatedArts.length ? (
                       paginatedArts.map((art) => (
-                        <tr key={art.id}>
+                        <tr key={art._id || art.id || art.artNo}>
                           <td>
                             <div className="ArtPosting-table-artwork">
                               <div className="ArtPosting-table-artwork__image">
-                                {art.photos?.[0]?.dataUrl ? (
+                                {getImageUrl(art.photos?.[0]) ? (
                                   <img
-                                    src={art.photos[0].dataUrl}
+                                    src={getImageUrl(art.photos[0])}
                                     alt={art.title}
                                   />
                                 ) : (
@@ -1315,6 +1463,24 @@ const ArtPosting = () => {
                           </td>
 
                           <td>
+                            <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
+                              {art.isGeneralArtwork !== false && (
+                                <span className="ArtPosting-type-badge ArtPosting-type-badge--gold">
+                                  General
+                                </span>
+                              )}
+                              {Boolean(art.isStreamingCollection) && (
+                                <span className="ArtPosting-type-badge ArtPosting-type-badge--purple">
+                                  Streaming
+                                </span>
+                              )}
+                              {art.isGeneralArtwork === false && !art.isStreamingCollection && (
+                                <span style={{ color: "#9c8e7e", fontSize: "11px" }}>None</span>
+                              )}
+                            </div>
+                          </td>
+
+                          <td>
                             <div className="ArtPosting-table-price">
                               <strong>
                                 {formatCurrency(
@@ -1337,15 +1503,18 @@ const ArtPosting = () => {
 
                           <td>
                             <span
-                              className={`ArtPosting-stock-status ${
-                                Number(art.stockQuantity) > 0
-                                  ? "ArtPosting-stock-status--available"
-                                  : "ArtPosting-stock-status--out"
+                              className={`ArtPosting-status-badge ${
+                                art.isPublished === false ||
+                                art.status === "Unpublished"
+                                  ? "ArtPosting-status-badge--unpublished"
+                                  : "ArtPosting-status-badge--published"
                               }`}
                             >
-                              {Number(art.stockQuantity) > 0
-                                ? "In Stock"
-                                : "Out of Stock"}
+                              <span className="ArtPosting-status-badge__dot" />
+                              {art.isPublished === false ||
+                              art.status === "Unpublished"
+                                ? "Unpublished"
+                                : "Published"}
                             </span>
                           </td>
 
@@ -1604,7 +1773,7 @@ const ArtPosting = () => {
                 {previewArt.photos?.map((photo, index) => (
                   <img
                     key={photo.id || `${photo.name}-${index}`}
-                    src={photo.dataUrl}
+                    src={getImageUrl(photo)}
                     alt={`${previewArt.title} ${index + 1}`}
                   />
                 ))}
@@ -1619,6 +1788,41 @@ const ArtPosting = () => {
                 </p>
                 <p>
                   <strong>Category:</strong> {previewArt.category}
+                </p>
+                <p>
+                  <strong>Collections:</strong>{" "}
+                  <span style={{ display: "inline-flex", gap: "6px", verticalAlign: "middle" }}>
+                    {previewArt.isGeneralArtwork !== false && (
+                      <span className="ArtPosting-type-badge ArtPosting-type-badge--gold">
+                        General Artwork
+                      </span>
+                    )}
+                    {Boolean(previewArt.isStreamingCollection) && (
+                      <span className="ArtPosting-type-badge ArtPosting-type-badge--purple">
+                        Streaming Collection
+                      </span>
+                    )}
+                    {previewArt.isGeneralArtwork === false && !previewArt.isStreamingCollection && (
+                      <span style={{ color: "#9c8e7e" }}>None</span>
+                    )}
+                  </span>
+                </p>
+                <p>
+                  <strong>Publish Status:</strong>{" "}
+                  <span
+                    className={`ArtPosting-status-badge ${
+                      previewArt.isPublished === false ||
+                      previewArt.status === "Unpublished"
+                        ? "ArtPosting-status-badge--unpublished"
+                        : "ArtPosting-status-badge--published"
+                    }`}
+                  >
+                    <span className="ArtPosting-status-badge__dot" />
+                    {previewArt.isPublished === false ||
+                    previewArt.status === "Unpublished"
+                      ? "Unpublished"
+                      : "Published"}
+                  </span>
                 </p>
                 <p>
                   <strong>Size:</strong> {previewArt.sizeOverview}

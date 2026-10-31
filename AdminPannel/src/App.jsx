@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -7,8 +6,10 @@ import {
   Navigate,
 } from "react-router-dom";
 
-
 import MainLayout from "./Layout/MainLayout/MainLayout";
+import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
+import Login from "./Pages/Login/Login";
+import { clearAdminSession } from "./utils/adminAuth";
 
 import ArtPosting from "./Components/ArtPosting/ArtPosting";
 import ArtManage from "./Components/ArtManage/ArtManage";
@@ -20,59 +21,79 @@ import Users from "./Components/Users/Users";
 import EnquiryManagement from "./Components/EnquiryManagement/EnquiryManagement";
 import BlogPosting from "./Components/BlogPosting/BlogPosting";
 import BlogManagement from "./Components/BlogManagement/BlogManagement";
-import Dashboard from "./Pages/Dashboard/Dashboard"
+import ReviewManagement from "./Components/ReviewManagement/ReviewManagement";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import Profile from "./Pages/Profile/Profile";
+
+// Dedicated Logout route component
+const Logout = () => {
+  useEffect(() => {
+    clearAdminSession();
+  }, []);
+  return <Navigate to="/login" replace />;
+};
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirect the root URL to Dashboard */}
-        <Route
-          path="/"
-          element={<Navigate to="/dashboard" replace />}
-        />
+        {/* Public Admin Auth Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
 
-        {/* Main layout for all dashboard pages */}
-        <Route element={<MainLayout />}>
-         <Route path="/dashboard" element={<Dashboard />} />
+        {/* Redirect root URL to Dashboard */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-          <Route
-            path="/art-management/art-posting"
-            element={<ArtPosting />}
-          />
+        {/* Protected Admin Suite - Requires Valid Admin Session */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
 
-          <Route
-            path="/art-management/manage-art"
-            element={<ArtManage />}
-          />
+            <Route
+              path="/art-management/art-posting"
+              element={<ArtPosting />}
+            />
 
-          <Route
-            path="/art-management/category-manage"
-            element={<ArtCatagory />}
-          />
+            <Route
+              path="/art-management/manage-art"
+              element={<ArtManage />}
+            />
 
-          <Route path="/gallery" element={<Gallary />} />
-          <Route path="/orders" element={<Order />} />
-          <Route path="/coupons" element={<Coupons />} />
-          <Route path="/users" element={<Users />} />
+            <Route
+              path="/art-management/category-manage"
+              element={<ArtCatagory />}
+            />
 
-          <Route
-            path="/enquiry-management"
-            element={<EnquiryManagement />}
-          />
+            <Route path="/gallery" element={<Gallary />} />
+            <Route path="/orders" element={<Order />} />
+            <Route path="/coupons" element={<Coupons />} />
+            <Route path="/users" element={<Users />} />
 
-          <Route
-            path="/blog/blog-posting"
-            element={<BlogPosting />}
-          />
+            <Route
+              path="/enquiry-management"
+              element={<EnquiryManagement />}
+            />
 
-          <Route
-            path="/blog/blog-management"
-            element={<BlogManagement />}
-          />
+            <Route
+              path="/blog/blog-posting"
+              element={<BlogPosting />}
+            />
+
+            <Route
+              path="/blog/blog-management"
+              element={<BlogManagement />}
+            />
+
+            <Route
+              path="/review-management"
+              element={<ReviewManagement />}
+            />
+
+            <Route path="/profile" element={<Profile />} />
+          </Route>
         </Route>
 
-        {/* Unknown routes */}
+        {/* Fallback for Unknown routes */}
         <Route
           path="*"
           element={<Navigate to="/dashboard" replace />}

@@ -253,24 +253,166 @@
 }
 
 /* ========================================
-   MAIN CONTENT LAYOUT
+   MAIN CONTENT LAYOUT (FULL WIDTH TABLE)
 ======================================== */
 
 .Coupons-content {
-  display: grid;
-  grid-template-columns: minmax(300px, 0.78fr) minmax(0, 1.5fr);
-  align-items: start;
-  gap: 24px;
+  display: block;
+  width: 100%;
 }
 
-.Coupons-form-section,
 .Coupons-table-section {
+  width: 100%;
   min-width: 0;
   padding: 24px;
   background: var(--Coupons-surface);
   border: 1px solid var(--Coupons-border);
   border-radius: 16px;
   box-shadow: 0 3px 15px rgba(61, 44, 27, 0.025);
+}
+
+/* ========================================
+   CREATE / EDIT MODAL (PREMIUM & NO SCROLLBAR)
+======================================== */
+
+.Coupons-form-modal {
+  position: relative;
+  width: 100%;
+  max-width: 660px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e7d8c5;
+  border-radius: 24px;
+  box-shadow:
+    0 24px 60px -12px rgba(45, 30, 18, 0.28),
+    0 8px 24px -4px rgba(45, 30, 18, 0.12);
+  animation: Coupons-modal-enter 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.Coupons-form-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 28px;
+  border-bottom: 1px solid #f0e8dc;
+  background: linear-gradient(180deg, #fdfbf7 0%, #faf6f0 100%);
+}
+
+.Coupons-modal-header-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.Coupons-modal-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  color: #8b5b29;
+  background: #f4e9db;
+  border: 1px solid #e8dac8;
+  border-radius: 12px;
+  font-size: 20px;
+  box-shadow: 0 2px 6px rgba(139, 91, 41, 0.08);
+}
+
+.Coupons-form-modal-header h2 {
+  margin: 0 0 3px;
+  color: #2b2219;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+
+.Coupons-form-modal-header p {
+  margin: 0;
+  color: #85786a;
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
+/* Remove right side scrollbar completely while allowing smooth scroll */
+.Coupons-form-modal-body {
+  padding: 22px 28px 10px;
+  overflow-y: auto;
+  max-height: calc(90vh - 145px);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.Coupons-form-modal-body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+  width: 0;
+  height: 0;
+}
+
+.Coupons-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+.Coupons-field-full {
+  grid-column: 1 / -1;
+}
+
+.Coupons-code-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.Coupons-code-input-group input {
+  flex: 1;
+  font-family: monospace, inherit;
+  font-size: 14px;
+}
+
+.Coupons-regenerate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 16px;
+  background: linear-gradient(135deg, #916333 0%, #764b21 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(118, 75, 33, 0.25);
+  transition: all 0.2s ease;
+}
+
+.Coupons-regenerate-btn:hover {
+  background: linear-gradient(135deg, #9f6e3c 0%, #855527 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(118, 75, 33, 0.32);
+}
+
+.Coupons-regenerate-btn:active {
+  transform: translateY(0);
+}
+
+.Coupons-form-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 28px;
+  border-top: 1px solid #f0e8dc;
+  background: linear-gradient(180deg, #faf7f2 0%, #f6f0e7 100%);
 }
 
 /* ========================================
@@ -947,9 +1089,9 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(35, 27, 20, 0.48);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  background: rgba(28, 20, 14, 0.52);
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
   animation: Coupons-fade-in 0.2s ease;
 }
 
@@ -1504,5 +1646,17 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+}
+
+.Coupons-spinning {
+  animation: couponsSpin 1s linear infinite;
+}
+
+@keyframes couponsSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

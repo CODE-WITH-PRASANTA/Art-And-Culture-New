@@ -45,10 +45,17 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.ArtCatagory button:focus-visible,
-.ArtCatagory input:focus-visible {
+.ArtCatagory button:focus-visible {
   outline: 2px solid rgba(182, 139, 89, 0.55);
   outline-offset: 3px;
+}
+
+.ArtCatagory input,
+.ArtCatagory input:focus,
+.ArtCatagory input:focus-visible {
+  outline: none !important;
+  border: none;
+  box-shadow: none;
 }
 
 /* =========================================
@@ -333,11 +340,18 @@
 
   color: #443a2f;
   background: transparent;
-  border: none;
-  outline: none;
-  box-shadow: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 
   font-size: 12px;
+}
+
+.ArtCatagory-form__input-wrap input:focus,
+.ArtCatagory-form__input-wrap input:focus-visible {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .ArtCatagory-form__input-wrap input::placeholder {
@@ -864,8 +878,8 @@
 
 .ArtCatagory-category-cell__content strong {
   color: #39322a;
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 700;
   line-height: 1.5;
 
   overflow-wrap: anywhere;
