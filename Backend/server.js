@@ -83,6 +83,11 @@ const userRoutes = require("./src/routes/userRoutes");
 const orderRoutes = require("./src/routes/orderRoutes");
 const enquiryRoutes = require("./src/routes/enquiryRoutes");
 const blogCommentRoutes = require("./src/routes/blogCommentRoutes");
+const adminAuthRoutes = require("./src/routes/adminAuthRoutes");
+
+app.use("/api/admin/auth", adminAuthRoutes);
+app.use("/api/admin", adminAuthRoutes);
+app.use("/api/adminuser", adminAuthRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/categories", categoryRoutes);

@@ -582,6 +582,75 @@
 }
 
 /* ==================================================================
+   SHIPPED LOGISTICS TRACKING CARD (SPEED POST / COURIER HUB)
+================================================================== */
+.OrderDetails-shipped-card {
+  background: linear-gradient(135deg, #f8faff 0%, #eff6ff 100%);
+  border: 1.5px solid #bfdbfe;
+  border-radius: 16px;
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08);
+  margin-bottom: 24px;
+}
+
+.OrderDetails-shipped-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.OrderDetails-shipped-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #1d4ed8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.OrderDetails-shipped-title {
+  margin: 2px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.OrderDetails-shipped-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed #bfdbfe;
+}
+
+.OrderDetails-shipped-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.OrderDetails-shipped-meta-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.04em;
+}
+
+.OrderDetails-shipped-meta-val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* ==================================================================
    OUT FOR DELIVERY AGENT HIGHLIGHT CARD
 ================================================================== */
 .OrderDetails-agent-card {

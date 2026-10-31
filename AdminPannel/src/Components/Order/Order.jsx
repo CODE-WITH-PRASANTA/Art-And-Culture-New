@@ -40,14 +40,15 @@ const statusOptions = [
 ];
 
 const carrierOptions = [
+  "India Post (Speed Post)",
   "Blue Dart Express",
   "Delhivery",
   "DTDC Express",
   "FedEx India",
-  "India Post (Speed Post)",
   "Ekart Logistics",
   "Shadowfax",
   "Direct Art Courier",
+  "Other Courier",
 ];
 
 const paymentOptions = [
@@ -113,10 +114,11 @@ const Order = () => {
   const [statusOrder, setStatusOrder] = useState(null);
   const [statusForm, setStatusForm] = useState({
     status: "Pending",
-    carrier: "Blue Dart Express",
+    carrier: "India Post (Speed Post)",
     trackingNumber: "",
     shippingAddress: "",
     currentLocation: "",
+    currentHub: "",
     transitLocations: [],
     deliveryAgent: {
       name: "",
@@ -125,6 +127,7 @@ const Order = () => {
       vehicleNumber: "",
     },
     estimatedDelivery: "",
+    deliveryDate: "",
     notes: "",
   });
   const [newCheckpoint, setNewCheckpoint] = useState({
@@ -304,15 +307,23 @@ const Order = () => {
     const defaultAddress =
       currentShipment.shippingAddress || order.address || "";
 
+    const hub = currentShipment.currentHub || currentShipment.currentLocation || "";
+    const estDelivery = currentShipment.estimatedDelivery || currentShipment.deliveryDate || "";
+    const delDate = currentShipment.deliveryDate || estDelivery || new Date().toISOString().slice(0, 10);
+    const defaultCarrier = currentShipment.carrier || "India Post (Speed Post)";
+    const fallbackTracking =
+      defaultCarrier.includes("Speed Post") || defaultCarrier.includes("India Post")
+        ? `SP${order.id.replace(/[^0-9]/g, "") || Date.now().toString().slice(-8)}IN`
+        : `AWB-${order.id.replace(/[^0-9]/g, "") || Date.now().toString().slice(-8)}`;
+
     setStatusOrder(order);
     setStatusForm({
       status: initialStatus,
-      carrier: currentShipment.carrier || "Blue Dart Express",
-      trackingNumber:
-        currentShipment.trackingNumber ||
-        `AWB-${order.id.replace(/[^0-9]/g, "") || Date.now().toString().slice(-8)}`,
+      carrier: defaultCarrier,
+      trackingNumber: currentShipment.trackingNumber || fallbackTracking,
       shippingAddress: defaultAddress,
-      currentLocation: currentShipment.currentLocation || "",
+      currentLocation: hub,
+      currentHub: hub,
       transitLocations: Array.isArray(currentShipment.transitLocations)
         ? currentShipment.transitLocations.map((t) => ({ ...t }))
         : [],
@@ -322,18 +333,13 @@ const Order = () => {
         altPhone: currentShipment.deliveryAgent?.altPhone || "",
         vehicleNumber: currentShipment.deliveryAgent?.vehicleNumber || "",
       },
-      estimatedDelivery:
-        currentShipment.estimatedDelivery ||
-        new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString("en-IN", {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }),
+      estimatedDelivery: estDelivery,
+      deliveryDate: delDate,
       notes: currentShipment.notes || "",
     });
 
     setNewCheckpoint({
-      location: "",
+      location: hub || "",
       city: "",
       status: "In Transit",
       timestamp: new Date().toISOString().slice(0, 16),
@@ -364,6 +370,7 @@ const Order = () => {
     setStatusForm((prev) => ({
       ...prev,
       currentLocation: checkpoint.location,
+      currentHub: checkpoint.location,
       transitLocations: [...prev.transitLocations, checkpoint],
     }));
 
@@ -380,11 +387,12 @@ const Order = () => {
   const handleRemoveCheckpoint = (index) => {
     setStatusForm((prev) => {
       const updated = prev.transitLocations.filter((_, i) => i !== index);
+      const lastLoc = updated.length > 0 ? updated[updated.length - 1].location : "";
       return {
         ...prev,
         transitLocations: updated,
-        currentLocation:
-          updated.length > 0 ? updated[updated.length - 1].location : "",
+        currentLocation: lastLoc,
+        currentHub: lastLoc || prev.currentHub,
       };
     });
   };
@@ -394,13 +402,28 @@ const Order = () => {
     if (e) e.preventDefault();
     if (!statusOrder) return;
 
+    if (statusForm.status === "Shipped") {
+      if (!statusForm.trackingNumber.trim()) {
+        setNotice("Please enter the Tracking ID / Consignment Number.");
+        return;
+      }
+      if (!statusForm.currentHub.trim() && !statusForm.currentLocation.trim()) {
+        setNotice("Please enter the Current Courier Hub for Shipped status.");
+        return;
+      }
+    }
+
     if (statusForm.status === "Out for Delivery") {
+      if (!statusForm.deliveryAgent.phone.trim()) {
+        setNotice("Please enter the Delivery Agent contact number (Agent No).");
+        return;
+      }
       if (!statusForm.deliveryAgent.name.trim()) {
         setNotice("Please enter the Delivery Agent name for Out for Delivery status.");
         return;
       }
-      if (!statusForm.deliveryAgent.phone.trim()) {
-        setNotice("Please enter the Delivery Agent contact number.");
+      if (!statusForm.currentHub.trim() && !statusForm.currentLocation.trim()) {
+        setNotice("Please enter the Current Hub for Out for Delivery.");
         return;
       }
     }
@@ -408,17 +431,29 @@ const Order = () => {
     setSavingStatus(true);
     try {
       const mongoId = statusOrder._id || statusOrder.id;
+      const effectiveHub = (statusForm.currentHub || statusForm.currentLocation || "").trim();
+      const effectiveEstDelivery = (statusForm.estimatedDelivery || statusForm.deliveryDate || "").trim();
+      const effectiveDelDate = (statusForm.deliveryDate || effectiveEstDelivery || "").trim();
+      const effectiveShippingAddress = (statusForm.shippingAddress || statusOrder.address || statusOrder.shipment?.shippingAddress || "").trim();
+
       const payload = {
         status: statusForm.status,
         shipment: {
-          carrier: statusForm.carrier,
-          trackingNumber: statusForm.trackingNumber,
-          shippingAddress: statusForm.shippingAddress,
-          currentLocation: statusForm.currentLocation,
-          transitLocations: statusForm.transitLocations,
-          deliveryAgent: statusForm.deliveryAgent,
-          estimatedDelivery: statusForm.estimatedDelivery,
-          notes: statusForm.notes,
+          carrier: statusForm.carrier || statusOrder.shipment?.carrier || "India Post (Speed Post)",
+          trackingNumber: (statusForm.trackingNumber || statusOrder.shipment?.trackingNumber || "").trim(),
+          shippingAddress: effectiveShippingAddress,
+          currentLocation: effectiveHub,
+          currentHub: effectiveHub,
+          transitLocations: statusForm.transitLocations || statusOrder.shipment?.transitLocations || [],
+          deliveryAgent: {
+            name: (statusForm.deliveryAgent?.name || statusOrder.shipment?.deliveryAgent?.name || "").trim(),
+            phone: (statusForm.deliveryAgent?.phone || statusOrder.shipment?.deliveryAgent?.phone || "").trim(),
+            altPhone: (statusForm.deliveryAgent?.altPhone || statusOrder.shipment?.deliveryAgent?.altPhone || "").trim(),
+            vehicleNumber: (statusForm.deliveryAgent?.vehicleNumber || statusOrder.shipment?.deliveryAgent?.vehicleNumber || "").trim(),
+          },
+          estimatedDelivery: effectiveEstDelivery,
+          deliveryDate: effectiveDelDate,
+          notes: (statusForm.notes || statusOrder.shipment?.notes || "").trim(),
         },
       };
 
@@ -936,6 +971,40 @@ const Order = () => {
                           <span>{order.status}</span>
                         </button>
 
+                        {order.status === "Shipped" && (order.shipment?.currentHub || order.shipment?.currentLocation) && (
+                          <span
+                            style={{
+                              fontSize: "11px",
+                              color: "#1e40af",
+                              maxWidth: "140px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              display: "block",
+                            }}
+                            title={`Current Courier Hub: ${order.shipment.currentHub || order.shipment.currentLocation}`}
+                          >
+                            📍 {order.shipment.currentHub || order.shipment.currentLocation}
+                          </span>
+                        )}
+
+                        {order.status === "Out for Delivery" && order.shipment?.deliveryAgent?.phone && (
+                          <span
+                            style={{
+                              fontSize: "11px",
+                              color: "#c2410c",
+                              fontWeight: "700",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "3px",
+                            }}
+                            title={`Agent: ${order.shipment.deliveryAgent.name || "Executive"} (${order.shipment.deliveryAgent.phone})`}
+                          >
+                            <FiPhone size={10} />
+                            {order.shipment.deliveryAgent.phone}
+                          </span>
+                        )}
+
                         <button
                           type="button"
                           className="Order-shipment-pill-btn"
@@ -1172,36 +1241,96 @@ const Order = () => {
                   </div>
                 </div>
 
+                {/* Shipped Logistics Card (Courier, Tracking, Hub, Expected Date) */}
+                {(selectedOrder.status === "Shipped" || selectedOrder.shipment?.trackingNumber) && (
+                  <div
+                    style={{
+                      marginTop: "14px",
+                      background: "#f0f7ff",
+                      border: "1px solid #bfdbfe",
+                      borderRadius: "10px",
+                      padding: "14px 16px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "8px",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "6px" }}>
+                      <span style={{ fontSize: "11px", color: "#1d4ed8", fontWeight: "700", textTransform: "uppercase" }}>
+                        📦 Shipped Logistics &amp; Speed Post Tracking
+                      </span>
+                      {selectedOrder.shipment?.trackingNumber && (
+                        <span style={{ background: "#dbeafe", color: "#1e40af", padding: "2px 8px", borderRadius: "4px", fontSize: "11.5px", fontWeight: "700", fontFamily: "monospace" }}>
+                          AWB: {selectedOrder.shipment.trackingNumber}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px", fontSize: "12.5px", color: "#1e3a8a" }}>
+                      <div>
+                        <strong>Courier: </strong>
+                        <span>{selectedOrder.shipment?.carrier || "India Post (Speed Post)"}</span>
+                      </div>
+                      {(selectedOrder.shipment?.currentHub || selectedOrder.shipment?.currentLocation) && (
+                        <div>
+                          <strong>Current Courier Hub: </strong>
+                          <span>📍 {selectedOrder.shipment.currentHub || selectedOrder.shipment.currentLocation}</span>
+                        </div>
+                      )}
+                      {(selectedOrder.shipment?.estimatedDelivery || selectedOrder.shipment?.deliveryDate) && (
+                        <div>
+                          <strong>Expected Delivery: </strong>
+                          <span style={{ color: "#15803d", fontWeight: "600" }}>
+                            {selectedOrder.shipment.estimatedDelivery || selectedOrder.shipment.deliveryDate}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Out for Delivery Delivery Agent Highlight */}
-                {selectedOrder.status === "Out for Delivery" && selectedOrder.shipment?.deliveryAgent?.name && (
+                {selectedOrder.status === "Out for Delivery" && (
                   <div
                     style={{
                       marginTop: "14px",
                       background: "#fff7ed",
                       border: "1px solid #fed7aa",
-                      borderRadius: "8px",
-                      padding: "12px 14px",
+                      borderRadius: "10px",
+                      padding: "14px 16px",
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
                       flexWrap: "wrap",
-                      gap: "10px",
+                      gap: "12px",
                     }}
                   >
                     <div>
                       <span style={{ fontSize: "11px", color: "#c2410c", fontWeight: "700", textTransform: "uppercase" }}>
-                        🚴 Out For Delivery Executive
+                        🚴 Out For Delivery Executive &amp; Hub Details
                       </span>
-                      <h4 style={{ margin: "2px 0 0", fontSize: "14px", color: "#9a3412" }}>
-                        {selectedOrder.shipment.deliveryAgent.name}
+                      <h4 style={{ margin: "3px 0 0", fontSize: "15px", color: "#9a3412" }}>
+                        {selectedOrder.shipment?.deliveryAgent?.name || "Assigned Courier Executive"}
                       </h4>
-                      <small style={{ color: "#7c2d12" }}>
-                        {selectedOrder.shipment.deliveryAgent.vehicleNumber && `Vehicle: ${selectedOrder.shipment.deliveryAgent.vehicleNumber} · `}
-                        {selectedOrder.shipment.estimatedDelivery && `Slot: ${selectedOrder.shipment.estimatedDelivery}`}
-                      </small>
+                      <div style={{ marginTop: "4px", display: "flex", flexDirection: "column", gap: "2px", fontSize: "12px", color: "#7c2d12" }}>
+                        {(selectedOrder.shipment?.currentHub || selectedOrder.shipment?.currentLocation) && (
+                          <span>
+                            <strong>Current Hub: </strong> {selectedOrder.shipment.currentHub || selectedOrder.shipment.currentLocation}
+                          </span>
+                        )}
+                        {(selectedOrder.shipment?.deliveryDate || selectedOrder.shipment?.estimatedDelivery) && (
+                          <span>
+                            <strong>Date of Delivery: </strong> {selectedOrder.shipment.deliveryDate || selectedOrder.shipment.estimatedDelivery}
+                          </span>
+                        )}
+                        {selectedOrder.shipment?.deliveryAgent?.vehicleNumber && (
+                          <span>
+                            <strong>Vehicle: </strong> {selectedOrder.shipment.deliveryAgent.vehicleNumber}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    {selectedOrder.shipment.deliveryAgent.phone && (
+                    {selectedOrder.shipment?.deliveryAgent?.phone && (
                       <a
                         href={`tel:${selectedOrder.shipment.deliveryAgent.phone}`}
                         style={{
@@ -1210,14 +1339,15 @@ const Order = () => {
                           gap: "6px",
                           background: "#ea580c",
                           color: "#fff",
-                          padding: "7px 14px",
-                          borderRadius: "6px",
-                          fontSize: "12.5px",
-                          fontWeight: "600",
+                          padding: "8px 16px",
+                          borderRadius: "8px",
+                          fontSize: "13px",
+                          fontWeight: "700",
                           textDecoration: "none",
+                          boxShadow: "0 2px 8px rgba(234, 88, 12, 0.25)",
                         }}
                       >
-                        <FiPhone size={14} />
+                        <FiPhone size={15} />
                         <span>Call Agent: {selectedOrder.shipment.deliveryAgent.phone}</span>
                       </a>
                     )}
@@ -1411,6 +1541,23 @@ const Order = () => {
                     {formatCurrency(statusOrder.amount)}
                   </strong>
                 </div>
+                {(statusOrder.address || statusOrder.shipment?.shippingAddress) && (
+                  <div className="Order-shipment-summary-item">
+                    <span>Delivery Address</span>
+                    <strong
+                      style={{
+                        fontSize: "12px",
+                        maxWidth: "240px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={statusOrder.address || statusOrder.shipment?.shippingAddress}
+                    >
+                      {statusOrder.address || statusOrder.shipment?.shippingAddress}
+                    </strong>
+                  </div>
+                )}
               </div>
 
               {/* Status Stepper / Stage Selector */}
@@ -1447,54 +1594,40 @@ const Order = () => {
                     background: "#fffbeb",
                     border: "1px solid #fde68a",
                     borderRadius: "10px",
-                    padding: "14px 18px",
+                    padding: "16px 20px",
                     fontSize: "13px",
                     color: "#92400e",
                     lineHeight: "1.5",
                   }}
                 >
-                  Order payment is captured. Select <strong>Shipped</strong> when the artwork is dispatched to add shipping address, carrier tracking, and transit checkpoints.
+                  Order payment is captured. Select <strong>Shipped</strong> when the artwork is dispatched to assign Speed Post courier tracking, current hub, and expected delivery date.
                 </div>
               )}
 
-              {/* SECTION: SHIPPING ADDRESS (When Shipped, Out for Delivery, Delivered) */}
-              {statusForm.status !== "Pending" && (
-                <div className="Order-shipment-card">
+              {/* ========================================================= */}
+              {/* SECTION: SHIPPED STATUS LOGISTICS & TRACKING             */}
+              {/* Current Courier Hub, Expected Delivery Date, Speed Post, Tracking ID */}
+              {/* ========================================================= */}
+              {statusForm.status === "Shipped" && (
+                <div className="Order-shipment-card Order-shipment-card--shipped">
                   <div className="Order-card-header">
-                    <FiMapPin size={16} style={{ color: "#8c5b0c" }} />
-                    <h4>Delivery Destination Address</h4>
-                  </div>
-                  <textarea
-                    rows={3}
-                    className="Order-textarea"
-                    value={statusForm.shippingAddress ?? ""}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setStatusForm((prev) => ({ ...prev, shippingAddress: val }));
-                    }}
-                    placeholder="Enter complete delivery address..."
-                    style={{
-                      pointerEvents: "auto",
-                      userSelect: "text",
-                      cursor: "text",
-                      resize: "vertical",
-                      minHeight: "70px",
-                    }}
-                    required
-                  />
-                </div>
-              )}
-
-              {/* SECTION: CARRIER & AWB TRACKING */}
-              {statusForm.status !== "Pending" && (
-                <div className="Order-shipment-card">
-                  <div className="Order-card-header">
-                    <FiTruck size={16} style={{ color: "#1d4ed8" }} />
-                    <h4>Logistics &amp; Tracking Details</h4>
-                  </div>
-                  <div className="Order-three-col">
+                    <FiTruck size={17} style={{ color: "#1d4ed8" }} />
                     <div>
-                      <label className="Order-field-label">Courier Carrier</label>
+                      <h4 style={{ color: "#1e40af", margin: 0, fontSize: "14.5px" }}>
+                        Shipped Courier &amp; Tracking Details
+                      </h4>
+                      <span style={{ fontSize: "12px", color: "#4b5563" }}>
+                        Specify Speed Post courier, tracking ID, current courier hub, and expected delivery date
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="Order-two-col" style={{ marginTop: "12px" }}>
+                    {/* 1. Delivery Tracking Speed Post (Carrier) */}
+                    <div>
+                      <label className="Order-field-label">
+                        Delivery Tracking Speed Post / Courier <span style={{ color: "#dc2626" }}>*</span>
+                      </label>
                       <select
                         className="Order-select"
                         value={statusForm.carrier}
@@ -1508,10 +1641,16 @@ const Order = () => {
                           </option>
                         ))}
                       </select>
+                      <span style={{ fontSize: "11px", color: "#6b7280", marginTop: "3px", display: "block" }}>
+                        Speed Post / courier partner
+                      </span>
                     </div>
 
+                    {/* 2. Tracking ID */}
                     <div>
-                      <label className="Order-field-label">AWB / Tracking Number</label>
+                      <label className="Order-field-label">
+                        Tracking ID / Consignment Number <span style={{ color: "#dc2626" }}>*</span>
+                      </label>
                       <input
                         type="text"
                         className="Order-input"
@@ -1519,177 +1658,100 @@ const Order = () => {
                         onChange={(e) =>
                           setStatusForm((prev) => ({ ...prev, trackingNumber: e.target.value }))
                         }
-                        placeholder="e.g. BD-892348123IN"
+                        placeholder="e.g. SP982348123IN"
+                        required
                       />
-                    </div>
-
-                    <div>
-                      <label className="Order-field-label">Estimated Delivery</label>
-                      <input
-                        type="text"
-                        className="Order-input"
-                        value={statusForm.estimatedDelivery}
-                        onChange={(e) =>
-                          setStatusForm((prev) => ({ ...prev, estimatedDelivery: e.target.value }))
-                        }
-                        placeholder="e.g. 31 Oct 2026"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* SECTION: MULTIPLE SHIPPED TRANSIT CHECKPOINTS */}
-              {statusForm.status !== "Pending" && (
-                <div className="Order-shipment-card">
-                  <div className="Order-card-header" style={{ justifyContent: "space-between" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <FiNavigation size={16} style={{ color: "#8c5b0c" }} />
-                      <h4>Transit Hub Checkpoints ({statusForm.transitLocations.length})</h4>
+                      <span style={{ fontSize: "11px", color: "#6b7280", marginTop: "3px", display: "block" }}>
+                        Speed Post consignment / tracking number
+                      </span>
                     </div>
                   </div>
 
-                  {/* Existing Checkpoints List */}
-                  {statusForm.transitLocations.length > 0 && (
-                    <div className="Order-transit-list">
-                      {statusForm.transitLocations.map((loc, idx) => (
-                        <div key={idx} className="Order-transit-item">
-                          <div className="Order-transit-num">#{idx + 1}</div>
-                          <div className="Order-transit-details">
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                              <strong>{loc.location}</strong>
-                              <span className="Order-transit-status-tag">{loc.status}</span>
-                            </div>
-                            <div style={{ fontSize: "12px", color: "#666", marginTop: "2px" }}>
-                              {loc.city && <span>📍 {loc.city} · </span>}
-                              <span>🕒 {formatDateTime(loc.timestamp)}</span>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            className="Order-transit-delete-btn"
-                            onClick={() => handleRemoveCheckpoint(idx)}
-                            title="Remove checkpoint"
-                          >
-                            <FiTrash2 size={14} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Add Checkpoint Form */}
-                  <div className="Order-add-checkpoint-box">
-                    <h5 style={{ margin: "0 0 12px", fontSize: "12.5px", color: "#2d241e", fontWeight: "700" }}>
-                      + Add Transit Hub Checkpoint
-                    </h5>
-                    <div className="Order-two-col">
-                      <div>
-                        <label className="Order-field-label">Hub / Facility Name *</label>
-                        <input
-                          type="text"
-                          className="Order-input"
-                          placeholder="e.g. Bhubaneswar Sorting Facility"
-                          value={newCheckpoint.location}
-                          onChange={(e) =>
-                            setNewCheckpoint((prev) => ({ ...prev, location: e.target.value }))
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="Order-field-label">City / State</label>
-                        <input
-                          type="text"
-                          className="Order-input"
-                          placeholder="e.g. Bhubaneswar, Odisha"
-                          value={newCheckpoint.city}
-                          onChange={(e) =>
-                            setNewCheckpoint((prev) => ({ ...prev, city: e.target.value }))
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="Order-two-col" style={{ marginTop: "10px" }}>
-                      <div>
-                        <label className="Order-field-label">Status</label>
-                        <select
-                          className="Order-select"
-                          value={newCheckpoint.status}
-                          onChange={(e) =>
-                            setNewCheckpoint((prev) => ({ ...prev, status: e.target.value }))
-                          }
-                        >
-                          <option value="Dispatched">Dispatched from Origin</option>
-                          <option value="In Transit">In Transit to Hub</option>
-                          <option value="Arrived at Sorting Facility">Arrived at Sorting Facility</option>
-                          <option value="Departed Facility">Departed Facility</option>
-                          <option value="Arrived at Destination City">Arrived at Destination City</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="Order-field-label">Date &amp; Time</label>
-                        <input
-                          type="datetime-local"
-                          className="Order-input"
-                          value={newCheckpoint.timestamp}
-                          onChange={(e) =>
-                            setNewCheckpoint((prev) => ({ ...prev, timestamp: e.target.value }))
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="Order-add-checkpoint-btn"
-                      onClick={handleAddCheckpoint}
-                    >
-                      <FiPlus size={14} />
-                      <span>Add Checkpoint</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* SECTION: OUT FOR DELIVERY (DELIVERY AGENT DETAILS) */}
-              {(statusForm.status === "Out for Delivery" || statusForm.status === "Delivered") && (
-                <div className="Order-shipment-card Order-shipment-card--highlight">
-                  <div className="Order-card-header">
-                    <FiUser size={16} style={{ color: "#c2410c" }} />
-                    <h4 style={{ color: "#9a3412" }}>
-                      Delivery Executive Details {statusForm.status === "Out for Delivery" && "(Required)"}
-                    </h4>
-                  </div>
-
-                  <div className="Order-two-col">
+                  <div className="Order-two-col" style={{ marginTop: "12px" }}>
+                    {/* 3. Current Courier Hub */}
                     <div>
                       <label className="Order-field-label">
-                        Agent Name <span style={{ color: "#dc2626" }}>*</span>
+                        Current Courier Hub <span style={{ color: "#dc2626" }}>*</span>
                       </label>
                       <input
                         type="text"
                         className="Order-input"
-                        placeholder="e.g. Ramesh Kumar"
-                        value={statusForm.deliveryAgent.name}
-                        onChange={(e) =>
+                        value={statusForm.currentHub}
+                        onChange={(e) => {
+                          const val = e.target.value;
                           setStatusForm((prev) => ({
                             ...prev,
-                            deliveryAgent: { ...prev.deliveryAgent, name: e.target.value },
-                          }))
-                        }
-                        required={statusForm.status === "Out for Delivery"}
+                            currentHub: val,
+                            currentLocation: val,
+                          }));
+                        }}
+                        placeholder="e.g. Bhubaneswar National Speed Post Hub"
+                        required
                       />
+                      <span style={{ fontSize: "11px", color: "#6b7280", marginTop: "3px", display: "block" }}>
+                        Current transit distribution facility or postal hub
+                      </span>
                     </div>
 
+                    {/* 4. Expected Delivery Date */}
                     <div>
                       <label className="Order-field-label">
-                        Agent Contact Number <span style={{ color: "#dc2626" }}>*</span>
+                        Expected Delivery Date <span style={{ color: "#dc2626" }}>*</span>
+                      </label>
+                      <input
+                        type="date"
+                        className="Order-input"
+                        value={
+                          statusForm.estimatedDelivery && !isNaN(Date.parse(statusForm.estimatedDelivery))
+                            ? new Date(statusForm.estimatedDelivery).toISOString().slice(0, 10)
+                            : statusForm.estimatedDelivery || ""
+                        }
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setStatusForm((prev) => ({
+                            ...prev,
+                            estimatedDelivery: val,
+                            deliveryDate: prev.deliveryDate || val,
+                          }));
+                        }}
+                        required
+                      />
+                      <span style={{ fontSize: "11px", color: "#6b7280", marginTop: "3px", display: "block" }}>
+                        Estimated arrival date displayed to collector
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================= */}
+              {/* SECTION: OUT FOR DELIVERY                                */}
+              {/* Agent No, Current Hub, Date of Delivery                   */}
+              {/* ========================================================= */}
+              {statusForm.status === "Out for Delivery" && (
+                <div className="Order-shipment-card Order-shipment-card--highlight">
+                  <div className="Order-card-header">
+                    <FiNavigation size={17} style={{ color: "#c2410c" }} />
+                    <div>
+                      <h4 style={{ color: "#9a3412", margin: 0, fontSize: "14.5px" }}>
+                        Out for Delivery Details
+                      </h4>
+                      <span style={{ fontSize: "12px", color: "#7c2d12" }}>
+                        Enter Delivery Agent contact number, local dispatch hub, and handover date of delivery
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="Order-two-col" style={{ marginTop: "12px" }}>
+                    {/* 1. Agent No (Phone) */}
+                    <div>
+                      <label className="Order-field-label">
+                        Delivery Agent Contact No (Agent No) <span style={{ color: "#dc2626" }}>*</span>
                       </label>
                       <input
                         type="tel"
                         className="Order-input"
-                        placeholder="e.g. +91 98765 43210"
+                        placeholder="e.g. +91 8117048317 or 9876543210"
                         value={statusForm.deliveryAgent.phone}
                         onChange={(e) =>
                           setStatusForm((prev) => ({
@@ -1697,39 +1759,152 @@ const Order = () => {
                             deliveryAgent: { ...prev.deliveryAgent, phone: e.target.value },
                           }))
                         }
-                        required={statusForm.status === "Out for Delivery"}
+                        required
                       />
+                      <span style={{ fontSize: "11px", color: "#8c735d", marginTop: "3px", display: "block" }}>
+                        Direct mobile number for customer delivery coordination
+                      </span>
                     </div>
-                  </div>
 
-                  <div className="Order-two-col" style={{ marginTop: "10px" }}>
+                    {/* 2. Delivery Agent Name */}
                     <div>
-                      <label className="Order-field-label">Vehicle Registration #</label>
+                      <label className="Order-field-label">
+                        Delivery Agent Name
+                      </label>
                       <input
                         type="text"
                         className="Order-input"
-                        placeholder="e.g. OD-02-AX-8910"
-                        value={statusForm.deliveryAgent.vehicleNumber}
+                        placeholder="e.g. Ramesh Kumar (Speed Post Executive)"
+                        value={statusForm.deliveryAgent.name}
                         onChange={(e) =>
                           setStatusForm((prev) => ({
                             ...prev,
-                            deliveryAgent: { ...prev.deliveryAgent, vehicleNumber: e.target.value },
+                            deliveryAgent: { ...prev.deliveryAgent, name: e.target.value },
                           }))
                         }
                       />
+                      <span style={{ fontSize: "11px", color: "#8c735d", marginTop: "3px", display: "block" }}>
+                        Name of assigned delivery personnel
+                      </span>
                     </div>
+                  </div>
 
+                  <div className="Order-two-col" style={{ marginTop: "12px" }}>
+                    {/* 3. Current Hub */}
                     <div>
-                      <label className="Order-field-label">Delivery Time Slot</label>
+                      <label className="Order-field-label">
+                        Current Hub (Local Delivery Center) <span style={{ color: "#dc2626" }}>*</span>
+                      </label>
                       <input
                         type="text"
                         className="Order-input"
-                        placeholder="e.g. Today 2:00 PM – 5:00 PM"
+                        placeholder="e.g. Palasuni Delivery Sub-Post Office, Bhubaneswar"
+                        value={statusForm.currentHub}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setStatusForm((prev) => ({
+                            ...prev,
+                            currentHub: val,
+                            currentLocation: val,
+                          }));
+                        }}
+                        required
+                      />
+                      <span style={{ fontSize: "11px", color: "#8c735d", marginTop: "3px", display: "block" }}>
+                        Local facility / post office from which the parcel is out for delivery
+                      </span>
+                    </div>
+
+                    {/* 4. Date of Delivery */}
+                    <div>
+                      <label className="Order-field-label">
+                        Date of Delivery / Handover Date <span style={{ color: "#dc2626" }}>*</span>
+                      </label>
+                      <input
+                        type="date"
+                        className="Order-input"
+                        value={
+                          statusForm.deliveryDate && !isNaN(Date.parse(statusForm.deliveryDate))
+                            ? new Date(statusForm.deliveryDate).toISOString().slice(0, 10)
+                            : statusForm.deliveryDate || new Date().toISOString().slice(0, 10)
+                        }
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setStatusForm((prev) => ({
+                            ...prev,
+                            deliveryDate: val,
+                            estimatedDelivery: val,
+                          }));
+                        }}
+                        required
+                      />
+                      <span style={{ fontSize: "11px", color: "#8c735d", marginTop: "3px", display: "block" }}>
+                        Scheduled delivery day for the collector
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================= */}
+              {/* SECTION: DELIVERED CONFIRMATION                           */}
+              {/* ========================================================= */}
+              {statusForm.status === "Delivered" && (
+                <div className="Order-shipment-card" style={{ background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
+                  <div className="Order-card-header">
+                    <FiCheckCircle size={18} style={{ color: "#16a34a" }} />
+                    <div>
+                      <h4 style={{ color: "#166534", margin: 0, fontSize: "14.5px" }}>
+                        Delivered Order Confirmation
+                      </h4>
+                      <span style={{ fontSize: "12px", color: "#15803d" }}>
+                        Confirm final handover date and notes for delivered artwork
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="Order-two-col" style={{ marginTop: "12px" }}>
+                    <div>
+                      <label className="Order-field-label">
+                        Actual Handover Date <span style={{ color: "#dc2626" }}>*</span>
+                      </label>
+                      <input
+                        type="date"
+                        className="Order-input"
+                        value={
+                          statusForm.deliveryDate && !isNaN(Date.parse(statusForm.deliveryDate))
+                            ? new Date(statusForm.deliveryDate).toISOString().slice(0, 10)
+                            : statusForm.deliveryDate || new Date().toISOString().slice(0, 10)
+                        }
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setStatusForm((prev) => ({
+                            ...prev,
+                            deliveryDate: val,
+                            estimatedDelivery: val,
+                          }));
+                        }}
+                        required
+                      />
+                      <span style={{ fontSize: "11px", color: "#166534", marginTop: "3px", display: "block" }}>
+                        Date when artwork was safely delivered to collector
+                      </span>
+                    </div>
+
+                    <div>
+                      <label className="Order-field-label">Delivery Note</label>
+                      <input
+                        type="text"
+                        className="Order-input"
+                        placeholder="e.g. Handed over directly to recipient"
                         value={statusForm.notes}
                         onChange={(e) =>
                           setStatusForm((prev) => ({ ...prev, notes: e.target.value }))
                         }
                       />
+                      <span style={{ fontSize: "11px", color: "#166534", marginTop: "3px", display: "block" }}>
+                        Optional completion note or acknowledgment
+                      </span>
                     </div>
                   </div>
                 </div>

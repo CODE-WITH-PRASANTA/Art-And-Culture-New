@@ -1,0 +1,371 @@
+/* ==========================================================================
+   ADMIN MY PROFILE - LUXURY ART & CULTURE DESIGN
+   ========================================================================== */
+
+.AdminProfile-page {
+  padding: 24px 28px 40px;
+  max-width: 1040px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Banner Card */
+.AdminProfile-banner-card {
+  position: relative;
+  background: linear-gradient(135deg, #2b180d 0%, #1a0f07 60%, #120904 100%);
+  border: 1px solid rgba(201, 148, 50, 0.35);
+  border-radius: 18px;
+  padding: 30px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.AdminProfile-banner-glow {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 148, 50, 0.25) 0%, rgba(201, 148, 50, 0) 70%);
+  filter: blur(50px);
+  pointer-events: none;
+}
+
+.AdminProfile-header-flex {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.AdminProfile-avatar-wrap {
+  position: relative;
+}
+
+.AdminProfile-avatar-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c99432 0%, #8c5b0c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.AdminProfile-status-dot {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2.5px solid #1a0f07;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+
+.AdminProfile-intro {
+  flex: 1;
+}
+
+.AdminProfile-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.AdminProfile-name {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+}
+
+.AdminProfile-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(201, 148, 50, 0.18);
+  border: 1px solid rgba(201, 148, 50, 0.4);
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #f1c97a;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.AdminProfile-email {
+  margin: 6px 0 12px;
+  font-size: 14px;
+  color: #d1bda9;
+}
+
+.AdminProfile-meta-pills {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.AdminProfile-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: #ded1c4;
+}
+
+/* Tabs */
+.AdminProfile-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ebd8c3;
+  padding-bottom: 8px;
+}
+
+.AdminProfile-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #7a6a5d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.AdminProfile-tab-btn:hover {
+  color: #8c5b0c;
+  background: rgba(140, 91, 12, 0.06);
+}
+
+.AdminProfile-tab-btn.active {
+  background: #8c5b0c;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(140, 91, 12, 0.25);
+}
+
+/* Content Card */
+.AdminProfile-content-card {
+  background: #ffffff;
+  border: 1px solid #ebd8c3;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.AdminProfile-card-header {
+  margin-bottom: 22px;
+}
+
+.AdminProfile-section-title {
+  margin: 0 0 4px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  color: #1a1612;
+  font-weight: 700;
+}
+
+.AdminProfile-section-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #7a6a5d;
+}
+
+/* Alerts */
+.AdminProfile-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.AdminProfile-alert--success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.AdminProfile-alert--error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+/* Form */
+.AdminProfile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.AdminProfile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 22px;
+}
+
+.AdminProfile-grid--stacked {
+  max-width: 480px;
+  grid-template-columns: 1fr;
+}
+
+.AdminProfile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.AdminProfile-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #382d24;
+}
+
+.AdminProfile-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.AdminProfile-icon {
+  position: absolute;
+  left: 14px;
+  color: #9c8e82;
+  pointer-events: none;
+}
+
+.AdminProfile-input {
+  width: 100%;
+  height: 44px;
+  background: #faf8f5;
+  border: 1.5px solid #e2d7cc;
+  border-radius: 10px;
+  padding: 0 14px 0 42px;
+  color: #1a1612;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.AdminProfile-input--pass {
+  padding-right: 44px;
+}
+
+.AdminProfile-input:focus {
+  border-color: #8c5b0c;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(140, 91, 12, 0.12);
+}
+
+.AdminProfile-eye-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #9c8e82;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.AdminProfile-eye-btn:hover {
+  color: #1a1612;
+}
+
+.AdminProfile-action-row {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.AdminProfile-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #a8741a 0%, #8c5b0c 50%, #6e4304 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(140, 91, 12, 0.25);
+  transition: all 0.2s ease;
+}
+
+.AdminProfile-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b88322 0%, #9e6710 50%, #7d4d07 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(140, 91, 12, 0.35);
+}
+
+.AdminProfile-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.AdminProfile-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .AdminProfile-grid {
+    grid-template-columns: 1fr;
+  }
+  .AdminProfile-header-flex {
+    flex-direction: column;
+    text-align: center;
+  }
+  .AdminProfile-title-row {
+    justify-content: center;
+  }
+  .AdminProfile-meta-pills {
+    justify-content: center;
+  }
+}
+

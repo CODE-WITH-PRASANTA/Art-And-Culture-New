@@ -93,10 +93,11 @@ exports.getAllOrders = async (req, res) => {
         razorpayOrderId: o.payment?.razorpayOrderId || "—",
         status: o.status || "Pending",
         shipment: {
-          carrier: o.shipment?.carrier || "Blue Dart Express",
+          carrier: o.shipment?.carrier || "India Post (Speed Post)",
           trackingNumber: o.shipment?.trackingNumber || "",
           shippingAddress: effectiveAddress,
-          currentLocation: o.shipment?.currentLocation || "",
+          currentLocation: o.shipment?.currentLocation || o.shipment?.currentHub || "",
+          currentHub: o.shipment?.currentHub || o.shipment?.currentLocation || "",
           transitLocations: Array.isArray(o.shipment?.transitLocations)
             ? o.shipment.transitLocations
             : [],
@@ -106,7 +107,8 @@ exports.getAllOrders = async (req, res) => {
             altPhone: o.shipment?.deliveryAgent?.altPhone || "",
             vehicleNumber: o.shipment?.deliveryAgent?.vehicleNumber || "",
           },
-          estimatedDelivery: o.shipment?.estimatedDelivery || "",
+          estimatedDelivery: o.shipment?.estimatedDelivery || o.shipment?.deliveryDate || "",
+          deliveryDate: o.shipment?.deliveryDate || o.shipment?.estimatedDelivery || "",
           outForDeliveryAt: o.shipment?.outForDeliveryAt || null,
           deliveredAt: o.shipment?.deliveredAt || null,
           notes: o.shipment?.notes || "",
@@ -182,7 +184,14 @@ exports.updateOrder = async (req, res) => {
           order.customer.address = shipment.shippingAddress;
         }
       }
-      if (shipment.currentLocation !== undefined) order.shipment.currentLocation = shipment.currentLocation;
+      if (shipment.currentLocation !== undefined) {
+        order.shipment.currentLocation = shipment.currentLocation;
+        if (!order.shipment.currentHub) order.shipment.currentHub = shipment.currentLocation;
+      }
+      if (shipment.currentHub !== undefined) {
+        order.shipment.currentHub = shipment.currentHub;
+        if (!order.shipment.currentLocation) order.shipment.currentLocation = shipment.currentHub;
+      }
 
       // Handle transitLocations (multiple shipped locations / hubs)
       if (Array.isArray(shipment.transitLocations)) {
@@ -214,6 +223,11 @@ exports.updateOrder = async (req, res) => {
 
       if (shipment.estimatedDelivery !== undefined) {
         order.shipment.estimatedDelivery = shipment.estimatedDelivery;
+        if (!order.shipment.deliveryDate) order.shipment.deliveryDate = shipment.estimatedDelivery;
+      }
+      if (shipment.deliveryDate !== undefined) {
+        order.shipment.deliveryDate = shipment.deliveryDate;
+        if (!order.shipment.estimatedDelivery) order.shipment.estimatedDelivery = shipment.deliveryDate;
       }
       if (shipment.notes !== undefined) {
         order.shipment.notes = shipment.notes;

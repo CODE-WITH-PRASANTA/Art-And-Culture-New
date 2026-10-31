@@ -516,26 +516,27 @@ const sendOrderShippedEmail = async ({ to, order }) => {
 
   const customerName = order.customer?.fullName || "Art Collector";
   const displayId = order.orderNumber || order.id || "ORD";
-  const carrier = order.shipment?.carrier || "Blue Dart Express";
+  const carrier = order.shipment?.carrier || "India Post (Speed Post)";
   const trackingNumber = order.shipment?.trackingNumber || "Assigned on Dispatch";
-  const estimatedDelivery = order.shipment?.estimatedDelivery || "2 to 4 business days";
+  const estimatedDelivery = order.shipment?.estimatedDelivery || order.shipment?.deliveryDate || "2 to 4 business days";
+  const currentHub = order.shipment?.currentHub || order.shipment?.currentLocation || "";
 
   const bodyContent = `
     <p style="margin: 0 0 16px; font-size: 16px; color: #2e261e; font-weight: 600;">
       Namaste <strong>${customerName}</strong>,
     </p>
     <p style="margin: 0 0 20px; font-size: 14.5px; line-height: 1.6; color: #5a4b3d;">
-      Great news! Your handcrafted artwork for order <strong>#${displayId}</strong> has been carefully inspected, packaged in custom shock-absorbing timber framing, and dispatched with our premium logistics partner.
+      Great news! Your handcrafted artwork for order <strong>#${displayId}</strong> has been carefully inspected, packaged in custom shock-absorbing museum-grade casing, and dispatched with our delivery partner.
     </p>
 
     <!-- Shipment Tracking Card -->
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #fcf9f2; border: 1.5px solid #ebd9c4; border-radius: 12px; margin: 20px 0; padding: 18px 20px;">
       <tr>
-        <td style="font-size: 13.5px; color: #4e4033; line-height: 1.7;">
-          <strong style="color: #8a5524;">Logistics Carrier:</strong> ${carrier}<br>
-          <strong style="color: #8a5524;">Tracking AWB Number:</strong> <span style="font-family: monospace; font-size: 14.5px; color: #b06f15; font-weight: 700;">${trackingNumber}</span><br>
-          <strong style="color: #8a5524;">Estimated Delivery:</strong> <span style="color: #15803d; font-weight: 700;">${estimatedDelivery}</span>
-          ${order.shipment?.currentLocation ? `<br><strong style="color: #8a5524;">Current Transit Hub:</strong> ${order.shipment.currentLocation}` : ""}
+        <td style="font-size: 13.5px; color: #4e4033; line-height: 1.8;">
+          <strong style="color: #8a5524;">Logistics Courier:</strong> ${carrier}<br>
+          <strong style="color: #8a5524;">Tracking ID / Consignment:</strong> <span style="font-family: monospace; font-size: 14.5px; color: #b06f15; font-weight: 700;">${trackingNumber}</span><br>
+          ${currentHub ? `<strong style="color: #8a5524;">Current Courier Hub:</strong> 📍 ${currentHub}<br>` : ""}
+          <strong style="color: #8a5524;">Expected Delivery Date:</strong> <span style="color: #15803d; font-weight: 700;">${estimatedDelivery}</span>
         </td>
       </tr>
     </table>
@@ -602,7 +603,7 @@ const sendOrderOutForDeliveryEmail = async ({ to, order }) => {
       <tr>
         <td>
           <h3 style="margin: 0 0 10px; font-size: 13.5px; color: #8a5524; text-transform: uppercase; letter-spacing: 0.5px;">
-            Delivery Executive Details:
+            Delivery Executive &amp; Hub Details:
           </h3>
           <p style="margin: 0 0 6px; font-size: 14px; color: #33271d;">
             <strong>Agent Name:</strong> ${agent.name || "Specialist Art Courier Agent"}
@@ -610,7 +611,21 @@ const sendOrderOutForDeliveryEmail = async ({ to, order }) => {
           ${
             agent.phone
               ? `<p style="margin: 0 0 6px; font-size: 14px; color: #33271d;">
-                  <strong>Contact Phone:</strong> <a href="tel:${agent.phone}" style="color: #b06f15; font-weight: 700; text-decoration: none;">${agent.phone}</a>
+                  <strong>Agent Contact (Phone):</strong> <a href="tel:${agent.phone}" style="color: #ea580c; font-weight: 700; text-decoration: none;">${agent.phone}</a>
+                </p>`
+              : ""
+          }
+          ${
+            order.shipment?.currentHub || order.shipment?.currentLocation
+              ? `<p style="margin: 0 0 6px; font-size: 14px; color: #33271d;">
+                  <strong>Current Hub (Local Center):</strong> 📍 ${order.shipment.currentHub || order.shipment.currentLocation}
+                </p>`
+              : ""
+          }
+          ${
+            order.shipment?.deliveryDate || order.shipment?.estimatedDelivery
+              ? `<p style="margin: 0 0 6px; font-size: 14px; color: #33271d;">
+                  <strong>Date of Delivery:</strong> <span style="color: #15803d; font-weight: 700;">${order.shipment.deliveryDate || order.shipment.estimatedDelivery}</span>
                 </p>`
               : ""
           }

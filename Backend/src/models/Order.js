@@ -31,10 +31,11 @@ const transitCheckpointSchema = new mongoose.Schema(
 
 const shipmentSchema = new mongoose.Schema(
   {
-    carrier: { type: String, default: "Blue Dart Express", trim: true },
+    carrier: { type: String, default: "India Post (Speed Post)", trim: true },
     trackingNumber: { type: String, default: "", trim: true },
     shippingAddress: { type: String, default: "", trim: true },
     currentLocation: { type: String, default: "", trim: true },
+    currentHub: { type: String, default: "", trim: true },
     transitLocations: [transitCheckpointSchema],
     deliveryAgent: {
       name: { type: String, default: "", trim: true },
@@ -43,6 +44,7 @@ const shipmentSchema = new mongoose.Schema(
       vehicleNumber: { type: String, default: "", trim: true },
     },
     estimatedDelivery: { type: String, default: "", trim: true },
+    deliveryDate: { type: String, default: "", trim: true },
     outForDeliveryAt: { type: Date },
     deliveredAt: { type: Date },
     notes: { type: String, default: "", trim: true },
