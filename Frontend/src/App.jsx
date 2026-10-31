@@ -24,7 +24,6 @@ import Blog from "./Components/Blog/Blog";
 import Gallary from "./Pages/Gallary/Gallary";
 import Coupons from "./Pages/Coupons/Coupons";
 import Training from "./Pages/Training/Training";
-import OnlineArt from "./Pages/OnlineArt/OnlineArt";
 import ClassDetails from "./Pages/ClassDetails/ClassDetails";
 import RequestArtClass from "./Pages/RequestArtClass/RequestArtClass";
 import OrderDetails from "./Pages/OrderDetails/OrderDetails";
@@ -72,7 +71,6 @@ const App = () => {
           <Route path="/gallary" element={<Gallary />} />
           <Route path="/training-and-course" element={<Training />} />
           <Route path="/coupons" element={<Coupons />} />
-          <Route path="/online-art-class" element={<OnlineArt />} />
           <Route path="/class-details" element={<ClassDetails />} />
           <Route path="/request-art-class" element={<RequestArtClass />} />
         </Routes>
