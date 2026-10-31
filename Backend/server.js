@@ -84,6 +84,9 @@ const orderRoutes = require("./src/routes/orderRoutes");
 const enquiryRoutes = require("./src/routes/enquiryRoutes");
 const blogCommentRoutes = require("./src/routes/blogCommentRoutes");
 const adminAuthRoutes = require("./src/routes/adminAuthRoutes");
+const feedbackRoutes = require("./src/routes/feedbackRoutes");
+const trainingCourseRoutes = require("./src/routes/trainingCourseRoutes");
+const courseEnquiryRoutes = require("./src/routes/courseEnquiryRoutes");
 
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin", adminAuthRoutes);
@@ -103,6 +106,10 @@ app.use("/api/enquiries", enquiryRoutes);
 app.use("/api/enquiry", enquiryRoutes);
 app.use("/api/blog-comments", blogCommentRoutes);
 app.use("/api/reviews", blogCommentRoutes);
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/training-courses", trainingCourseRoutes);
+app.use("/api/training-course", trainingCourseRoutes);
+app.use("/api/course-enquiries", courseEnquiryRoutes);
 
 /* ==============================
    404 HANDLER

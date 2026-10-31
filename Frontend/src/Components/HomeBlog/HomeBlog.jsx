@@ -1,10 +1,10 @@
-
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaArrowRight } from "react-icons/fa";
+import { BLOGS_API_URL, formatImageUrl } from "../../config/api";
 import "./HomeBlog.css";
 
-const blogArticles = [
+const defaultBlogArticles = [
   {
     id: 1,
     image:
@@ -12,6 +12,8 @@ const blogArticles = [
     date: "30 December, 2024",
     comments: 0,
     title: "Simple Hacks for a Healthier Daily Routine",
+    description:
+      "Discover simple yet transformative daily rituals to revitalize your energy, mental clarity, and wellness.",
     slug: "/blog/healthier-daily-routine",
   },
   {
@@ -21,6 +23,8 @@ const blogArticles = [
     date: "30 December, 2024",
     comments: 0,
     title: "Effective Ways to Save Money While Shopping",
+    description:
+      "Smart, proven shopping strategies and mindful budget techniques for art enthusiasts and collectors.",
     slug: "/blog/save-money-while-shopping",
   },
   {
@@ -30,6 +34,8 @@ const blogArticles = [
     date: "30 December, 2024",
     comments: 0,
     title: "Top Marketing Trends to Watch This Year",
+    description:
+      "Key creative trends and cultural shifts reshaping the modern digital art and design landscape.",
     slug: "/blog/marketing-trends",
   },
   {
@@ -39,6 +45,8 @@ const blogArticles = [
     date: "30 December, 2024",
     comments: 0,
     title: "Transform Your Backyard into a Relaxing Oasis",
+    description:
+      "Elevate your outdoor sanctuary with timeless sculptural accents and soothing natural aesthetics.",
     slug: "/blog/relaxing-oasis",
   },
   {
@@ -48,6 +56,8 @@ const blogArticles = [
     date: "28 December, 2024",
     comments: 2,
     title: "Discover the Beauty of Contemporary Art",
+    description:
+      "An inspiring journey into vibrant textures, bold expressions, and thought-provoking cultural narratives.",
     slug: "/blog/contemporary-art",
   },
   {
@@ -57,9 +67,23 @@ const blogArticles = [
     date: "25 December, 2024",
     comments: 4,
     title: "Creative Ideas to Inspire Your Next Masterpiece",
+    description:
+      "Unleash your artistic potential with insightful techniques and creative concepts from celebrated artisans.",
     slug: "/blog/creative-art-ideas",
   },
 ];
+
+const stripHtml = (html) => {
+  if (!html) return "";
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+};
 
 const HomeBlog = () => {
   const viewportRef = useRef(null);
@@ -67,10 +91,76 @@ const HomeBlog = () => {
   const cardRefs = useRef([]);
   const autoplayRef = useRef(null);
 
+  const [articles, setArticles] = useState(defaultBlogArticles);
   const [activeIndex, setActiveIndex] = useState(0);
   const [slideDistance, setSlideDistance] = useState(0);
   const [maxIndex, setMaxIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+
+  // Fetch published blogs from API
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchBlogs = async () => {
+      try {
+        const res = await fetch(`${BLOGS_API_URL}?status=Published`);
+        const data = await res.json();
+
+        if (isMounted && data.success && Array.isArray(data.blogs) && data.blogs.length > 0) {
+          const mapped = data.blogs.map((b, idx) => {
+            const rawDate = b.publishDate || b.createdAt;
+            let formattedDate = "Recent";
+            if (rawDate) {
+              const d = new Date(rawDate);
+              if (!isNaN(d.getTime())) {
+                formattedDate = d.toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                });
+              }
+            }
+
+            const imgUrl = formatImageUrl(b.mainImage || b.image);
+            const fallbackImg = defaultBlogArticles[idx % defaultBlogArticles.length]?.image;
+
+            const rawDescription =
+              (b.excerpt && stripHtml(b.excerpt)) ||
+              (b.description && stripHtml(b.description)) ||
+              (b.metaDescription && stripHtml(b.metaDescription)) ||
+              "";
+
+            const cleanDescription =
+              rawDescription.length > 115
+                ? rawDescription.slice(0, 115).trim() + "..."
+                : rawDescription ||
+                  defaultBlogArticles[idx % defaultBlogArticles.length]?.description ||
+                  "Discover the authentic artistry, craftsmanship, and cultural heritage behind this piece.";
+
+            return {
+              id: b._id || b.slug || `blog-${idx}`,
+              image: imgUrl || fallbackImg,
+              date: formattedDate,
+              comments: typeof b.commentsCount === "number" ? b.commentsCount : 0,
+              title: b.title || "Untitled Article",
+              description: cleanDescription,
+              slug: `/blog/${b.slug || b._id}`,
+            };
+          });
+
+          setArticles(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to fetch blogs for Latest Article:", err);
+      }
+    };
+
+    fetchBlogs();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const measureCarousel = useCallback(() => {
     const viewport = viewportRef.current;
@@ -93,14 +183,14 @@ const HomeBlog = () => {
 
     const nextMaxIndex = Math.max(
       0,
-      blogArticles.length - visibleCount
+      articles.length - visibleCount
     );
 
     setSlideDistance(cardWidth + gap);
     setMaxIndex(nextMaxIndex);
 
     setActiveIndex((current) => Math.min(current, nextMaxIndex));
-  }, []);
+  }, [articles.length]);
 
   useEffect(() => {
     measureCarousel();
@@ -122,7 +212,7 @@ const HomeBlog = () => {
       resizeObserver?.disconnect();
       window.removeEventListener("resize", measureCarousel);
     };
-  }, [measureCarousel]);
+  }, [measureCarousel, articles]);
 
   const showNext = useCallback(() => {
     setActiveIndex((current) =>
@@ -153,21 +243,27 @@ const HomeBlog = () => {
       <div className="HomeBlog-container">
         {/* Section heading */}
         <div className="HomeBlog-header">
-          <div className="HomeBlog-heading">
+          <div className="HomeBlog-header-left">
+            <div className="HomeBlog-eyebrow">
+              <span className="HomeBlog-eyebrow-spark">✦</span>
+              <span>CURATED EDITORIAL & JOURNAL</span>
+            </div>
             <h2 className="HomeBlog-title" id="HomeBlog-title">
-              Latest Article
+              Latest Articles <span className="HomeBlog-title-accent">& Heritage Stories</span>
             </h2>
           </div>
 
-          <div className="HomeBlog-header-content">
+          <div className="HomeBlog-header-right">
             <p className="HomeBlog-subtitle">
-              Join us for an exhilarating live auction experience
-              where art meets excitement.
+              Explore in-depth cultural chronicles, master artisan dialogues, and timeless reflections celebrating India's living art traditions.
             </p>
 
-            <Link to="/blog" className="HomeBlog-view-all">
-              View All
-            </Link>
+            <div className="HomeBlog-header-actions">
+              <Link to="/blog" className="HomeBlog-view-all-btn">
+                <span>Explore All Articles</span>
+                <FaArrowRight className="HomeBlog-view-all-icon" />
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -201,7 +297,7 @@ const HomeBlog = () => {
                 transform: `translate3d(-${activeIndex * slideDistance}px, 0, 0)`,
               }}
             >
-              {blogArticles.map((article, index) => (
+              {articles.map((article, index) => (
                 <article
                   className="HomeBlog-card"
                   key={article.id}
@@ -219,6 +315,14 @@ const HomeBlog = () => {
                       alt={article.title}
                       className="HomeBlog-image"
                       loading={index < 4 ? "eager" : "lazy"}
+                      onError={(e) => {
+                        const fallback =
+                          defaultBlogArticles[index % defaultBlogArticles.length]?.image ||
+                          "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=900&q=85";
+                        if (e.target.src !== fallback) {
+                          e.target.src = fallback;
+                        }
+                      }}
                     />
                   </Link>
 
@@ -238,11 +342,18 @@ const HomeBlog = () => {
                       </Link>
                     </h3>
 
+                    {article.description && (
+                      <p className="HomeBlog-description">
+                        {article.description}
+                      </p>
+                    )}
+
                     <Link
                       to={article.slug}
                       className="HomeBlog-read-more"
                     >
-                      Read Article
+                      <span>Read Article</span>
+                      <FaArrowRight className="HomeBlog-read-more-arrow" />
                     </Link>
                   </div>
                 </article>

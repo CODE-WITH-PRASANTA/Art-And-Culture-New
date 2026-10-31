@@ -14,6 +14,9 @@ export const PAYMENT_API_URL = `${API_BASE_URL}/api/payment`;
 export const ENQUIRIES_API_URL = `${API_BASE_URL}/api/enquiries`;
 export const BLOG_COMMENTS_API_URL = `${API_BASE_URL}/api/blog-comments`;
 export const REVIEWS_API_URL = `${API_BASE_URL}/api/blog-comments`;
+export const FEEDBACK_API_URL = `${API_BASE_URL}/api/feedback`;
+export const TRAINING_COURSES_API_URL = `${API_BASE_URL}/api/training-courses`;
+export const COURSE_ENQUIRIES_API_URL = `${API_BASE_URL}/api/course-enquiries`;
 
 export const formatImageUrl = (img) => {
   if (!img) return "";

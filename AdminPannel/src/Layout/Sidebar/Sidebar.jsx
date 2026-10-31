@@ -15,6 +15,8 @@ import {
   FiList,
   FiFileText,
   FiX,
+  FiMessageCircle,
+  FiAward,
 } from "react-icons/fi";
 
 import "./Sidebar.css";
@@ -69,6 +71,27 @@ const menuItems = [
     icon: FiImage,
   },
   {
+    text: "Training & Course",
+    icon: FiAward,
+    children: [
+      {
+        text: "Course Posting",
+        path: "/training-course/posting",
+        icon: FiPlusSquare,
+      },
+      {
+        text: "Training Management",
+        path: "/training-course/management",
+        icon: FiList,
+      },
+      {
+        text: "Course Enquiries",
+        path: "/training-course/enquiries",
+        icon: FiClipboard,
+      },
+    ],
+  },
+  {
     text: "Order",
     path: "/orders",
     icon: FiShoppingBag,
@@ -93,6 +116,11 @@ const menuItems = [
     path: "/review-management",
     icon: FiMessageSquare,
   },
+  {
+    text: "Feedback",
+    path: "/feedback",
+    icon: FiMessageCircle,
+  },
 ];
 
 const Sidebar = ({
@@ -105,6 +133,7 @@ const Sidebar = ({
   const [openDropdowns, setOpenDropdowns] = useState({
     "Art Management": true,
     Blog: true,
+    "Training & Course": true,
   });
 
   const handleNavClick = () => {

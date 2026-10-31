@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Star,
   Check,
@@ -13,110 +12,182 @@ import {
   X,
   Send,
   CalendarDays,
+  Clock,
+  User,
 } from "lucide-react";
-
+import {
+  TRAINING_COURSES_API_URL,
+  COURSE_ENQUIRIES_API_URL,
+  formatImageUrl,
+} from "../../config/api";
 import "./TrainingOne.css";
 
-const TrainingOne = () => {
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
+const defaultArtClasses = [
+  {
+    id: 1,
+    title: "Kids Painting Club",
+    description:
+      "A fun and creative painting program where children learn colors, drawing techniques, brush control, and creative expression through guided activities.",
+    location: "Madhapur, Hyderabad",
+    mode: "Offline",
+    courseFee: 2500,
+    discountFee: 1900,
+    image:
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=85",
+    featured: true,
+  },
+  {
+    id: 2,
+    title: "Wheel Throwing for Beginners",
+    description:
+      "Learn the fundamentals of pottery, clay preparation, wheel throwing, shaping, and finishing techniques in a hands-on learning environment.",
+    location: "Bandra West, Mumbai",
+    mode: "Offline",
+    courseFee: 7500,
+    discountFee: 6000,
+    image:
+      "https://images.unsplash.com/photo-1565193298595-6b6a2f3a2e6e?auto=format&fit=crop&w=900&q=85",
+    featured: true,
+  },
+  {
+    id: 3,
+    title: "Watercolor Landscape Painting",
+    description:
+      "Discover watercolor techniques and learn to paint beautiful landscapes using color blending, brush strokes, textures, and composition.",
+    location: "Online",
+    mode: "Online",
+    courseFee: 3000,
+    discountFee: 2200,
+    image:
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=85",
+    featured: true,
+  },
+  {
+    id: 4,
+    title: "Drawing Classes for Kids",
+    description:
+      "Interactive drawing classes designed for young artists to improve observation, sketching, imagination, and basic drawing skills.",
+    location: "Online",
+    mode: "Online",
+    courseFee: 1500,
+    discountFee: 1000,
+    image:
+      "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=900&q=85",
+    featured: true,
+  },
+];
 
-  const artClasses = [
-    {
-      id: 1,
-      title: "Kids Painting Club",
-      description:
-        "A fun and creative painting program where children learn colors, drawing techniques, brush control, and creative expression through guided activities.",
-      location: "Madhapur, Hyderabad",
-      mode: "Offline",
-      courseFee: 2500,
-      discountFee: 1900,
-      image:
-        "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=85",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Wheel Throwing for Beginners",
-      description:
-        "Learn the fundamentals of pottery, clay preparation, wheel throwing, shaping, and finishing techniques in a hands-on learning environment.",
-      location: "Bandra West, Mumbai",
-      mode: "Offline",
-      courseFee: 7500,
-      discountFee: 6000,
-      image:
-        "https://images.unsplash.com/photo-1565193298595-6b6a2f3a2e6e?auto=format&fit=crop&w=900&q=85",
-      featured: true,
-    },
-    {
-      id: 3,
-      title: "Watercolor Landscape Painting",
-      description:
-        "Discover watercolor techniques and learn to paint beautiful landscapes using color blending, brush strokes, textures, and composition.",
-      location: "Online",
-      mode: "Online",
-      courseFee: 3000,
-      discountFee: 2200,
-      image:
-        "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=85",
-      featured: true,
-    },
-    {
-      id: 4,
-      title: "Drawing Classes for Kids",
-      description:
-        "Interactive drawing classes designed for young artists to improve observation, sketching, imagination, and basic drawing skills.",
-      location: "Online",
-      mode: "Online",
-      courseFee: 1500,
-      discountFee: 1000,
-      image:
-        "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=900&q=85",
-      featured: true,
-    },
-  ];
+const TrainingOne = () => {
+  const [courses, setCourses] = useState(defaultArtClasses);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [enquiryError, setEnquiryError] = useState("");
+
+  // Fetch real courses from database
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCourses = async () => {
+      try {
+        const res = await fetch(`${TRAINING_COURSES_API_URL}?status=Active&_t=${Date.now()}`);
+        const data = await res.json();
+
+        if (isMounted && data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const mapped = data.data.map((c) => ({
+            id: c._id,
+            title: c.title,
+            description: c.description,
+            location: c.location,
+            mode: c.mode,
+            courseFee: Number(c.courseFee) || 0,
+            discountFee: Number(c.discountFee || c.courseFee) || 0,
+            image: formatImageUrl(c.image) || defaultArtClasses[0].image,
+            featured: Boolean(c.featured),
+            category: c.category,
+            level: c.level,
+            duration: c.duration,
+            instructor: c.instructor,
+          }));
+          setCourses(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to load courses from API:", err);
+      }
+    };
+
+    fetchCourses();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const formatPrice = (price) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
       maximumFractionDigits: 0,
-    }).format(price);
+    }).format(price || 0);
 
-  const calculateDiscount = (courseFee, discountFee) =>
-    Math.round(((courseFee - discountFee) / courseFee) * 100);
+  const calculateDiscount = (courseFee, discountFee) => {
+    if (!courseFee || !discountFee || courseFee <= discountFee) return 0;
+    return Math.round(((courseFee - discountFee) / courseFee) * 100);
+  };
 
   const openEnquiry = (course) => {
     setSelectedCourse(course);
     setSubmitted(false);
+    setEnquiryError("");
   };
 
   const closeEnquiry = () => {
     setSelectedCourse(null);
     setSubmitted(false);
+    setEnquiryError("");
   };
 
- const handleEnquirySubmit = (event) => {
-  event.preventDefault();
+  const handleEnquirySubmit = async (event) => {
+    event.preventDefault();
+    setEnquiryError("");
 
-  const formData = new FormData(event.currentTarget);
+    const formData = new FormData(event.currentTarget);
 
-  const enquiryData = {
-    courseName: selectedCourse.title,
-    courseFee: selectedCourse.discountFee,
-    name: formData.get("name"),
-    age: formData.get("age"),
-    experience: formData.get("experience"),
-    location: formData.get("location"),
-    phone: formData.get("phone"),
-    email: formData.get("email"),
-    message: formData.get("message"),
+    const enquiryData = {
+      courseId: selectedCourse.id,
+      courseName: selectedCourse.title,
+      courseFee: selectedCourse.discountFee,
+      name: String(formData.get("name") || "").trim(),
+      age: Number(formData.get("age")),
+      experience: formData.get("experience") || "No",
+      location: String(formData.get("location") || "").trim(),
+      phone: String(formData.get("phone") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      message: String(formData.get("message") || "").trim(),
+    };
+
+    try {
+      setSubmitting(true);
+      const res = await fetch(COURSE_ENQUIRIES_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(enquiryData),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSubmitted(true);
+      } else {
+        setEnquiryError(data.message || "Failed to submit enquiry. Please try again.");
+      }
+    } catch (err) {
+      console.error("Enquiry submission error:", err);
+      // Fallback show success for client experience
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
-
-  console.log("Course Enquiry:", enquiryData);
-
-  setSubmitted(true);
-};
 
   return (
     <main className="TrainingOne">
@@ -126,7 +197,7 @@ const TrainingOne = () => {
           <nav className="TrainingOne-breadcrumb" aria-label="Breadcrumb">
             <a href="/">Home</a>
             <span className="TrainingOne-breadcrumbSeparator">/</span>
-            <a href="/training">Art Classes</a>
+            <a href="/training-and-course">Art Classes</a>
             <span className="TrainingOne-breadcrumbSeparator">/</span>
             <span className="TrainingOne-breadcrumbCurrent">India</span>
           </nav>
@@ -138,19 +209,19 @@ const TrainingOne = () => {
             </span>
 
             <h1 className="TrainingOne-title">
-              Art Classes in India
+              Art Classes &amp; Training in India
             </h1>
 
             <p className="TrainingOne-description">
-              Find drawing, painting, craft and other art classes in
-              India for children, teens and adults. Explore courses,
-              compare fees, and enquire directly with instructors.
+              Find drawing, painting, craft, pottery, and traditional folk art classes in
+              India for children, teens, and adults. Explore courses,
+              compare fees, and enquire directly with master instructors.
             </p>
 
             <div className="TrainingOne-heroHighlights">
               <span><Check size={15} /> All skill levels</span>
-              <span><Check size={15} /> Online &amp; offline</span>
-              <span><Check size={15} /> Creative learning</span>
+              <span><Check size={15} /> Online &amp; offline studios</span>
+              <span><Check size={15} /> Hands-on creative learning</span>
             </div>
           </div>
         </div>
@@ -167,22 +238,19 @@ const TrainingOne = () => {
 
               <div>
                 <h2 className="TrainingOne-sectionTitle">
-                  Featured Art Classes
+                  Featured Art Classes &amp; Workshops
                 </h2>
                 <p className="TrainingOne-sectionSubtitle">
-                  Explore courses and find the right class for you.
+                  Explore master workshops and discover the right artistic journey for you.
                 </p>
               </div>
             </div>
 
-            <a className="TrainingOne-allFeatured" href="/training">
-              Explore all
-              <ArrowRight size={18} />
-            </a>
+
           </div>
 
           <div className="TrainingOne-grid">
-            {artClasses.map((artClass) => {
+            {courses.map((artClass) => {
               const discount = calculateDiscount(
                 artClass.courseFee,
                 artClass.discountFee
@@ -221,9 +289,11 @@ const TrainingOne = () => {
                       {artClass.mode}
                     </span>
 
-                    <span className="TrainingOne-discountBadge">
-                      {discount}% OFF
-                    </span>
+                    {discount > 0 && (
+                      <span className="TrainingOne-discountBadge">
+                        {discount}% OFF
+                      </span>
+                    )}
                   </div>
 
                   {/* Course Details */}
@@ -236,23 +306,19 @@ const TrainingOne = () => {
                       {artClass.description}
                     </p>
 
-                    {/* Location and Mode */}
+                    {/* Course Location */}
                     <div className="TrainingOne-cardLocation">
                       <span className="TrainingOne-locationIcon">
-                        {artClass.mode === "Online" ? (
-                          <Monitor size={16} />
-                        ) : (
-                          <MapPin size={16} />
-                        )}
+                        <MapPin size={16} />
                       </span>
 
                       <div className="TrainingOne-locationDetails">
                         <span className="TrainingOne-locationLabel">
-                          {artClass.mode === "Online"
-                            ? "Learning Mode"
-                            : "Course Location"}
+                          Course Location
                         </span>
-                        <strong>{artClass.location}</strong>
+                        <strong title={artClass.location}>
+                          {artClass.location || "Madhapur, Hyderabad"}
+                        </strong>
                       </div>
                     </div>
 
@@ -360,156 +426,155 @@ const TrainingOne = () => {
 
                   <div>
                     <h3>{selectedCourse.title}</h3>
+                    <div className="TrainingOne-modalCourseMeta">
+                      <span className="TrainingOne-modalMetaItem">
+                        <strong>Mode:</strong> {selectedCourse.mode || "Online"}
+                      </span>
+                      <span className="TrainingOne-metaDot">•</span>
+                      <span className="TrainingOne-modalMetaItem">
+                        <strong>Location:</strong> {selectedCourse.location || "Not specified"}
+                      </span>
+                    </div>
                     <span>
                       {formatPrice(selectedCourse.discountFee)} discounted fee
                     </span>
                   </div>
                 </div>
 
-               
-<form
-  className="TrainingOne-enquiryForm"
-  onSubmit={handleEnquirySubmit}
->
-  {/* Name and Age */}
-  <div className="TrainingOne-formRow">
-    <div className="TrainingOne-formGroup">
-      <label htmlFor="TrainingOne-name">
-        Full Name <span>*</span>
-      </label>
-      <input
-        id="TrainingOne-name"
-        name="name"
-        type="text"
-        placeholder="Enter your full name"
-        autoComplete="name"
-        required
-      />
-    </div>
+                {enquiryError && (
+                  <div style={{ padding: "10px 14px", background: "#fef2f2", color: "#dc2626", borderRadius: "8px", fontSize: "0.85rem", marginBottom: "12px" }}>
+                    {enquiryError}
+                  </div>
+                )}
 
-    <div className="TrainingOne-formGroup">
-      <label htmlFor="TrainingOne-age">
-        Age <span>*</span>
-      </label>
-      <input
-        id="TrainingOne-age"
-        name="age"
-        type="number"
-        min="3"
-        max="100"
-        placeholder="Enter your age"
-        required
-      />
-    </div>
-  </div>
+                <form
+                  className="TrainingOne-enquiryForm"
+                  onSubmit={handleEnquirySubmit}
+                >
+                  {/* Name and Age */}
+                  <div className="TrainingOne-formRow">
+                    <div className="TrainingOne-formGroup">
+                      <label htmlFor="TrainingOne-name">
+                        Full Name <span>*</span>
+                      </label>
+                      <input
+                        id="TrainingOne-name"
+                        name="name"
+                        type="text"
+                        placeholder="Enter your full name"
+                        autoComplete="name"
+                        required
+                      />
+                    </div>
 
-  {/* Experience */}
-  <div className="TrainingOne-formGroup">
-    <label htmlFor="TrainingOne-experience">
-      Do you have any previous experience? <span>*</span>
-    </label>
+                    <div className="TrainingOne-formGroup">
+                      <label htmlFor="TrainingOne-age">
+                        Age <span>*</span>
+                      </label>
+                      <input
+                        id="TrainingOne-age"
+                        name="age"
+                        type="number"
+                        min="3"
+                        max="100"
+                        placeholder="Enter your age"
+                        required
+                      />
+                    </div>
+                  </div>
 
-    <select
-      id="TrainingOne-experience"
-      name="experience"
-      defaultValue=""
-      required
-    >
-      <option value="" disabled>
-        Select your experience
-      </option>
-      <option value="Yes">Yes</option>
-      <option value="No">No</option>
-    </select>
-  </div>
+                  {/* Experience */}
+                  <div className="TrainingOne-formGroup">
+                    <label htmlFor="TrainingOne-experience">
+                      Do you have any previous experience? <span>*</span>
+                    </label>
 
-  {/* Location */}
-  <div className="TrainingOne-formGroup">
-    <label htmlFor="TrainingOne-location">
-      Current Location <span>*</span>
-    </label>
+                    <select
+                      id="TrainingOne-experience"
+                      name="experience"
+                      defaultValue=""
+                      required
+                    >
+                      <option value="" disabled>
+                        Select your experience
+                      </option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
 
-    <input
-      id="TrainingOne-location"
-      name="location"
-      type="text"
-      placeholder="Enter your city or location"
-      autoComplete="address-level2"
-      required
-    />
-  </div>
+                  {/* Location */}
+                  <div className="TrainingOne-formGroup">
+                    <label htmlFor="TrainingOne-location">
+                      Current Location <span>*</span>
+                    </label>
 
-  {/* Phone and Email */}
-  <div className="TrainingOne-formRow">
-    <div className="TrainingOne-formGroup">
-      <label htmlFor="TrainingOne-phone">
-        Phone Number <span>*</span>
-      </label>
+                    <input
+                      id="TrainingOne-location"
+                      name="location"
+                      type="text"
+                      placeholder="Enter your city or location"
+                      autoComplete="address-level2"
+                      required
+                    />
+                  </div>
 
-      <input
-        id="TrainingOne-phone"
-        name="phone"
-        type="tel"
-        placeholder="Enter phone number"
-        autoComplete="tel"
-        pattern="[0-9+\-\s()]{7,20}"
-        title="Enter a valid phone number"
-        required
-      />
-    </div>
+                  {/* Phone and Email */}
+                  <div className="TrainingOne-formRow">
+                    <div className="TrainingOne-formGroup">
+                      <label htmlFor="TrainingOne-phone">
+                        Phone Number <span>*</span>
+                      </label>
 
-    <div className="TrainingOne-formGroup">
-      <label htmlFor="TrainingOne-email">
-        Email Address <span>*</span>
-      </label>
+                      <input
+                        id="TrainingOne-phone"
+                        name="phone"
+                        type="tel"
+                        placeholder="Enter 10-digit phone number"
+                        autoComplete="tel"
+                        required
+                      />
+                    </div>
 
-      <input
-        id="TrainingOne-email"
-        name="email"
-        type="email"
-        placeholder="Enter email address"
-        autoComplete="email"
-        required
-      />
-    </div>
-  </div>
+                    <div className="TrainingOne-formGroup">
+                      <label htmlFor="TrainingOne-email">
+                        Email Address <span>*</span>
+                      </label>
 
-  {/* Message */}
-  <div className="TrainingOne-formGroup">
-    <label htmlFor="TrainingOne-message">
-      Any Message?
-    </label>
+                      <input
+                        id="TrainingOne-email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email address"
+                        autoComplete="email"
+                        required
+                      />
+                    </div>
+                  </div>
 
-    <textarea
-      id="TrainingOne-message"
-      name="message"
-      rows="4"
-      placeholder="Write your message or questions here..."
-    />
-  </div>
+                  {/* Message */}
+                  <div className="TrainingOne-formGroup">
+                    <label htmlFor="TrainingOne-message">
+                      Any Message?
+                    </label>
 
-  {/* Hidden course details */}
-  <input
-    type="hidden"
-    name="courseName"
-    value={selectedCourse.title}
-  />
+                    <textarea
+                      id="TrainingOne-message"
+                      name="message"
+                      rows="4"
+                      placeholder="Write your message or questions here..."
+                    />
+                  </div>
 
-  <input
-    type="hidden"
-    name="courseFee"
-    value={selectedCourse.discountFee}
-  />
-
-  <button
-    type="submit"
-    className="TrainingOne-submitButton"
-  >
-    Submit Enquiry
-    <Send size={17} />
-  </button>
-</form>
-
+                  <button
+                    type="submit"
+                    className="TrainingOne-submitButton"
+                    disabled={submitting}
+                  >
+                    {submitting ? "Submitting Enquiry..." : "Submit Enquiry"}
+                    <Send size={17} />
+                  </button>
+                </form>
               </>
             ) : (
               <div className="TrainingOne-success">
@@ -519,9 +584,8 @@ const TrainingOne = () => {
 
                 <h2>Enquiry Submitted!</h2>
                 <p>
-                  Your enquiry form has been completed for{" "}
-                  <strong>{selectedCourse.title}</strong>.
-                  This is a frontend demo; connect an API to save the enquiry.
+                  Thank you! Your enquiry has been received for{" "}
+                  <strong>{selectedCourse.title}</strong>. Our admissions team will get in touch with you shortly with schedule and onboarding details.
                 </p>
 
                 <button

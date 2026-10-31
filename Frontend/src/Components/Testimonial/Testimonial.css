@@ -531,3 +531,43 @@
     animation: none !important;
   }
 }
+
+/* =====================================================
+   STARS, INITIALS & EMPTY STATE STYLING
+===================================================== */
+
+.Testimonial-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #f59e0b;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.Testimonial-avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 55px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  color: #f59e0b;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.Testimonial-empty-state {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}

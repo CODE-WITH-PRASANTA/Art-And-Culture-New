@@ -25,27 +25,49 @@ const generateAdminToken = (admin) => {
 };
 
 /**
- * Helper: Ensure default initial admin exists
+ * Helper: Get Static Admin Configuration from Environment
+ */
+const getStaticAdminConfig = () => {
+  return {
+    email: (process.env.ADMIN_EMAIL || "art@culture.com").trim().toLowerCase(),
+    password: (process.env.ADMIN_PASSWORD || "art@321").trim(),
+    name: process.env.ADMIN_NAME || "Culture Administrator",
+    role: process.env.ADMIN_ROLE || "Culture Administrator",
+  };
+};
+
+/**
+ * Helper: Ensure default initial admin exists in DB matching .env
  */
 const ensureInitialAdmin = async () => {
-  const existing = await AdminUser.findOne({ email: "art@culture.com" });
-  if (!existing) {
-    const count = await AdminUser.countDocuments();
-    if (count === 0) {
-      const defaultAdmin = new AdminUser({
-        name: "Culture Administrator",
-        email: "art@culture.com",
-        username: "art",
-        password: "art321",
-        role: "Culture Administrator",
-        status: "Active",
-      });
-      await defaultAdmin.save();
-      console.log("[AdminAuth] Default admin initialized: art@culture.com / art321");
-      return defaultAdmin;
-    }
+  const { email, password, name, role } = getStaticAdminConfig();
+
+  let admin = await AdminUser.findOne({ email });
+  if (!admin) {
+    admin = await AdminUser.findOne({});
   }
-  return null;
+
+  if (admin) {
+    admin.email = email;
+    admin.name = name;
+    admin.role = role;
+    admin.status = "Active";
+    admin.password = password;
+    await admin.save();
+    return admin;
+  } else {
+    const defaultAdmin = new AdminUser({
+      name,
+      email,
+      username: "art",
+      password,
+      role,
+      status: "Active",
+    });
+    await defaultAdmin.save();
+    console.log(`[AdminAuth] Initial admin configured from ENV: ${email}`);
+    return defaultAdmin;
+  }
 };
 
 /**
@@ -67,10 +89,43 @@ const adminLogin = async (req, res) => {
       });
     }
 
-    // Auto-seed default admin if table is empty
+    const staticConfig = getStaticAdminConfig();
+    const isStaticMatch =
+      (loginId === staticConfig.email || loginId === "art") &&
+      loginPassword === staticConfig.password;
+
+    if (isStaticMatch) {
+      // Find or create admin user document in MongoDB
+      let admin = await AdminUser.findOne({ email: staticConfig.email });
+      if (!admin) {
+        admin = await ensureInitialAdmin();
+      } else {
+        admin.lastLogin = new Date();
+        await admin.save({ validateBeforeSave: false });
+      }
+
+      const token = generateAdminToken(admin);
+
+      return res.status(200).json({
+        success: true,
+        message: `Welcome back, ${admin.name || staticConfig.name}!`,
+        token,
+        admin: {
+          id: admin._id,
+          name: admin.name || staticConfig.name,
+          email: staticConfig.email,
+          username: admin.username || "art",
+          role: admin.role || staticConfig.role,
+          avatar: admin.avatar || "",
+          status: "Active",
+          lastLogin: admin.lastLogin || new Date(),
+        },
+      });
+    }
+
+    // Fallback: check database credentials if static .env did not match
     await ensureInitialAdmin();
 
-    // Query by email OR username
     const admin = await AdminUser.findOne({
       $or: [{ email: loginId }, { username: loginId }],
     }).select("+password");
@@ -82,7 +137,6 @@ const adminLogin = async (req, res) => {
       });
     }
 
-    // Check account status
     if (admin.status !== "Active") {
       return res.status(403).json({
         success: false,
@@ -90,7 +144,6 @@ const adminLogin = async (req, res) => {
       });
     }
 
-    // Compare password
     const isMatch = await admin.comparePassword(loginPassword);
     if (!isMatch) {
       return res.status(401).json({
@@ -99,11 +152,9 @@ const adminLogin = async (req, res) => {
       });
     }
 
-    // Record login timestamp
     admin.lastLogin = new Date();
     await admin.save({ validateBeforeSave: false });
 
-    // Generate token
     const token = generateAdminToken(admin);
 
     return res.status(200).json({

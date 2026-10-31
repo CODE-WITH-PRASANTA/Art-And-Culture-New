@@ -7,6 +7,7 @@ import Endeavor from '../../Components/Endeavor/Endeavor'
 import ArtworkCategory from '../../Components/ArtworkCategory/ArtworkCategory'
 import SpecialUs from '../../Components/SpecialUs/SpecialUs'
 import Testimonial from '../../Components/Testimonial/Testimonial'
+import CustomerFeedback from '../../Components/CustomerFeedback/CustomerFeedback'
 import HomeBlog from '../../Components/HomeBlog/HomeBlog'
 
 const Home = () => {
@@ -20,6 +21,7 @@ const Home = () => {
         <ArtworkCategory />
         <SpecialUs />
         <Testimonial />
+        <CustomerFeedback />
         < HomeBlog />
     </div>
   )

@@ -1,129 +1,107 @@
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FiArrowRight } from "react-icons/fi";
+import { GALLERY_API_URL, formatImageUrl } from "../../config/api";
 import "./ArtworkCategory.css";
 
-const categories = [
-  {
-    id: 1,
-    title: "Abstract Art",
-    className: "abstract",
-    image:
-      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=800&q=90",
-    path: "/shop?category=abstract-art",
-  },
-  {
-    id: 2,
-    title: "Painting",
-    className: "painting",
-    image:
-      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=800&q=90",
-    path: "/shop?category=painting",
-  },
-  {
-    id: 3,
-    title: "Artwork",
-    className: "artwork",
-    image:
-      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=90",
-    path: "/shop?category=artwork",
-  },
-  {
-    id: 4,
-    title: "Modern Art",
-    className: "modern",
-    image:
-      "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=1400&q=90",
-    path: "/shop?category=modern-art",
-  },
-  {
-    id: 5,
-    title: "Poetry",
-    className: "poetry",
-    image:
-      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=800&q=90",
-    path: "/shop?category=poetry",
-  },
-  {
-    id: 6,
-    title: "Sculpture",
-    className: "sculpture",
-    image:
-      "https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?auto=format&fit=crop&w=800&q=90",
-    path: "/shop?category=sculpture",
-  },
-  {
-    id: 7,
-    title: "Natura",
-    className: "natura",
-    image:
-      "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=800&q=90",
-    path: "/shop?category=natura",
-  },
-  {
-    id: 8,
-    title: "Street Art",
-    className: "street",
-    image:
-      "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=800&q=90",
-    path: "/shop?category=street-art",
-  },
-];
-
 const ArtworkCategory = () => {
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchGallery = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(GALLERY_API_URL);
+        const data = await res.json();
+
+        if (isMounted && data.success && Array.isArray(data.data)) {
+          // Map real database items only - no dummy or fallback items
+          const realItems = data.data
+            .map((item) => {
+              const rawImg = item.photo || item.image;
+              const imgUrl = rawImg ? formatImageUrl(rawImg) : "";
+              return {
+                id: item._id || item.id,
+                title: item.title ? item.title.trim() : "Artwork",
+                image: imgUrl,
+              };
+            })
+            .filter((item) => Boolean(item.image))
+            // Limit to max 8 items so it only fills a maximum of two rows (4 per row)
+            .slice(0, 8);
+
+          setGalleryItems(realItems);
+        } else if (isMounted) {
+          setGalleryItems([]);
+        }
+      } catch (err) {
+        console.error("Failed to load real gallery items:", err);
+        if (isMounted) setGalleryItems([]);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchGallery();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // If there are no real items in database yet, don't show empty block
+  if (!loading && galleryItems.length === 0) {
+    return null;
+  }
+
   return (
-    <section
-      className="ArtworkCategory"
-      aria-labelledby="ArtworkCategory-title"
-    >
+    <section className="ArtworkCategory" aria-labelledby="ArtworkCategory-title">
       <div className="ArtworkCategory-container">
-        {/* Header */}
+        {/* Section Header */}
         <div className="ArtworkCategory-header">
           <div className="ArtworkCategory-heading">
-            <h2
-              className="ArtworkCategory-title"
-              id="ArtworkCategory-title"
-            >
+            <h2 className="ArtworkCategory-title" id="ArtworkCategory-title">
               Artwork Category
             </h2>
+            <p className="ArtworkCategory-subtitle">
+              Join us for an exhilarating live auction experience where art meets excitement.
+            </p>
           </div>
 
           <div className="ArtworkCategory-header-right">
-            <p className="ArtworkCategory-subtitle">
-              Join us for an exhilarating live auction experience
-              where art meets excitement.
-            </p>
-
-            <Link
-              to="/shop"
-              className="ArtworkCategory-view-all"
-            >
-              View All
+            <Link to="/gallary" className="ArtworkCategory-view-all">
+              <span>View All</span>
+              <FiArrowRight size={17} className="ArtworkCategory-view-all-arrow" />
             </Link>
           </div>
         </div>
 
-        {/* Artwork Grid */}
+        {/* Gallery Cards - Two rows maximum */}
         <div className="ArtworkCategory-grid">
-          {categories.map((category) => (
+          {galleryItems.map((item, index) => (
             <Link
-              to={category.path}
-              className={`ArtworkCategory-card ArtworkCategory-card--${category.className}`}
-              key={category.id}
-              aria-label={`Explore ${category.title}`}
+              to="/gallary"
+              className="ArtworkCategory-card"
+              key={item.id || index}
+              aria-label={`View ${item.title}`}
             >
-              <img
-                src={category.image}
-                alt={category.title}
-                className="ArtworkCategory-image"
-                loading={category.id <= 4 ? "eager" : "lazy"}
-              />
+              <div className="ArtworkCategory-image-wrapper">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="ArtworkCategory-image"
+                  loading={index < 4 ? "eager" : "lazy"}
+                />
 
-              <div className="ArtworkCategory-overlay" />
+                <div className="ArtworkCategory-overlay" />
 
-              <h3 className="ArtworkCategory-card-title">
-                {category.title}
-              </h3>
+                <div className="ArtworkCategory-card-content">
+                  <h3 className="ArtworkCategory-card-title">{item.title}</h3>
+                </div>
+              </div>
             </Link>
           ))}
         </div>

@@ -1,16 +1,12 @@
-
 /* =====================================================
-   ARTWORK CATEGORY SECTION
+   ARTWORK CATEGORY - REAL DATABASE GALLERY
 ===================================================== */
 
 .ArtworkCategory {
   width: 100%;
-  padding: 30px 0 45px;
-  overflow: hidden;
-
+  padding: 60px 0 75px;
   background: #ffffff;
   color: #171717;
-
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   box-sizing: border-box;
 }
@@ -25,7 +21,7 @@
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 0 6.85%;
+  padding: 0 6.5%;
 }
 
 /* =====================================================
@@ -33,447 +29,253 @@
 ===================================================== */
 
 .ArtworkCategory-header {
-  display: grid;
-  grid-template-columns: 1.35fr 1fr;
-  align-items: start;
-  gap: 40px;
-
-  width: 100%;
-  margin-bottom: 58px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 42px;
+  flex-wrap: wrap;
 }
 
 .ArtworkCategory-heading {
-  min-width: 0;
+  max-width: 650px;
 }
 
 .ArtworkCategory-title {
-  margin: 0;
+  margin: 0 0 10px;
   padding: 0;
-
   color: #171717;
-
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(30px, 2.35vw, 39px);
+  font-size: clamp(32px, 2.4vw, 42px);
   font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.6px;
+  letter-spacing: -0.5px;
+}
+
+.ArtworkCategory-subtitle {
+  margin: 0;
+  color: #666666;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.7;
 }
 
 .ArtworkCategory-header-right {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  min-width: 0;
-  padding-top: 0;
-}
-
-.ArtworkCategory-subtitle {
-  max-width: 590px;
-  margin: 0 0 23px;
-  padding: 0;
-
-  color: #686868;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.75;
-  letter-spacing: 0.2px;
+  align-items: center;
 }
 
 .ArtworkCategory-view-all {
-  display: inline-block;
-  padding: 0;
-
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: #171717;
-  font-size: 15px;
+  font-size: 15.5px;
   font-weight: 700;
-  line-height: 1.5;
-
   text-decoration: underline;
-  text-underline-offset: 3px;
-
-  transition: color 0.25s ease;
+  text-underline-offset: 4px;
+  transition: color 0.25s ease, transform 0.25s ease;
 }
 
 .ArtworkCategory-view-all:hover {
-  color: #8b5e3c;
+  color: #987044;
+  transform: translateX(4px);
+}
+
+.ArtworkCategory-view-all-arrow {
+  transition: transform 0.25s ease;
+}
+
+.ArtworkCategory-view-all:hover .ArtworkCategory-view-all-arrow {
+  transform: translateX(3px);
 }
 
 /* =====================================================
-   ASYMMETRICAL MASONRY GRID
+   GALLERY GRID (MAX TWO ROWS)
 ===================================================== */
 
 .ArtworkCategory-grid {
   display: grid;
-
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
   width: 100%;
-
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  grid-template-rows: 333px 333px;
-
-  grid-template-areas:
-    "abstract artwork modern modern natura"
-    "painting artwork poetry sculpture street";
-
-  gap: 17px;
-  align-items: stretch;
 }
 
 /* =====================================================
-   INDIVIDUAL CATEGORY CARDS
+   CARD
 ===================================================== */
 
 .ArtworkCategory-card {
   position: relative;
   display: block;
-
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-
-  overflow: hidden;
-  isolation: isolate;
-
-  background: #eae5df;
-  border-radius: 5px;
-
-  color: #ffffff;
   text-decoration: none;
-
-  transform: translateZ(0);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+  border: none;
+  outline: none;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
 }
 
-/* Grid placement */
-
-.ArtworkCategory-card--abstract {
-  grid-area: abstract;
+.ArtworkCategory-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+  border: none;
 }
 
-.ArtworkCategory-card--painting {
-  grid-area: painting;
+.ArtworkCategory-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
+  border: none;
+  background: #ffffff;
 }
-
-.ArtworkCategory-card--artwork {
-  grid-area: artwork;
-}
-
-.ArtworkCategory-card--modern {
-  grid-area: modern;
-}
-
-.ArtworkCategory-card--poetry {
-  grid-area: poetry;
-}
-
-.ArtworkCategory-card--sculpture {
-  grid-area: sculpture;
-}
-
-.ArtworkCategory-card--natura {
-  grid-area: natura;
-}
-
-.ArtworkCategory-card--street {
-  grid-area: street;
-}
-
-/* =====================================================
-   CARD IMAGES
-===================================================== */
 
 .ArtworkCategory-image {
   position: absolute;
   inset: 0;
-  z-index: 0;
-
-  display: block;
   width: 100%;
   height: 100%;
-
   object-fit: cover;
   object-position: center;
-
-  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  border: none;
+  outline: none;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  filter: brightness(0.97);
 }
 
 .ArtworkCategory-card:hover .ArtworkCategory-image {
-  transform: scale(1.06);
+  transform: scale(1.07);
+  filter: brightness(1);
 }
 
-/* =====================================================
-   IMAGE OVERLAY
-===================================================== */
-
+/* Soft Bottom Dark Gradient */
 .ArtworkCategory-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-
   background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.01) 20%,
-    rgba(0, 0, 0, 0.06) 45%,
-    rgba(0, 0, 0, 0.45) 72%,
-    rgba(0, 0, 0, 0.92) 100%
+    180deg,
+    transparent 35%,
+    rgba(14, 10, 6, 0.45) 70%,
+    rgba(14, 10, 6, 0.92) 100%
   );
-
   pointer-events: none;
-  transition: background 0.3s ease;
+  transition: background 0.35s ease;
 }
 
 .ArtworkCategory-card:hover .ArtworkCategory-overlay {
   background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.04) 15%,
-    rgba(0, 0, 0, 0.12) 42%,
-    rgba(0, 0, 0, 0.58) 76%,
-    rgba(0, 0, 0, 0.95) 100%
+    180deg,
+    transparent 28%,
+    rgba(14, 10, 6, 0.55) 65%,
+    rgba(14, 10, 6, 0.96) 100%
   );
 }
 
-/* =====================================================
-   CARD TITLES
-===================================================== */
-
-.ArtworkCategory-card-title {
+/* Card Content: Title Only */
+.ArtworkCategory-card-content {
   position: absolute;
   z-index: 2;
-
-  right: 8px;
-  bottom: 30px;
-  left: 8px;
-
-  margin: 0;
-  padding: 0 5px;
-
-  color: #ffffff;
-
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(20px, 1.65vw, 30px);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.4px;
-
+  inset-inline: 0;
+  bottom: 0;
+  padding: 24px 20px 22px;
   text-align: center;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  transition: transform 0.35s ease;
+}
 
-  transition: transform 0.3s ease;
+.ArtworkCategory-card:hover .ArtworkCategory-card-content {
+  transform: translateY(-2px);
+}
+
+.ArtworkCategory-card-title {
+  margin: 0;
+  padding: 0;
+  color: #ffffff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  transition: color 0.3s ease;
 }
 
 .ArtworkCategory-card:hover .ArtworkCategory-card-title {
-  transform: translateY(-5px);
+  color: #f7eedf;
 }
 
 /* =====================================================
-   KEYBOARD ACCESSIBILITY
-===================================================== */
-
-.ArtworkCategory-card:focus-visible,
-.ArtworkCategory-view-all:focus-visible {
-  outline: 3px solid #00a86b;
-  outline-offset: 4px;
-}
-
-/* =====================================================
-   LARGE DESKTOPS
-===================================================== */
-
-@media (min-width: 1600px) {
-  .ArtworkCategory-grid {
-    grid-template-rows: 333px 333px;
-    gap: 18px;
-  }
-
-  .ArtworkCategory-card-title {
-    font-size: 29px;
-  }
-}
-
-/* =====================================================
-   LAPTOPS
+   RESPONSIVE DESIGN
 ===================================================== */
 
 @media (max-width: 1200px) {
-  .ArtworkCategory-container {
-    padding-right: 5%;
-    padding-left: 5%;
-  }
-
-  .ArtworkCategory-header {
-    gap: 28px;
-    margin-bottom: 42px;
-  }
-
-  .ArtworkCategory-title {
-    font-size: 33px;
-  }
-
-  .ArtworkCategory-subtitle {
-    font-size: 15px;
-  }
-
   .ArtworkCategory-grid {
-    grid-template-rows: 280px 280px;
-    gap: 14px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 
-  .ArtworkCategory-card-title {
-    bottom: 23px;
-    font-size: clamp(18px, 2vw, 25px);
+  .ArtworkCategory-image-wrapper {
+    height: 320px;
   }
 }
-
-/* =====================================================
-   TABLETS
-===================================================== */
 
 @media (max-width: 850px) {
   .ArtworkCategory {
-    padding-top: 28px;
-  }
-
-  .ArtworkCategory-container {
-    padding-right: 28px;
-    padding-left: 28px;
+    padding: 45px 0 55px;
   }
 
   .ArtworkCategory-header {
-    grid-template-columns: 1fr 1fr;
-    gap: 22px;
-    margin-bottom: 32px;
-  }
-
-  .ArtworkCategory-title {
-    font-size: 29px;
-  }
-
-  .ArtworkCategory-subtitle {
-    margin-bottom: 15px;
-    font-size: 14px;
-    line-height: 1.7;
-  }
-
-  .ArtworkCategory-view-all {
-    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 30px;
   }
 
   .ArtworkCategory-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(3, 230px);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
 
-    grid-template-areas:
-      "abstract artwork modern modern"
-      "painting artwork modern modern"
-      "poetry sculpture street natura";
-
-    gap: 12px;
+  .ArtworkCategory-image-wrapper {
+    height: 290px;
   }
 
   .ArtworkCategory-card-title {
-    bottom: 19px;
-    font-size: clamp(17px, 2.4vw, 23px);
+    font-size: 19px;
   }
 }
 
-/* =====================================================
-   MOBILE PHONES
-===================================================== */
-
-@media (max-width: 560px) {
+@media (max-width: 520px) {
   .ArtworkCategory {
-    padding: 25px 0 30px;
+    padding: 35px 0 45px;
   }
 
   .ArtworkCategory-container {
-    padding-right: 18px;
-    padding-left: 18px;
-  }
-
-  .ArtworkCategory-header {
-    grid-template-columns: 1fr;
-    gap: 13px;
-    margin-bottom: 27px;
+    padding: 0 18px;
   }
 
   .ArtworkCategory-title {
-    font-size: 29px;
-    letter-spacing: -0.5px;
-  }
-
-  .ArtworkCategory-header-right {
-    gap: 10px;
+    font-size: 28px;
   }
 
   .ArtworkCategory-subtitle {
-    max-width: 100%;
-    margin-bottom: 0;
-    font-size: 13px;
-    line-height: 1.75;
-  }
-
-  .ArtworkCategory-view-all {
-    font-size: 13px;
+    font-size: 14.5px;
   }
 
   .ArtworkCategory-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(5, 210px);
-
-    grid-template-areas:
-      "abstract artwork"
-      "painting artwork"
-      "modern modern"
-      "poetry sculpture"
-      "natura street";
-
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 
-  .ArtworkCategory-card-title {
-    right: 5px;
-    bottom: 19px;
-    left: 5px;
-
-    font-size: clamp(18px, 4.7vw, 23px);
-    letter-spacing: -0.2px;
-  }
-}
-
-/* =====================================================
-   EXTRA-SMALL PHONES
-===================================================== */
-
-@media (max-width: 380px) {
-  .ArtworkCategory-container {
-    padding-right: 13px;
-    padding-left: 13px;
-  }
-
-  .ArtworkCategory-title {
-    font-size: 26px;
-  }
-
-  .ArtworkCategory-grid {
-    grid-template-rows: repeat(5, 180px);
-    gap: 9px;
-  }
-
-  .ArtworkCategory-card-title {
-    bottom: 15px;
-    font-size: 18px;
-  }
-}
-
-/* =====================================================
-   REDUCED MOTION
-===================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-  .ArtworkCategory *,
-  .ArtworkCategory *::before,
-  .ArtworkCategory *::after {
-    transition: none !important;
-    animation: none !important;
+  .ArtworkCategory-image-wrapper {
+    height: 280px;
   }
 }

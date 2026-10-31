@@ -22,6 +22,10 @@ import EnquiryManagement from "./Components/EnquiryManagement/EnquiryManagement"
 import BlogPosting from "./Components/BlogPosting/BlogPosting";
 import BlogManagement from "./Components/BlogManagement/BlogManagement";
 import ReviewManagement from "./Components/ReviewManagement/ReviewManagement";
+import Feedback from "./Pages/Feedback/Feedback";
+import TrainingCoursePosting from "./Pages/TrainingCoursePosting/TrainingCoursePosting";
+import TrainingCourseManagement from "./Pages/TrainingCourseManagement/TrainingCourseManagement";
+import TrainingCourseEnquiries from "./Pages/TrainingCourseEnquiries/TrainingCourseEnquiries";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Profile from "./Pages/Profile/Profile";
 
@@ -87,6 +91,24 @@ const App = () => {
             <Route
               path="/review-management"
               element={<ReviewManagement />}
+            />
+
+            <Route
+              path="/feedback"
+              element={<Feedback />}
+            />
+
+            <Route
+              path="/training-course/posting"
+              element={<TrainingCoursePosting />}
+            />
+            <Route
+              path="/training-course/management"
+              element={<TrainingCourseManagement />}
+            />
+            <Route
+              path="/training-course/enquiries"
+              element={<TrainingCourseEnquiries />}
             />
 
             <Route path="/profile" element={<Profile />} />

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
+import Preloader from "./Components/Preloader/Preloader";
 
 import Home from "./Pages/Home/Home";
 import AboutUs from "./Pages/AboutUs/AboutUs";
@@ -35,6 +36,7 @@ import { CartProvider } from "./context/CartContext";
 const App = () => {
   return (
     <BrowserRouter>
+      <Preloader />
       <AuthProvider>
         <WishlistProvider>
           <CartProvider>
@@ -69,6 +71,7 @@ const App = () => {
             element={<CollectionDetails />}
           />
           <Route path="/gallary" element={<Gallary />} />
+          <Route path="/gallery" element={<Gallary />} />
           <Route path="/training-and-course" element={<Training />} />
           <Route path="/coupons" element={<Coupons />} />
           <Route path="/class-details" element={<ClassDetails />} />

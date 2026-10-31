@@ -246,16 +246,17 @@ html, body {
 }
 
 .AdminSplitLogin-logo-box {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #c99432 0%, #8c5b0c 100%);
+  background: #180d06;
+  border: 1.5px solid #c99432;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(140, 91, 12, 0.22);
+  box-shadow: 0 4px 14px rgba(24, 13, 6, 0.35);
   overflow: hidden;
-  padding: 5px;
+  padding: 6px;
   box-sizing: border-box;
 }
 
@@ -263,6 +264,7 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  filter: brightness(1.15) contrast(1.1);
 }
 
 .AdminSplitLogin-portal-title {
