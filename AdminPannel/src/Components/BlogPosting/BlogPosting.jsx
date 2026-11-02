@@ -1,5 +1,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import "./BlogPosting.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 import { BLOGS_API_URL, formatImageUrl } from "../../config/api";
@@ -27,7 +28,7 @@ import {
   FiBookOpen,
   FiHash,
 } from "react-icons/fi";
-import "./BlogPosting.css";
+
 
 const categories = [
   "Art & Culture",
