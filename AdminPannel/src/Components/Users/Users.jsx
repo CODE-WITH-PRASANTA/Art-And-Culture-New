@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useMemo, useState } from "react";
 import { USERS_API_URL, formatImageUrl } from "../../config/api";
 

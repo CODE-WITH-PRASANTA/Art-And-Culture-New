@@ -648,7 +648,6 @@ const NewBlogPosting = () => {
       };
 
   return (
-    <div>
  <div className="BlogPosting">
       {notice && (
         <div className="BlogPosting-notice" role="status">
@@ -1779,7 +1778,6 @@ const NewBlogPosting = () => {
           </div>
         </div>
       )}
-    </div>
     </div>
   )
 }
