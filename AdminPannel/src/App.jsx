@@ -19,7 +19,6 @@ import Order from "./Components/Order/Order";
 import Coupons from "./Components/Coupons/Coupons";
 import Users from "./Components/Users/Users";
 import EnquiryManagement from "./Components/EnquiryManagement/EnquiryManagement";
-import BlogPosting from "./Components/BlogPosting/BlogPosting";
 import BlogManagement from "./Components/BlogManagement/BlogManagement";
 import ReviewManagement from "./Components/ReviewManagement/ReviewManagement";
 import Feedback from "./Pages/Feedback/Feedback";
@@ -28,6 +27,7 @@ import TrainingCourseManagement from "./Pages/TrainingCourseManagement/TrainingC
 import TrainingCourseEnquiries from "./Pages/TrainingCourseEnquiries/TrainingCourseEnquiries";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Profile from "./Pages/Profile/Profile";
+import NewBlogPosting from "./Components/NewBlogPosting/NewBlogPosting";
 
 // Dedicated Logout route component
 const Logout = () => {
@@ -80,7 +80,7 @@ const App = () => {
 
             <Route
               path="/blog/blog-posting"
-              element={<BlogPosting />}
+              element={<NewBlogPosting />}
             />
 
             <Route

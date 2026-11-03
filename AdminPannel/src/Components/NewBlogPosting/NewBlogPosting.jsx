@@ -1,9 +1,9 @@
-
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import "./Blogposting.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 import { BLOGS_API_URL, formatImageUrl } from "../../config/api";
+import './NewBlogPosting.css'
+
 import {
   FiFileText,
   FiPlus,
@@ -158,497 +158,498 @@ const normalizeImage = (image) => {
   return image;
 };
 
-const BlogPosting = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const [activeTab, setActiveTab] = useState("form");
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState(createEmptyForm);
-  const [editingId, setEditingId] = useState(null);
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("All Categories");
-  const [statusFilter, setStatusFilter] = useState("All Statuses");
-  const [sortOrder, setSortOrder] = useState("newest");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [viewBlog, setViewBlog] = useState(null);
-  const [deleteBlogId, setDeleteBlogId] = useState(null);
-  const [notice, setNotice] = useState("");
-  const [selectedIds, setSelectedIds] = useState([]);
-
-  const mainImageRef = useRef(null);
-  const bodyImageOneRef = useRef(null);
-  const bodyImageTwoRef = useRef(null);
-  const characteristicInputRef = useRef(null);
-
-  const fetchBlogs = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(BLOGS_API_URL);
-      const data = await res.json();
-      if (data.success && Array.isArray(data.blogs)) {
-        setBlogs(data.blogs);
-      }
-    } catch (err) {
-      console.error("Error fetching blogs:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
-
-  useEffect(() => {
-    if (location.state?.blog) {
-      openEditForm(location.state.blog);
-    } else {
-      const params = new URLSearchParams(location.search);
-      const editId = params.get("edit");
-      if (editId) {
-        fetch(`${BLOGS_API_URL}/${editId}`)
-          .then((r) => r.json())
-          .then((d) => {
-            if (d.success && d.blog) {
-              openEditForm(d.blog);
-            }
+const NewBlogPosting = () => {
+    const location = useLocation();
+      const navigate = useNavigate();
+    
+      const [activeTab, setActiveTab] = useState("form");
+      const [blogs, setBlogs] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [form, setForm] = useState(createEmptyForm);
+      const [editingId, setEditingId] = useState(null);
+      const [search, setSearch] = useState("");
+      const [categoryFilter, setCategoryFilter] = useState("All Categories");
+      const [statusFilter, setStatusFilter] = useState("All Statuses");
+      const [sortOrder, setSortOrder] = useState("newest");
+      const [currentPage, setCurrentPage] = useState(1);
+      const [viewBlog, setViewBlog] = useState(null);
+      const [deleteBlogId, setDeleteBlogId] = useState(null);
+      const [notice, setNotice] = useState("");
+      const [selectedIds, setSelectedIds] = useState([]);
+    
+      const mainImageRef = useRef(null);
+      const bodyImageOneRef = useRef(null);
+      const bodyImageTwoRef = useRef(null);
+      const characteristicInputRef = useRef(null);
+    
+      const fetchBlogs = async () => {
+        try {
+          setLoading(true);
+          const res = await fetch(BLOGS_API_URL);
+          const data = await res.json();
+          if (data.success && Array.isArray(data.blogs)) {
+            setBlogs(data.blogs);
+          }
+        } catch (err) {
+          console.error("Error fetching blogs:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      useEffect(() => {
+        fetchBlogs();
+      }, []);
+    
+      useEffect(() => {
+        if (location.state?.blog) {
+          openEditForm(location.state.blog);
+        } else {
+          const params = new URLSearchParams(location.search);
+          const editId = params.get("edit");
+          if (editId) {
+            fetch(`${BLOGS_API_URL}/${editId}`)
+              .then((r) => r.json())
+              .then((d) => {
+                if (d.success && d.blog) {
+                  openEditForm(d.blog);
+                }
+              })
+              .catch((e) => console.error("Error fetching blog by ID:", e));
+          } else {
+            setActiveTab("form");
+          }
+        }
+      }, [location.state, location.search]);
+    
+      const itemsPerPage = 6;
+    
+      const filteredBlogs = useMemo(() => {
+        const query = search.trim().toLowerCase();
+    
+        return blogs
+          .filter((blog) => {
+            const characteristics = (blog.characteristics || []).join(" ");
+    
+            const matchesSearch =
+              !query ||
+              (blog.title || "").toLowerCase().includes(query) ||
+              (blog.authorName || "").toLowerCase().includes(query) ||
+              (blog.category || "").toLowerCase().includes(query) ||
+              (blog.slug || "").toLowerCase().includes(query) ||
+              (blog.tags || "").toLowerCase().includes(query) ||
+              characteristics.toLowerCase().includes(query);
+    
+            const matchesCategory =
+              categoryFilter === "All Categories" ||
+              blog.category === categoryFilter;
+    
+            const matchesStatus =
+              statusFilter === "All Statuses" || blog.status === statusFilter;
+    
+            return matchesSearch && matchesCategory && matchesStatus;
           })
-          .catch((e) => console.error("Error fetching blog by ID:", e));
-      } else {
+          .sort((a, b) => {
+            if (sortOrder === "oldest") {
+              return (a.publishDate || "").localeCompare(b.publishDate || "");
+            }
+    
+            if (sortOrder === "title") {
+              return a.title.localeCompare(b.title);
+            }
+    
+            return (b.publishDate || "").localeCompare(a.publishDate || "");
+          });
+      }, [blogs, search, categoryFilter, statusFilter, sortOrder]);
+    
+      const totalPages = Math.max(
+        1,
+        Math.ceil(filteredBlogs.length / itemsPerPage)
+      );
+    
+      const safePage = Math.min(currentPage, totalPages);
+    
+      const paginatedBlogs = filteredBlogs.slice(
+        (safePage - 1) * itemsPerPage,
+        safePage * itemsPerPage
+      );
+    
+      const publishedCount = blogs.filter(
+        (blog) => blog.status === "Published"
+      ).length;
+    
+      const draftCount = blogs.filter((blog) => blog.status === "Draft").length;
+    
+      const scheduledCount = blogs.filter(
+        (blog) => blog.status === "Scheduled"
+      ).length;
+    
+      const totalViews = blogs.reduce((sum, blog) => sum + blog.views, 0);
+    
+      const openNewForm = () => {
+        setForm(createEmptyForm());
+        setEditingId(null);
+        setNotice("");
         setActiveTab("form");
-      }
-    }
-  }, [location.state, location.search]);
-
-  const itemsPerPage = 6;
-
-  const filteredBlogs = useMemo(() => {
-    const query = search.trim().toLowerCase();
-
-    return blogs
-      .filter((blog) => {
-        const characteristics = (blog.characteristics || []).join(" ");
-
-        const matchesSearch =
-          !query ||
-          (blog.title || "").toLowerCase().includes(query) ||
-          (blog.authorName || "").toLowerCase().includes(query) ||
-          (blog.category || "").toLowerCase().includes(query) ||
-          (blog.slug || "").toLowerCase().includes(query) ||
-          (blog.tags || "").toLowerCase().includes(query) ||
-          characteristics.toLowerCase().includes(query);
-
-        const matchesCategory =
-          categoryFilter === "All Categories" ||
-          blog.category === categoryFilter;
-
-        const matchesStatus =
-          statusFilter === "All Statuses" || blog.status === statusFilter;
-
-        return matchesSearch && matchesCategory && matchesStatus;
-      })
-      .sort((a, b) => {
-        if (sortOrder === "oldest") {
-          return (a.publishDate || "").localeCompare(b.publishDate || "");
+      };
+    
+      const openEditForm = (blog) => {
+        let pubDate = "";
+        if (blog.publishDate) {
+          pubDate = new Date(blog.publishDate).toISOString().split("T")[0];
+        } else if (blog.date) {
+          pubDate = new Date(blog.date).toISOString().split("T")[0];
         }
-
-        if (sortOrder === "title") {
-          return a.title.localeCompare(b.title);
+    
+        setForm({
+          ...createEmptyForm(),
+          title: blog.title || "",
+          slug: blog.slug || makeSlug(blog.title || ""),
+          authorName: blog.authorName || blog.author || "",
+          category: blog.category || "",
+          characteristics: [...(blog.characteristics || [])],
+          characteristicInput: "",
+          description: blog.description || "",
+          tags: Array.isArray(blog.tags) ? blog.tags.join(", ") : (blog.tags || ""),
+          metaDescription: blog.metaDescription || "",
+          status: blog.status || "Draft",
+          publishDate: pubDate,
+          mainImage: normalizeImage(blog.mainImage || blog.image),
+          bodyImages: [
+            normalizeImage(blog.bodyImages?.[0]),
+            normalizeImage(blog.bodyImages?.[1]),
+          ],
+          views: blog.views || 0,
+          blogCode: blog.blogCode || blog.code || "",
+        });
+    
+        setEditingId(blog._id || (blog._id || blog.id));
+        setNotice("");
+        setActiveTab("form");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+    
+      const handleTitleChange = (value) => {
+        setForm((previous) => ({
+          ...previous,
+          title: value,
+          slug:
+            !editingId ||
+            !previous.slug ||
+            previous.slug === makeSlug(previous.title)
+              ? makeSlug(value)
+              : previous.slug,
+        }));
+      };
+    
+      // Add one custom characteristic.
+      const addCharacteristic = (value = form.characteristicInput) => {
+        const characteristic = value.trim().replace(/\s+/g, " ");
+    
+        if (!characteristic) {
+          setNotice("Please enter a characteristic first.");
+          return;
         }
-
-        return (b.publishDate || "").localeCompare(a.publishDate || "");
-      });
-  }, [blogs, search, categoryFilter, statusFilter, sortOrder]);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredBlogs.length / itemsPerPage)
-  );
-
-  const safePage = Math.min(currentPage, totalPages);
-
-  const paginatedBlogs = filteredBlogs.slice(
-    (safePage - 1) * itemsPerPage,
-    safePage * itemsPerPage
-  );
-
-  const publishedCount = blogs.filter(
-    (blog) => blog.status === "Published"
-  ).length;
-
-  const draftCount = blogs.filter((blog) => blog.status === "Draft").length;
-
-  const scheduledCount = blogs.filter(
-    (blog) => blog.status === "Scheduled"
-  ).length;
-
-  const totalViews = blogs.reduce((sum, blog) => sum + blog.views, 0);
-
-  const openNewForm = () => {
-    setForm(createEmptyForm());
-    setEditingId(null);
-    setNotice("");
-    setActiveTab("form");
-  };
-
-  const openEditForm = (blog) => {
-    let pubDate = "";
-    if (blog.publishDate) {
-      pubDate = new Date(blog.publishDate).toISOString().split("T")[0];
-    } else if (blog.date) {
-      pubDate = new Date(blog.date).toISOString().split("T")[0];
-    }
-
-    setForm({
-      ...createEmptyForm(),
-      title: blog.title || "",
-      slug: blog.slug || makeSlug(blog.title || ""),
-      authorName: blog.authorName || blog.author || "",
-      category: blog.category || "",
-      characteristics: [...(blog.characteristics || [])],
-      characteristicInput: "",
-      description: blog.description || "",
-      tags: Array.isArray(blog.tags) ? blog.tags.join(", ") : (blog.tags || ""),
-      metaDescription: blog.metaDescription || "",
-      status: blog.status || "Draft",
-      publishDate: pubDate,
-      mainImage: normalizeImage(blog.mainImage || blog.image),
-      bodyImages: [
-        normalizeImage(blog.bodyImages?.[0]),
-        normalizeImage(blog.bodyImages?.[1]),
-      ],
-      views: blog.views || 0,
-      blogCode: blog.blogCode || blog.code || "",
-    });
-
-    setEditingId(blog._id || (blog._id || blog.id));
-    setNotice("");
-    setActiveTab("form");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleTitleChange = (value) => {
-    setForm((previous) => ({
-      ...previous,
-      title: value,
-      slug:
-        !editingId ||
-        !previous.slug ||
-        previous.slug === makeSlug(previous.title)
-          ? makeSlug(value)
-          : previous.slug,
-    }));
-  };
-
-  // Add one custom characteristic.
-  const addCharacteristic = (value = form.characteristicInput) => {
-    const characteristic = value.trim().replace(/\s+/g, " ");
-
-    if (!characteristic) {
-      setNotice("Please enter a characteristic first.");
-      return;
-    }
-
-    const duplicate = form.characteristics.some(
-      (item) => item.toLowerCase() === characteristic.toLowerCase()
-    );
-
-    if (duplicate) {
-      setNotice("This characteristic has already been added.");
-      return;
-    }
-
-    setForm((previous) => ({
-      ...previous,
-      characteristics: [...previous.characteristics, characteristic],
-      characteristicInput: "",
-    }));
-
-    setNotice("");
-  };
-
-  const handleCharacteristicKeyDown = (event) => {
-    if (event.key === "Enter" || event.key === ",") {
-      event.preventDefault();
-      addCharacteristic();
-    }
-
-    if (
-      event.key === "Backspace" &&
-      !form.characteristicInput &&
-      form.characteristics.length
-    ) {
-      removeCharacteristic(
-        form.characteristics[form.characteristics.length - 1]
-      );
-    }
-  };
-
-  const removeCharacteristic = (characteristic) => {
-    setForm((previous) => ({
-      ...previous,
-      characteristics: previous.characteristics.filter(
-        (item) => item !== characteristic
-      ),
-    }));
-  };
-
-  // Supports pasting several comma-separated characteristics.
-  const handleCharacteristicPaste = (event) => {
-    const pastedText = event.clipboardData.getData("text");
-
-    if (!pastedText.includes(",")) return;
-
-    event.preventDefault();
-
-    const pastedItems = pastedText
-      .split(",")
-      .map((item) => item.trim().replace(/\s+/g, " "))
-      .filter(Boolean);
-
-    setForm((previous) => {
-      const merged = [...previous.characteristics];
-
-      pastedItems.forEach((item) => {
+    
+        const duplicate = form.characteristics.some(
+          (item) => item.toLowerCase() === characteristic.toLowerCase()
+        );
+    
+        if (duplicate) {
+          setNotice("This characteristic has already been added.");
+          return;
+        }
+    
+        setForm((previous) => ({
+          ...previous,
+          characteristics: [...previous.characteristics, characteristic],
+          characteristicInput: "",
+        }));
+    
+        setNotice("");
+      };
+    
+      const handleCharacteristicKeyDown = (event) => {
+        if (event.key === "Enter" || event.key === ",") {
+          event.preventDefault();
+          addCharacteristic();
+        }
+    
         if (
-          !merged.some(
-            (existing) => existing.toLowerCase() === item.toLowerCase()
-          )
+          event.key === "Backspace" &&
+          !form.characteristicInput &&
+          form.characteristics.length
         ) {
-          merged.push(item);
+          removeCharacteristic(
+            form.characteristics[form.characteristics.length - 1]
+          );
         }
-      });
-
-      return {
-        ...previous,
-        characteristics: merged,
-        characteristicInput: "",
       };
-    });
-
-    setNotice("");
-  };
-
-  const handleImageUpload = (event, type, index = 0) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setNotice("Please select a valid image file.");
-      event.target.value = "";
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setNotice("Image size must be 5 MB or less.");
-      event.target.value = "";
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const imageData = {
-        name: file.name,
-        preview: reader.result,
-        file,
+    
+      const removeCharacteristic = (characteristic) => {
+        setForm((previous) => ({
+          ...previous,
+          characteristics: previous.characteristics.filter(
+            (item) => item !== characteristic
+          ),
+        }));
       };
-
-      setForm((previous) => {
-        if (type === "mainImage") {
-          return { ...previous, mainImage: imageData };
+    
+      // Supports pasting several comma-separated characteristics.
+      const handleCharacteristicPaste = (event) => {
+        const pastedText = event.clipboardData.getData("text");
+    
+        if (!pastedText.includes(",")) return;
+    
+        event.preventDefault();
+    
+        const pastedItems = pastedText
+          .split(",")
+          .map((item) => item.trim().replace(/\s+/g, " "))
+          .filter(Boolean);
+    
+        setForm((previous) => {
+          const merged = [...previous.characteristics];
+    
+          pastedItems.forEach((item) => {
+            if (
+              !merged.some(
+                (existing) => existing.toLowerCase() === item.toLowerCase()
+              )
+            ) {
+              merged.push(item);
+            }
+          });
+    
+          return {
+            ...previous,
+            characteristics: merged,
+            characteristicInput: "",
+          };
+        });
+    
+        setNotice("");
+      };
+    
+      const handleImageUpload = (event, type, index = 0) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+    
+        if (!file.type.startsWith("image/")) {
+          setNotice("Please select a valid image file.");
+          event.target.value = "";
+          return;
         }
-
-        const updatedImages = [...previous.bodyImages];
-        updatedImages[index] = imageData;
-
-        return { ...previous, bodyImages: updatedImages };
-      });
-
-      setNotice("");
-    };
-
-    reader.readAsDataURL(file);
-    event.target.value = "";
-  };
-
-  const removeImage = (type, index = 0) => {
-    setForm((previous) => {
-      if (type === "mainImage") {
-        return { ...previous, mainImage: null };
-      }
-
-      const updatedImages = [...previous.bodyImages];
-      updatedImages[index] = null;
-
-      return { ...previous, bodyImages: updatedImages };
-    });
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!form.title.trim()) {
-      setNotice("Please enter a blog title.");
-      return;
-    }
-
-    const slug = makeSlug(form.slug || form.title);
-
-    let finalCharacteristics = [...form.characteristics];
-    const pendingCharacteristic = form.characteristicInput.trim();
-
-    if (pendingCharacteristic) {
-      const duplicate = finalCharacteristics.some(
-        (item) =>
-          item.toLowerCase() === pendingCharacteristic.toLowerCase()
+    
+        if (file.size > 5 * 1024 * 1024) {
+          setNotice("Image size must be 5 MB or less.");
+          event.target.value = "";
+          return;
+        }
+    
+        const reader = new FileReader();
+    
+        reader.onload = () => {
+          const imageData = {
+            name: file.name,
+            preview: reader.result,
+            file,
+          };
+    
+          setForm((previous) => {
+            if (type === "mainImage") {
+              return { ...previous, mainImage: imageData };
+            }
+    
+            const updatedImages = [...previous.bodyImages];
+            updatedImages[index] = imageData;
+    
+            return { ...previous, bodyImages: updatedImages };
+          });
+    
+          setNotice("");
+        };
+    
+        reader.readAsDataURL(file);
+        event.target.value = "";
+      };
+    
+      const removeImage = (type, index = 0) => {
+        setForm((previous) => {
+          if (type === "mainImage") {
+            return { ...previous, mainImage: null };
+          }
+    
+          const updatedImages = [...previous.bodyImages];
+          updatedImages[index] = null;
+    
+          return { ...previous, bodyImages: updatedImages };
+        });
+      };
+    
+      const handleSubmit = async (event) => {
+        event.preventDefault();
+    
+        if (!form.title.trim()) {
+          setNotice("Please enter a blog title.");
+          return;
+        }
+    
+        const slug = makeSlug(form.slug || form.title);
+    
+        let finalCharacteristics = [...form.characteristics];
+        const pendingCharacteristic = form.characteristicInput.trim();
+    
+        if (pendingCharacteristic) {
+          const duplicate = finalCharacteristics.some(
+            (item) =>
+              item.toLowerCase() === pendingCharacteristic.toLowerCase()
+          );
+    
+          if (!duplicate) finalCharacteristics.push(pendingCharacteristic);
+        }
+    
+        const payload = {
+          title: form.title.trim(),
+          slug,
+          authorName: form.authorName.trim(),
+          category: form.category,
+          characteristics: finalCharacteristics,
+          description: form.description,
+          tags: form.tags,
+          metaDescription: form.metaDescription,
+          status: form.status,
+          publishDate: form.publishDate || new Date().toISOString(),
+          mainImage: form.mainImage?.preview || form.mainImage?.url || "",
+          bodyImages: [
+            form.bodyImages?.[0]?.preview || form.bodyImages?.[0]?.url || "",
+            form.bodyImages?.[1]?.preview || form.bodyImages?.[1]?.url || "",
+          ],
+          views: Number(form.views) || 0,
+        };
+    
+        try {
+          setNotice("Saving blog...");
+          let response;
+          if (editingId) {
+            response = await fetch(`${BLOGS_API_URL}/${editingId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+          } else {
+            response = await fetch(BLOGS_API_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+          }
+    
+          const result = await response.json();
+          if (!response.ok || !result.success) {
+            setNotice(result.message || "Failed to save blog. Please try again.");
+            return;
+          }
+    
+          setNotice(editingId ? "Blog updated successfully!" : "Blog created successfully!");
+          setEditingId(null);
+          setForm(createEmptyForm());
+          await fetchBlogs();
+    
+          setTimeout(() => {
+            navigate("/blog/blog-management");
+          }, 1000);
+        } catch (error) {
+          console.error("Error saving blog:", error);
+          setNotice("An error occurred while saving the blog.");
+        }
+      };
+    
+      const resetForm = () => {
+        setForm(createEmptyForm());
+        setEditingId(null);
+        setNotice("");
+      };
+    
+      const confirmDelete = async () => {
+        if (!deleteBlogId) return;
+        try {
+          const response = await fetch(`${BLOGS_API_URL}/${deleteBlogId}`, {
+            method: "DELETE",
+          });
+          const data = await response.json();
+          if (data.success) {
+            setNotice("Blog deleted successfully.");
+            await fetchBlogs();
+          } else {
+            setNotice(data.message || "Failed to delete blog.");
+          }
+        } catch (err) {
+          console.error("Error deleting blog:", err);
+          setNotice("Error deleting blog.");
+        } finally {
+          setSelectedIds((previous) => previous.filter((id) => id !== deleteBlogId));
+          setDeleteBlogId(null);
+        }
+      };
+    
+      const toggleSelect = (id) => {
+        setSelectedIds((previous) =>
+          previous.includes(id)
+            ? previous.filter((selectedId) => selectedId !== id)
+            : [...previous, id]
+        );
+      };
+    
+      const toggleSelectAll = () => {
+        const pageIds = paginatedBlogs.map((blog) => (blog._id || blog.id));
+        const allSelected =
+          pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
+    
+        setSelectedIds((previous) =>
+          allSelected
+            ? previous.filter((id) => !pageIds.includes(id))
+            : [...new Set([...previous, ...pageIds])]
+        );
+      };
+    
+      const deleteSelected = () => {
+        if (!selectedIds.length) return;
+    
+        setBlogs((previous) =>
+          previous.filter((blog) => !selectedIds.includes((blog._id || blog.id)))
+        );
+    
+        setSelectedIds([]);
+        setNotice("Selected blog posts deleted.");
+      };
+    
+      const changeStatus = (blog, status) => {
+        setBlogs((previous) =>
+          previous.map((item) =>
+            item.id === (blog._id || blog.id) ? { ...item, status } : item
+          )
+        );
+      };
+    
+      const renderStatus = (status) => (
+        <span
+          className={`BlogPosting-status BlogPosting-status--${status.toLowerCase()}`}
+        >
+          <span className="BlogPosting-statusDot" />
+          {status}
+        </span>
       );
-
-      if (!duplicate) finalCharacteristics.push(pendingCharacteristic);
-    }
-
-    const payload = {
-      title: form.title.trim(),
-      slug,
-      authorName: form.authorName.trim(),
-      category: form.category,
-      characteristics: finalCharacteristics,
-      description: form.description,
-      tags: form.tags,
-      metaDescription: form.metaDescription,
-      status: form.status,
-      publishDate: form.publishDate || new Date().toISOString(),
-      mainImage: form.mainImage?.preview || form.mainImage?.url || "",
-      bodyImages: [
-        form.bodyImages?.[0]?.preview || form.bodyImages?.[0]?.url || "",
-        form.bodyImages?.[1]?.preview || form.bodyImages?.[1]?.url || "",
-      ],
-      views: Number(form.views) || 0,
-    };
-
-    try {
-      setNotice("Saving blog...");
-      let response;
-      if (editingId) {
-        response = await fetch(`${BLOGS_API_URL}/${editingId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } else {
-        response = await fetch(BLOGS_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
-
-      const result = await response.json();
-      if (!response.ok || !result.success) {
-        setNotice(result.message || "Failed to save blog. Please try again.");
-        return;
-      }
-
-      setNotice(editingId ? "Blog updated successfully!" : "Blog created successfully!");
-      setEditingId(null);
-      setForm(createEmptyForm());
-      await fetchBlogs();
-
-      setTimeout(() => {
-        navigate("/blog/blog-management");
-      }, 1000);
-    } catch (error) {
-      console.error("Error saving blog:", error);
-      setNotice("An error occurred while saving the blog.");
-    }
-  };
-
-  const resetForm = () => {
-    setForm(createEmptyForm());
-    setEditingId(null);
-    setNotice("");
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteBlogId) return;
-    try {
-      const response = await fetch(`${BLOGS_API_URL}/${deleteBlogId}`, {
-        method: "DELETE",
-      });
-      const data = await response.json();
-      if (data.success) {
-        setNotice("Blog deleted successfully.");
-        await fetchBlogs();
-      } else {
-        setNotice(data.message || "Failed to delete blog.");
-      }
-    } catch (err) {
-      console.error("Error deleting blog:", err);
-      setNotice("Error deleting blog.");
-    } finally {
-      setSelectedIds((previous) => previous.filter((id) => id !== deleteBlogId));
-      setDeleteBlogId(null);
-    }
-  };
-
-  const toggleSelect = (id) => {
-    setSelectedIds((previous) =>
-      previous.includes(id)
-        ? previous.filter((selectedId) => selectedId !== id)
-        : [...previous, id]
-    );
-  };
-
-  const toggleSelectAll = () => {
-    const pageIds = paginatedBlogs.map((blog) => (blog._id || blog.id));
-    const allSelected =
-      pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
-
-    setSelectedIds((previous) =>
-      allSelected
-        ? previous.filter((id) => !pageIds.includes(id))
-        : [...new Set([...previous, ...pageIds])]
-    );
-  };
-
-  const deleteSelected = () => {
-    if (!selectedIds.length) return;
-
-    setBlogs((previous) =>
-      previous.filter((blog) => !selectedIds.includes((blog._id || blog.id)))
-    );
-
-    setSelectedIds([]);
-    setNotice("Selected blog posts deleted.");
-  };
-
-  const changeStatus = (blog, status) => {
-    setBlogs((previous) =>
-      previous.map((item) =>
-        item.id === (blog._id || blog.id) ? { ...item, status } : item
-      )
-    );
-  };
-
-  const renderStatus = (status) => (
-    <span
-      className={`BlogPosting-status BlogPosting-status--${status.toLowerCase()}`}
-    >
-      <span className="BlogPosting-statusDot" />
-      {status}
-    </span>
-  );
-
-  const renderImagePreview = (image) => {
-    const raw = typeof image === "string" ? image : (image?.preview || image?.url || null);
-    if (!raw) return null;
-    return formatImageUrl(raw);
-  };
+    
+      const renderImagePreview = (image) => {
+        const raw = typeof image === "string" ? image : (image?.preview || image?.url || null);
+        if (!raw) return null;
+        return formatImageUrl(raw);
+      };
 
   return (
-    <div className="BlogPosting">
+    <div>
+ <div className="BlogPosting">
       {notice && (
         <div className="BlogPosting-notice" role="status">
           <FiCheckCircle />
@@ -1779,7 +1780,8 @@ const BlogPosting = () => {
         </div>
       )}
     </div>
-  );
-};
+    </div>
+  )
+}
 
-export default BlogPosting;
+export default NewBlogPosting
