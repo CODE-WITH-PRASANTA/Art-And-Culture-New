@@ -927,7 +927,7 @@ const NewBlogPosting = () => {
                 <label>Blog Description</label>
                 <div className="BlogPosting-editor">
                   <Editor
-                    apiKey="8hswbe7bfeeneui9eb9gjgsym8ku30nx5gwre9808ajdzniu"
+                    apiKey="qlkqn6bqabhrhalt2l7ezi0z2wwz68m9ckjlc7vf0zalv7b8"
                     value={form.description}
                     onEditorChange={(content) =>
                       setForm((previous) => ({
