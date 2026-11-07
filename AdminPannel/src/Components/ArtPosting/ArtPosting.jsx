@@ -1182,7 +1182,7 @@ const ArtPosting = () => {
                 <div className="ArtPosting-field ArtPosting-field--editor">
                   <label>Artist About</label>
                   <Editor
-                    apiKey="8hswbe7bfeeneui9eb9gjgsym8ku30nx5gwre9808ajdzniu"
+                    apiKey="qlkqn6bqabhrhalt2l7ezi0z2wwz68m9ckjlc7vf0zalv7b8"
                     value={form.artistAbout}
                     onEditorChange={(value) =>
                       updateField("artistAbout", value)
